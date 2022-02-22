@@ -45,6 +45,8 @@ def plot_depth_dist(data, axs):
         "xlabel": "Cell counts",
         "ylabel": "Frequency",
     }
+    # mn = min(data["raw"].sum())
+    # mx = max
 
     for idx, (title, matrix) in enumerate(data.items()):
         ax = axs[idx]
@@ -53,15 +55,15 @@ def plot_depth_dist(data, axs):
 
         x = np.sort(matrix.sum(1))[::-1]
 
-        mean = data["raw"].sum(1).mean()
+        mean = x.mean()
         stdev = np.sqrt(np.var(data["raw"].sum(1)))
 
         close = np.all(np.allclose(x, x[0]))
 
         if close:
-            ax.hist([x[0]] * len(x), edgecolor="k", facecolor="#D43F3A", bins=20)
+            ax.hist([x[0]] * len(x), edgecolor="k", facecolor="#D43F3A")
         else:
-            ax.hist(x, edgecolor="k", facecolor="#D43F3A", bins=20)
+            ax.hist(x, edgecolor="k", facecolor="#D43F3A")
         p.update({"title": title, "xlim": (mean - 1 * stdev, mean + 5 * stdev)})
         ax.set(**p)
     return axs
