@@ -8,6 +8,12 @@ def read_str_list(fname, lst=list):
             lst.append(line.strip())
 
 
+def read_int_list(fname, lst=list):
+    with open(fname, "r") as f:
+        for idx, line in enumerate(f.readlines()):
+            lst.append(int(line.strip()))
+
+
 def sanitize_mtx(mtx: np.ndarray):
     cell_count_mask = mtx.sum(1) > 0  # count for each cell
     gene_count_mask = mtx.sum(0) > 0  # count for each gene
