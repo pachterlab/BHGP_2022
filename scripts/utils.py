@@ -1,4 +1,4 @@
-from sklearn.preprocessing import normalize
+from sklearn.preprocessing import normalize, scale
 import numpy as np
 
 
@@ -62,5 +62,8 @@ def norm(mtx):
 
     print("pf -> log1p -> pf")
     d["pf -> log1p -> pf"] = do_log1p_pf(do_pf(mtx))
+
+    print("cpm -> log1p -> scale")
+    d["cpm -> log1p -> scale"] = scale(np.log1p(do_pf(mtx, target_sum=1_000_000)))
 
     return d
