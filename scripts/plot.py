@@ -64,7 +64,7 @@ def plot_depth_dist(data, axs):
             ax.hist([x[0]] * len(x), edgecolor="k", facecolor="#D43F3A")
         else:
             ax.hist(x, edgecolor="k", facecolor="#D43F3A")
-        p.update({"title": title, "xlim": (mean - 1 * stdev, mean + 5 * stdev)})
+        p.update({"title": title, "xlim": (mean - 5 * stdev, mean + 5 * stdev)})
         ax.set(**p)
     return axs
 
