@@ -1,5 +1,6 @@
 from sklearn.preprocessing import normalize, scale
 import numpy as np
+from scipy.sparse import csr_matrix
 
 
 def read_str_list(fname, lst=list):
@@ -46,24 +47,30 @@ def do_log_pf(mtx, pc=0.5, iter=1):
     return do_log_pf(pf_up, iter)
 
 
-# def norm(mtx):
-#     d = {}
-#     print("raw")
-#     d["raw"] = mtx
+def norm(mtx):
+    d = {}
+    print("raw")
+    d["raw"] = mtx
+    pc = 0.5
 
-#     print("pf")
-#     d["pf"] = do_pf(mtx)
+    print("pf")
+    d["pf"] = csr_matrix(do_pf(mtx))
 
-#     print("log1p")
-#     d["log1p"] = np.log1p(mtx)
+    print("log")
+    d["log"] = csr_matrix(np.log(pc + mtx))
 
-#     print("pf -> log1p")
-#     d["pf -> log1p"] = np.log1p(do_pf(mtx))
+    print("pf -> log")
+    d["pf_log"] = csr_matrix(np.log(pc + do_pf(mtx)))
 
-#     print("pf -> log1p -> pf")
-#     d["pf -> log1p -> pf"] = do_log1p_pf(do_pf(mtx))
+    print("pf -> log -> pf")
+    d["pf_log_pf"] = csr_matrix(do_log_pf(do_pf(mtx)))
 
-#     print("cpm -> log1p -> scale")
-#     d["cpm -> log1p -> scale"] = scale(np.log1p(do_pf(mtx, target_sum=1_000_000)))
+    print("cp10k -> log")
+    d["cp10k_log"] = csr_matrix(np.log(pc + do_pf(mtx, target_sum=10_000)))
 
-#     return d
+    print("cp10k -> log -> scale")
+    d["cp10k_log_scale"] = pd.DataFrame(
+        scale(np.log(pc + do_pf(mtx, target_sum=10_000)))
+    ).values
+
+    return d
