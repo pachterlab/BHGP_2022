@@ -60,7 +60,7 @@ def norm(mtx):
 
     var = pd.DataFrame(genes, columns=["gids"])
     adata = anndata.AnnData(X=csr_matrix(sanmtx), var=var)
-    adata.var_names = var["gids"]
+    adata.var_names = var["gids"].astype(str)
 
     residuals = SCTransform(adata, var_features_n=3000, vst_flavor="v2")
     columns = residuals.columns.values.astype(int)
