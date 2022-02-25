@@ -54,7 +54,12 @@ def norm(mtx):
     d = {}
 
     print("sctransform")
-    residuals = SCTransform(anndata.AnnData(X=csr_matrix(mtx)), var_features_n=3000)
+
+    var = pd.DataFrame(np.arange(mtx.shape[1]), columns=["gids"])
+
+    residuals = SCTransform(
+        anndata.AnnData(X=csr_matrix(mtx), var=var), var_features_n=3000
+    )
     columns = residuals.columns.values.astype(int)
     d["sctransform"] = residuals.values
 
