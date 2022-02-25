@@ -67,7 +67,7 @@ def norm(mtx):
 
     genes = np.arange(mtx.shape[1])
     remap_genes = np.array([list(genes).index(i) for i in columns])
-    mtx = mtx[:, remap_genes].toarray()
+    mtx = mtx[:, remap_genes]
 
     print("raw")
     d["raw"] = mtx
