@@ -50,7 +50,7 @@ def do_log_pf(mtx, pc=0.5, iter=1):
     return do_log_pf(pf_up, iter)
 
 
-def norm(mtx):
+def norm(mtx, pc=0.5):
     d = {}
     rm, cm = sanitize_mtx(mtx)
     sanmtx = mtx[rm][:, cm]
@@ -78,7 +78,6 @@ def norm(mtx):
 
     print("raw")
     d["raw"] = mtx
-    pc = 0.5
 
     print("pf")
     d["pf"] = do_pf(mtx)
@@ -90,7 +89,7 @@ def norm(mtx):
     d["pf_log"] = np.log(pc + do_pf(mtx))
 
     print("pf -> log -> pf")
-    d["pf_log_pf"] = do_log_pf(do_pf(mtx))
+    d["pf_log_pf"] = do_log_pf(do_pf(mtx), pc=pc)
 
     print("cp10k -> log")
     d["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=10_000))
