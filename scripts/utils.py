@@ -56,7 +56,7 @@ def norm(mtx):
     print("sctransform")
     d["sctransform"] = SCTransform(
         anndata.AnnData(X=csr_matrix(mtx)), var_features_n=3000
-    )
+    ).values
 
     genes = np.arange(mtx.shape[1])
     remap_genes = np.array(
@@ -69,23 +69,26 @@ def norm(mtx):
     pc = 0.5
 
     print("pf")
-    d["pf"] = csr_matrix(do_pf(mtx))
+    d["pf"] = do_pf(mtx)
 
     print("log")
-    d["log"] = csr_matrix(np.log(pc + mtx))
+    d["log"] = np.log(pc + mtx)
 
     print("pf -> log")
-    d["pf_log"] = csr_matrix(np.log(pc + do_pf(mtx)))
+    d["pf_log"] = np.log(pc + do_pf(mtx))
 
     print("pf -> log -> pf")
-    d["pf_log_pf"] = csr_matrix(do_log_pf(do_pf(mtx)))
+    d["pf_log_pf"] = do_log_pf(do_pf(mtx))
 
     print("cp10k -> log")
-    d["cp10k_log"] = csr_matrix(np.log(pc + do_pf(mtx, target_sum=10_000)))
+    d["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=10_000))
 
     print("cp10k -> log -> scale")
     d["cp10k_log_scale"] = pd.DataFrame(
         scale(np.log(pc + do_pf(mtx, target_sum=10_000)))
     ).values
+
+    print("cp10k -> log")
+    d["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=1_000_000))
 
     return d
