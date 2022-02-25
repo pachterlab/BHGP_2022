@@ -54,14 +54,12 @@ def norm(mtx):
     d = {}
 
     print("sctransform")
-    d["sctransform"] = SCTransform(
-        anndata.AnnData(X=csr_matrix(mtx)), var_features_n=3000
-    ).values
+    residuals = SCTransform(anndata.AnnData(X=csr_matrix(mtx)), var_features_n=3000)
+    columns = residuals.columns.values.astype(int)
+    d["sctransform"] = residuals.values
 
     genes = np.arange(mtx.shape[1])
-    remap_genes = np.array(
-        [list(genes).index(i) for i in d["sctransform"].columns.values.astype(int)]
-    )
+    remap_genes = np.array([list(genes).index(i) for i in columns])
     mtx = mtx[:, remap_genes].toarray()
 
     print("raw")
