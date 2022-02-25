@@ -18,7 +18,6 @@ def main(in_matrix_fn, out_prefix):
     mtx = mmread(in_matrix_fn).toarray()
     data = norm(mtx, pc=pc)
 
-    title = "pf"
     titles = ["raw", "pf", "log", "pf_log", "pf_log_pf", "cpm_log", "cp10k_log"]
     for title in titles:
         print(f"saving {title}")
