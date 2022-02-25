@@ -3,6 +3,7 @@ import numpy as np
 from scipy.sparse import csr_matrix
 import anndata
 from pysctransform import SCTransform
+import pandas as pd
 
 
 def read_str_list(fname, lst=list):
