@@ -61,7 +61,7 @@ def norm(mtx):
     remap_genes = np.array(
         [list(genes).index(i) for i in d["sctransform"].columns.values.astype(int)]
     )
-    mtx = mtx[:, remap_genes]
+    mtx = mtx[:, remap_genes].toarray()
 
     print("raw")
     d["raw"] = mtx
