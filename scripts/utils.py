@@ -63,7 +63,7 @@ def norm(mtx):
     adata.var_names = var["gids"]
 
     residuals = SCTransform(adata, var_features_n=3000)
-    columns = residuals.columns.values
+    columns = residuals.columns.values.astype(int)
 
     remap_genes = np.array([list(genes).index(i) for i in columns])
 
