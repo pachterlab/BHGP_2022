@@ -52,6 +52,8 @@ def do_log_pf(mtx, pc=0.5, iter=1):
 
 def norm(mtx):
     d = {}
+    rm, cm = sanitize_mtx(mtx)
+    mtx = mtx[rm][:, cm]
 
     print("sctransform")
 
