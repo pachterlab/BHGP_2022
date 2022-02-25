@@ -1,6 +1,8 @@
 from sklearn.preprocessing import normalize, scale
 import numpy as np
 from scipy.sparse import csr_matrix
+import anndata
+from pysctransform import SCTransform
 
 
 def read_str_list(fname, lst=list):
@@ -49,6 +51,18 @@ def do_log_pf(mtx, pc=0.5, iter=1):
 
 def norm(mtx):
     d = {}
+
+    print("sctransform")
+    d["sctransform"] = SCTransform(
+        anndata.AnnData(X=csr_matrix(mtx)), var_features_n=3000
+    )
+
+    genes = np.arange(mtx.shape[1])
+    remap_genes = np.array(
+        [list(genes).index(i) for i in d["sctransform"].columns.values]
+    )
+    mtx = mtx[:, remap_genes]
+
     print("raw")
     d["raw"] = mtx
     pc = 0.5
