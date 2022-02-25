@@ -151,7 +151,7 @@ def main(ds, base_data_fn, base_out_fn):
         plot_mono(m, raw, ax3)
         ax2.set_title(title, fontsize=20, weight="bold")
 
-    out_fn = os.path.join(base_out_fn, "f{ds}.png")
+    out_fn = os.path.join(base_out_fn, f"{ds}.png")
     fig.savefig(
         out_fn, facecolor="white", transparent=False, dpi=200, bbox_inches="tight"
     )
