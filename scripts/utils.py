@@ -59,7 +59,7 @@ def norm(mtx):
 
     genes = np.arange(mtx.shape[1])
     remap_genes = np.array(
-        [list(genes).index(i) for i in d["sctransform"].columns.values]
+        [list(genes).index(i) for i in d["sctransform"].columns.values.astype(int)]
     )
     mtx = mtx[:, remap_genes]
 
