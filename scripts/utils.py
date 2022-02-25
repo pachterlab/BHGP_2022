@@ -100,7 +100,7 @@ def norm(mtx):
         scale(np.log(pc + do_pf(mtx, target_sum=10_000)))
     ).values
 
-    print("cp10k -> log")
-    d["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=1_000_000))
+    print("cpm -> log")
+    d["cpm_log"] = np.log(pc + do_pf(mtx, target_sum=1_000_000))
 
     return d
