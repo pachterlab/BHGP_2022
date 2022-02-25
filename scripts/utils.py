@@ -53,21 +53,28 @@ def do_log_pf(mtx, pc=0.5, iter=1):
 def norm(mtx):
     d = {}
     rm, cm = sanitize_mtx(mtx)
-    mtx = mtx[rm][:, cm]
+    sanmtx = mtx[rm][:, cm]
 
     print("sctransform")
+    genes = np.arange(sanmtx.shape[1])
 
-    var = pd.DataFrame(np.arange(mtx.shape[1]), columns=["gids"])
+    var = pd.DataFrame(genes, columns=["gids"])
+    adata = anndata.AnnData(X=csr_matrix(sanmtx), var=var)
+    adata.var_names = var["gids"]
 
-    residuals = SCTransform(
-        anndata.AnnData(X=csr_matrix(mtx), var=var), var_features_n=3000
-    )
-    columns = residuals.columns.values.astype(int)
-    d["sctransform"] = residuals.values
+    residuals = SCTransform(adata, var_features_n=3000)
+    columns = residuals.columns.values
 
-    genes = np.arange(mtx.shape[1])
     remap_genes = np.array([list(genes).index(i) for i in columns])
-    mtx = mtx[:, remap_genes]
+
+    # when we do the remap genes we have to drop some rows since then become zero
+    remapmtx = sanmtx[:, remap_genes]
+    rm, cm = sanitize_mtx(remapmtx)
+    mtx = remapmtx[rm]
+
+    residuals = residuals[rm]
+
+    d["sctransform"] = residuals.values
 
     print("raw")
     d["raw"] = mtx
