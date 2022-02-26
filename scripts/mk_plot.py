@@ -80,7 +80,7 @@ def mono(matrix, raw):
 
 def plot_mono(matrix, raw, ax):
     x = mono(matrix, raw)
-    p = {"xlabel": "Spearman r", "ylabel": "Frequency"}
+    p = {"xlabel": "Spearman r", "ylabel": "Frequency", "xlim": (-0.1, 1.2)}
     close = np.all(np.allclose(x, x[0]))
     if close:
         weights = np.ones(len(x)) / len(x)
@@ -96,15 +96,17 @@ def read_data(base_data_fn):
     data = {}
     titles = ["raw", "pf", "log", "pf_log", "pf_log_pf", "cpm_log", "cp10k_log"]
     for title in titles:
-        print(f"saving {title}")
+        print(f"loading {title}")
         in_fn = os.path.join(base_data_fn, f"{title}.mtx")
         data[title] = mmread(in_fn).toarray()
 
     title = "sctransform"
+    print(f"loading {title}")
     in_fn = os.path.join("./", f"{title}.csv")
     data[title] = pd.read_csv(in_fn, header=None).values
 
     title = "cp10k_log_scale"
+    print(f"loading {title}")
     in_fn = os.path.join("./", f"{title}.csv")
     data[title] = pd.read_csv(in_fn, header=None).values
     return data
@@ -113,6 +115,7 @@ def read_data(base_data_fn):
 def main(ds, base_data_fn, base_out_fn):
     data = read_data(base_data_fn)
 
+    print(f"saving {ds}.png")
     fig = plt.figure(figsize=(6 * 3, 5 * 3))
     fig.suptitle(ds, y=0.92)
     gs = gridspec.GridSpec(5, 2, figure=fig, wspace=0.15, hspace=0.75)
