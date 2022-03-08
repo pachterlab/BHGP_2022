@@ -2,7 +2,7 @@
 
 import sys
 import os
-from utils import do_pf, do_log_pf, norm
+from utils import do_pf, do_log_pf, norm, sanitize_mtx
 from scipy.io import mmread, mmwrite
 from scipy.sparse import csr_matrix
 from sklearn.preprocessing import scale
@@ -12,13 +12,15 @@ import numpy as np
 
 
 def main(in_matrix_fn, out_prefix):
-    # pseudocount
-    pc = 0.5
-
     mtx = mmread(in_matrix_fn).toarray()
-    data = norm(mtx, pc=pc)
+    rm, cm = sanitize_mtx(mtx)
 
-    titles = ["raw", "pf", "log", "pf_log", "pf_log_pf", "cpm_log", "cp10k_log"]
+    # sanitize
+    sanmtx = mtx[rm][:, cm]
+ 
+    (data, _, _, _) = norm(sanmtx)
+
+    titles = ["raw", "pf", "log", "pf_log", "pf_log_pf", "cpm_log", "cp10k_log", "sqrt"]
     for title in titles:
         print(f"saving {title}")
         out_fn = os.path.join(out_prefix, f"{title}.mtx")

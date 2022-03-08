@@ -49,57 +49,64 @@ def do_log_pf(mtx, pc=0.5, iter=1):
     pf_up = do_pf(np.exp(pf) - 1)
     return do_log_pf(pf_up, iter)
 
+import anndata
+from pysctransform import SCTransform
 
-def norm(mtx, pc=0.5):
-    d = {}
-    rm, cm = sanitize_mtx(mtx)
-    sanmtx = mtx[rm][:, cm]
+def norm(sanmtx, sanbcs = [], sangenes = []):
+    nc, ng = sanmtx.shape
+    pc = 1.0
+    if len(sanbcs) == 0:
+        sanbcs = np.arange(nc).astype(str)
+    if len(sangenes) == 0:
+        sangenes = np.arange(ng).astype(str)
+    
+    # assume you get a sanitized matrix
+    data = {}
 
-    print("sctransform")
-    genes = np.arange(sanmtx.shape[1])
-
-    var = pd.DataFrame(genes, columns=["gids"])
-    adata = anndata.AnnData(X=csr_matrix(sanmtx), var=var)
+    # prepare anndata for sctransform
+    var = pd.DataFrame(sangenes, columns=["gids"])
+    obs = pd.DataFrame(sanbcs, columns=["bcs"])
+    adata = anndata.AnnData(X=csr_matrix(sanmtx), var=var, obs=obs)
     adata.var_names = var["gids"].astype(str)
+    adata.obs_names = obs["bcs"].astype(str)
 
-    residuals = SCTransform(adata, var_features_n=3000, vst_flavor="v2")
-    columns = residuals.columns.values.astype(int)
+    print("sctransform")    
+    residuals = SCTransform(adata, var_features_n=ng, vst_flavor="v2")
+    sctgenes = residuals.columns.values
 
-    remap_genes = np.array([list(genes).index(i) for i in columns])
+    reorder_gidx = np.array([list(sangenes).index(i) for i in sctgenes])
 
     # when we do the remap genes we have to drop some rows since then become zero
-    remapmtx = sanmtx[:, remap_genes]
-    rm, cm = sanitize_mtx(remapmtx)
-    mtx = remapmtx[rm]
+    reorder_mtx = sanmtx[:, reorder_gidx]
+    rm, cm = sanitize_mtx(reorder_mtx)
 
-    residuals = residuals[rm]
-
-    d["sctransform"] = residuals.values
-
+    # clean and ordered matrices (we dont drop genes)
+    mtx = reorder_mtx[rm]
+    bcs = sanbcs[rm]
+    genes = sangenes[reorder_gidx]
+    
+    sct = residuals[rm].values
+    
+    # create data dict with all transformations
+    data["sctransform"] = sct
     print("raw")
-    d["raw"] = mtx
-
+    data["raw"] = mtx
     print("pf")
-    d["pf"] = do_pf(mtx)
-
+    data["pf"] = do_pf(mtx)
     print("log")
-    d["log"] = np.log(pc + mtx)
-
-    print("pf -> log")
-    d["pf_log"] = np.log(pc + do_pf(mtx))
-
-    print("pf -> log -> pf")
-    d["pf_log_pf"] = do_log_pf(do_pf(mtx), pc=pc)
-
-    print("cp10k -> log")
-    d["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=10_000))
-
-    print("cp10k -> log -> scale")
-    d["cp10k_log_scale"] = pd.DataFrame(
+    data["log"] = np.log(pc + mtx)
+    print("pf_log")
+    data["pf_log"] = np.log(pc + do_pf(mtx))
+    print("pf_log_pf")
+    data["pf_log_pf"] = do_log_pf(do_pf(mtx), pc=pc)
+    print("cp10k_log")
+    data["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=10_000))
+    print("cp10k_log_scale")
+    data["cp10k_log_scale"] = pd.DataFrame(
         scale(np.log(pc + do_pf(mtx, target_sum=10_000)))
     ).values
-
-    print("cpm -> log")
-    d["cpm_log"] = np.log(pc + do_pf(mtx, target_sum=1_000_000))
-
-    return d
+    print("cpm_log")
+    data["cpm_log"] = np.log(pc + do_pf(mtx, target_sum=1_000_000))
+    print("sqrt")
+    data["sqrt"] = np.sqrt(mtx)
+    return (data, mtx, bcs, genes)
