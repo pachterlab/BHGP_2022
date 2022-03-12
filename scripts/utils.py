@@ -2,7 +2,6 @@ from sklearn.preprocessing import normalize, scale
 import numpy as np
 from scipy.sparse import csr_matrix
 import anndata
-from pysctransform import SCTransform
 import pandas as pd
 
 
@@ -49,10 +48,43 @@ def do_log_pf(mtx, pc=0.5, iter=1):
     pf_up = do_pf(np.exp(pf) - 1)
     return do_log_pf(pf_up, iter)
 
+def sclcp(mtx):
+    data = {}
+    bcs = []
+    genes = []
+    data["cp10k_log_scale"] = scale(mtx)
+    return (data, mtx, bcs, genes)
+
 import anndata
-from pysctransform import SCTransform
+
+def notsct(mtx):
+    pc = 1.0
+    data = {}
+    bcs = []
+    genes = []
+    print("pf")
+    data["pf"] = do_pf(mtx)
+    print("log")
+    data["log"] = np.log(pc + mtx)
+    print("pf_log")
+    data["pf_log"] = np.log(pc + do_pf(mtx))
+    print("pf_log_pf")
+    data["pf_log_pf"] = do_log_pf(do_pf(mtx), pc=pc)
+    print("cp10k_log")
+    data["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=10_000))
+    print("cp10k_log_scale")
+    data["cp10k_log_scale"] = pd.DataFrame(
+        scale(np.log(pc + do_pf(mtx, target_sum=10_000)))
+    ).values
+    print("cpm_log")
+    data["cpm_log"] = np.log(pc + do_pf(mtx, target_sum=1_000_000))
+    print("sqrt")
+    data["sqrt"] = np.sqrt(mtx)
+    return (data, mtx, bcs, genes)
 
 def norm(sanmtx, sanbcs = [], sangenes = []):
+
+    from pysctransform import SCTransform
     nc, ng = sanmtx.shape
     pc = 1.0
     if len(sanbcs) == 0:
@@ -91,22 +123,22 @@ def norm(sanmtx, sanbcs = [], sangenes = []):
     data["sctransform"] = sct
     print("raw")
     data["raw"] = mtx
-    print("pf")
-    data["pf"] = do_pf(mtx)
-    print("log")
-    data["log"] = np.log(pc + mtx)
-    print("pf_log")
-    data["pf_log"] = np.log(pc + do_pf(mtx))
-    print("pf_log_pf")
-    data["pf_log_pf"] = do_log_pf(do_pf(mtx), pc=pc)
-    print("cp10k_log")
-    data["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=10_000))
-    print("cp10k_log_scale")
-    data["cp10k_log_scale"] = pd.DataFrame(
-        scale(np.log(pc + do_pf(mtx, target_sum=10_000)))
-    ).values
-    print("cpm_log")
-    data["cpm_log"] = np.log(pc + do_pf(mtx, target_sum=1_000_000))
-    print("sqrt")
-    data["sqrt"] = np.sqrt(mtx)
+    # print("pf")
+    # data["pf"] = do_pf(mtx)
+    # print("log")
+    # data["log"] = np.log(pc + mtx)
+    # print("pf_log")
+    # data["pf_log"] = np.log(pc + do_pf(mtx))
+    # print("pf_log_pf")
+    # data["pf_log_pf"] = do_log_pf(do_pf(mtx), pc=pc)
+    # print("cp10k_log")
+    # data["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=10_000))
+    # print("cp10k_log_scale")
+    # data["cp10k_log_scale"] = pd.DataFrame(
+    #     scale(np.log(pc + do_pf(mtx, target_sum=10_000)))
+    # ).values
+    # print("cpm_log")
+    # data["cpm_log"] = np.log(pc + do_pf(mtx, target_sum=1_000_000))
+    # print("sqrt")
+    # data["sqrt"] = np.sqrt(mtx)
     return (data, mtx, bcs, genes)
