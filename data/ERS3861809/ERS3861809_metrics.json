@@ -49,11 +49,11 @@
         "r2_depth": 0,
         "r_mono": 1.0
     },
-    "ncells": "6935",
+    "ncells": 6935,
     "ngenes": 29016,
-    "avg_per_cell": "7869.29",
-    "avg_per_gene": "1880.81",
-    "min_cell": "100",
-    "max_cell": "64758",
-    "overdispersion": "2.63"
+    "avg_per_cell": 7869.29,
+    "avg_per_gene": 1880.81,
+    "min_cell": 100.0,
+    "max_cell": 64758.0,
+    "overdispersion": 2.63
 }
