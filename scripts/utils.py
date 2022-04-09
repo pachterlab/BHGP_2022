@@ -48,7 +48,7 @@ def do_log_pf(mtx, pc=0.5, iter=1):
     pf_up = do_pf(np.exp(pf) - 1)
     return do_log_pf(pf_up, iter)
 
-def sclcp(mtx):
+def cps(mtx):
     data = {}
     bcs = []
     genes = []
@@ -82,7 +82,7 @@ def notsct(mtx):
     data["sqrt"] = np.sqrt(mtx)
     return (data, mtx, bcs, genes)
 
-def norm(sanmtx, sanbcs = [], sangenes = []):
+def sct(sanmtx, sanbcs = [], sangenes = []):
 
     from pysctransform import SCTransform
     nc, ng = sanmtx.shape
@@ -102,9 +102,9 @@ def norm(sanmtx, sanbcs = [], sangenes = []):
     adata.var_names = var["gids"].astype(str)
     adata.obs_names = obs["bcs"].astype(str)
 
-    print("sctransform")    
-    residuals = SCTransform(adata, var_features_n=ng, vst_flavor="v2")
-    sctgenes = residuals.columns.values
+    residuals, corrected_counts = SCTransform(adata, var_features_n=ng, vst_flavor="v2")
+    sctgenes = residuals.T.columns.values
+    cc = corrected_counts.toarray().T
 
     reorder_gidx = np.array([list(sangenes).index(i) for i in sctgenes])
 
@@ -117,28 +117,11 @@ def norm(sanmtx, sanbcs = [], sangenes = []):
     bcs = sanbcs[rm]
     genes = sangenes[reorder_gidx]
     
-    sct = residuals[rm].values
+    sct = residuals.T[rm].values
+    #sct_cc = cc[rm]
     
     # create data dict with all transformations
     data["sctransform"] = sct
-    print("raw")
+    # data["sctransform_cc"] = sct_cc
     data["raw"] = mtx
-    # print("pf")
-    # data["pf"] = do_pf(mtx)
-    # print("log")
-    # data["log"] = np.log(pc + mtx)
-    # print("pf_log")
-    # data["pf_log"] = np.log(pc + do_pf(mtx))
-    # print("pf_log_pf")
-    # data["pf_log_pf"] = do_log_pf(do_pf(mtx), pc=pc)
-    # print("cp10k_log")
-    # data["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=10_000))
-    # print("cp10k_log_scale")
-    # data["cp10k_log_scale"] = pd.DataFrame(
-    #     scale(np.log(pc + do_pf(mtx, target_sum=10_000)))
-    # ).values
-    # print("cpm_log")
-    # data["cpm_log"] = np.log(pc + do_pf(mtx, target_sum=1_000_000))
-    # print("sqrt")
-    # data["sqrt"] = np.sqrt(mtx)
     return (data, mtx, bcs, genes)
