@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 mknorm(){
-    echo $1 && ../scripts/norm_sparse.py $1/raw.mtx.gz $1/ && gzip $1/*.mtx
+    echo $1 && $parent_path/norm_sparse.py $1/raw.mtx.gz $1/ && gzip $1/*.mtx
 }
 
 N=256
-
-OBS=$(cat fixed | cut -f2 -d'/')
+path=$(pwd)
+OBS=$(find $path -mindepth 1 -maxdepth 1 -type d  \( ! -iname ".*" \) | sed 's|^\./||g')
 
 (
 for d in $OBS; do
