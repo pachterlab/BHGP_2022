@@ -516,7 +516,7 @@ GSM5051498	sctransform	100	5799141
 klein_2015	sctransform	953	175750106
 macosko_2015	sctransform	84	42453
 padovan_merhar_2015	sctransform	96	11244704
-pbmc3k	sctransform	2638	53819335
+pbmc3k	sctransform	2700	204883170
 SAMN14275543	sctransform	6814	709172731
 SRX4733402	sctransform	12650	1810215107
 SRX4733403	sctransform	6670	483262295
