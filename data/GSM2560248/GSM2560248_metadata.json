@@ -1,0 +1,35 @@
+{
+    "GSM2560248": {
+        "accession": "GSM2560248",
+        "supplementary_files": [
+            {
+                "filename": "GSM2560248_2.1.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2560nnn/GSM2560248/suppl/GSM2560248_2.1.mtx.gz",
+                "size": "28545918"
+            },
+            {
+                "filename": "GSM2560248_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2560nnn/GSM2560248/suppl/GSM2560248_barcodes.tsv.gz",
+                "size": "52904"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS2089637": {
+                "accession": "SRS2089637",
+                "title": "GEO accession GSM2560248 is currently private and is scheduled to be released on Mar 14, 2018.",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "ENA-SPOT-COUNT": 90179490,
+                    "ENA-BASE-COUNT": 8837590020,
+                    "ENA-FIRST-PUBLIC": "2017-06-14",
+                    "ENA-LAST-UPDATE": "2017-06-14"
+                },
+                "experiment": "SRX2693025"
+            }
+        }
+    }
+}

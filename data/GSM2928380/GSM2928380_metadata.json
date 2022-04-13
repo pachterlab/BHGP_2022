@@ -1,0 +1,43 @@
+{
+    "GSM2928380": {
+        "accession": "GSM2928380",
+        "supplementary_files": [
+            {
+                "filename": "GSM2928380_AdultHuman_17-3_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2928nnn/GSM2928380/suppl/GSM2928380_AdultHuman_17-3_barcodes.tsv.gz",
+                "size": "10210"
+            },
+            {
+                "filename": "GSM2928380_AdultHuman_17-3_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2928nnn/GSM2928380/suppl/GSM2928380_AdultHuman_17-3_genes.tsv.gz",
+                "size": "264799"
+            },
+            {
+                "filename": "GSM2928380_AdultHuman_17-3_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2928nnn/GSM2928380/suppl/GSM2928380_AdultHuman_17-3_matrix.mtx.gz",
+                "size": "26219451"
+            }
+        ],
+        "platform": {
+            "accession": "GPL21290",
+            "title": "Illumina HiSeq 3000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS2823407": {
+                "accession": "SRS2823407",
+                "title": "AdultHuman_17-3",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Adult testis",
+                    "number of cells": "2272",
+                    "cell type": "Steady-state Spermatogenic cells",
+                    "ENA-SPOT-COUNT": 360260796,
+                    "ENA-BASE-COUNT": 36026079600,
+                    "ENA-FIRST-PUBLIC": "2018-11-07",
+                    "ENA-LAST-UPDATE": "2018-11-07"
+                },
+                "experiment": "SRX3549437"
+            }
+        }
+    }
+}

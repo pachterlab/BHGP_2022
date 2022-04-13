@@ -1,0 +1,26 @@
+{
+    "GSM2786157": {
+        "accession": "GSM2786157",
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS2517316": {
+                "accession": "SRS2517316",
+                "title": "proximal",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "NKX2-1 GFP + lung progenitors in proximal media",
+                    "media": "proximal",
+                    "cell type": "NKX2-1 GFP + lung progenitors",
+                    "ENA-SPOT-COUNT": 109406227,
+                    "ENA-BASE-COUNT": 10721810246,
+                    "ENA-FIRST-PUBLIC": "2018-03-01",
+                    "ENA-LAST-UPDATE": "2018-03-02"
+                },
+                "experiment": "SRX3189946"
+            }
+        }
+    }
+}

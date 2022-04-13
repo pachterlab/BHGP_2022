@@ -1,0 +1,28 @@
+{
+    "GSM3711785": {
+        "accession": "GSM3711785",
+        "platform": {
+            "accession": "GPL24676",
+            "title": "Illumina NovaSeq 6000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4590173": {
+                "accession": "SRS4590173",
+                "title": "AT-21-SAT-CD34+",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "adipose derived stromal vascular fraction (SVF)",
+                    "subject status": "obese individual",
+                    "diabetic status": "Non Diabetic",
+                    "tissue": "Subcutaneous adipose tissue",
+                    "cd34 sorting": "CD34_Positive",
+                    "ENA-SPOT-COUNT": 64127584,
+                    "ENA-BASE-COUNT": 6156248064,
+                    "ENA-FIRST-PUBLIC": "2019-11-05",
+                    "ENA-LAST-UPDATE": "2019-11-06"
+                },
+                "experiment": "SRX5644480"
+            }
+        }
+    }
+}

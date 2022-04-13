@@ -1,0 +1,44 @@
+{
+    "GSM3529821": {
+        "accession": "GSM3529821",
+        "supplementary_files": [
+            {
+                "filename": "GSM3529821_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3529nnn/GSM3529821/suppl/GSM3529821_barcodes.tsv.gz",
+                "size": "27990"
+            },
+            {
+                "filename": "GSM3529821_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3529nnn/GSM3529821/suppl/GSM3529821_genes.tsv.gz",
+                "size": "259446"
+            },
+            {
+                "filename": "GSM3529821_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3529nnn/GSM3529821/suppl/GSM3529821_matrix.mtx.gz",
+                "size": "51226488"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4185885": {
+                "accession": "SRS4185885",
+                "title": "Activated myeloid cells at day 1 pi",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Activated myeloid cells infected with TB40/E at 1 dpi",
+                    "cell type": "Activated myeloid cells",
+                    "virus": "TB40/E",
+                    "time point": "Day 1 post-infection",
+                    "ENA-SPOT-COUNT": 301474803,
+                    "ENA-BASE-COUNT": 29544530694,
+                    "ENA-FIRST-PUBLIC": "2019-03-14",
+                    "ENA-LAST-UPDATE": "2019-03-14"
+                },
+                "experiment": "SRX5178631"
+            }
+        }
+    }
+}

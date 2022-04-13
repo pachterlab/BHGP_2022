@@ -1,0 +1,43 @@
+{
+    "GSM3377671": {
+        "accession": "GSM3377671",
+        "supplementary_files": [
+            {
+                "filename": "GSM3377671_E6_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3377nnn/GSM3377671/suppl/GSM3377671_E6_barcodes.tsv.gz",
+                "size": "2280346"
+            },
+            {
+                "filename": "GSM3377671_E6_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3377nnn/GSM3377671/suppl/GSM3377671_E6_genes.tsv.gz",
+                "size": "264836"
+            },
+            {
+                "filename": "GSM3377671_E6_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3377nnn/GSM3377671/suppl/GSM3377671_E6_matrix.mtx.gz",
+                "size": "110053663"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3744977": {
+                "accession": "SRS3744977",
+                "title": "D25 MAFB:GATA3 reporter organoid",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "MAFB:mTagBFP2/GATA3:mCherry reporter",
+                    "cell type": "iPSC-derived kidney organoid",
+                    "day of differentiation": "25",
+                    "ENA-SPOT-COUNT": 202026198,
+                    "ENA-BASE-COUNT": 40809291996,
+                    "ENA-FIRST-PUBLIC": "2019-03-14",
+                    "ENA-LAST-UPDATE": "2019-03-14"
+                },
+                "experiment": "SRX4646943"
+            }
+        }
+    }
+}

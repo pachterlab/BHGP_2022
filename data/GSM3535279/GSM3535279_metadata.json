@@ -1,0 +1,44 @@
+{
+    "GSM3535279": {
+        "accession": "GSM3535279",
+        "supplementary_files": [
+            {
+                "filename": "GSM3535279_AXLN4_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3535nnn/GSM3535279/suppl/GSM3535279_AXLN4_barcodes.tsv.gz",
+                "size": "19340"
+            },
+            {
+                "filename": "GSM3535279_AXLN4_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3535nnn/GSM3535279/suppl/GSM3535279_AXLN4_genes.tsv.gz",
+                "size": "257278"
+            },
+            {
+                "filename": "GSM3535279_AXLN4_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3535nnn/GSM3535279/suppl/GSM3535279_AXLN4_matrix.mtx.gz",
+                "size": "29758457"
+            }
+        ],
+        "platform": {
+            "accession": "GPL21290",
+            "title": "Illumina HiSeq 3000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4203425": {
+                "accession": "SRS4203425",
+                "title": "AXLN4",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "AXLN4 lymphatic endothelial cells",
+                    "tissue": "Axillary lymph node",
+                    "individual": "Individual 3",
+                    "cell type": "LN CD45- PDPN+ CD31+ cells",
+                    "ENA-SPOT-COUNT": 516259487,
+                    "ENA-BASE-COUNT": 51109689213,
+                    "ENA-FIRST-PUBLIC": "2019-08-09",
+                    "ENA-LAST-UPDATE": "2019-08-09"
+                },
+                "experiment": "SRX5197636"
+            }
+        }
+    }
+}

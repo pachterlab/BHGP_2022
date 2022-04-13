@@ -1,0 +1,50 @@
+{
+    "GSM3739218": {
+        "accession": "GSM3739218",
+        "supplementary_files": [
+            {
+                "filename": "GSM3739218_ET05.barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3739nnn/GSM3739218/suppl/GSM3739218_ET05.barcodes.tsv.gz",
+                "size": "21283"
+            },
+            {
+                "filename": "GSM3739218_ET05.features.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3739nnn/GSM3739218/suppl/GSM3739218_ET05.features.tsv.gz",
+                "size": "273439"
+            },
+            {
+                "filename": "GSM3739218_ET05.matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3739nnn/GSM3739218/suppl/GSM3739218_ET05.matrix.mtx.gz",
+                "size": "33239165"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4701336": {
+                "accession": "SRS4701336",
+                "title": "10x.ET05",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "ET05, scRNA-seq",
+                    "source": "BMMC",
+                    "targeted mutation": "CALR exon9 A382Rfs*58 (c.1144_1215delins67)",
+                    "Sex": "male",
+                    "age": "17",
+                    "diagnosis": "ET",
+                    "pb blast count": "0%",
+                    "bm blast count": "1%",
+                    "bm fibrosis": "MF-0/3",
+                    "treatment": "None",
+                    "ENA-SPOT-COUNT": 148890936,
+                    "ENA-BASE-COUNT": 14591311728,
+                    "ENA-FIRST-PUBLIC": "2019-06-02",
+                    "ENA-LAST-UPDATE": "2019-06-02"
+                },
+                "experiment": "SRX5767042"
+            }
+        }
+    }
+}

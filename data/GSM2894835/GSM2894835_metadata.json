@@ -1,0 +1,44 @@
+{
+    "GSM2894835": {
+        "accession": "GSM2894835",
+        "supplementary_files": [
+            {
+                "filename": "GSM2894835_proximal_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2894nnn/GSM2894835/suppl/GSM2894835_proximal_barcodes.tsv.gz",
+                "size": "39243"
+            },
+            {
+                "filename": "GSM2894835_proximal_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2894nnn/GSM2894835/suppl/GSM2894835_proximal_genes.tsv.gz",
+                "size": "257281"
+            },
+            {
+                "filename": "GSM2894835_proximal_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2894nnn/GSM2894835/suppl/GSM2894835_proximal_matrix.mtx.gz",
+                "size": "72755333"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS2769051": {
+                "accession": "SRS2769051",
+                "title": "adult mourin lung stromal cells from proximal portion enriched in airways",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "adult human lung proximal airway stromal cells",
+                    "tissue": "lung",
+                    "developmental stage": "adult",
+                    "cell type": "lung distal alveolar stromal cells",
+                    "ENA-SPOT-COUNT": 199732510,
+                    "ENA-BASE-COUNT": 19573785980,
+                    "ENA-FIRST-PUBLIC": "2018-08-09",
+                    "ENA-LAST-UPDATE": "2018-08-09"
+                },
+                "experiment": "SRX3483300"
+            }
+        }
+    }
+}

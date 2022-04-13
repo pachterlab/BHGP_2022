@@ -1,0 +1,35 @@
+{
+    "GSM3439922": {
+        "accession": "GSM3439922",
+        "supplementary_files": [
+            {
+                "filename": "GSM3439922_D275ali28_raw_gene_bc_matrices_h5.h5",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3439nnn/GSM3439922/suppl/GSM3439922_D275ali28_raw_gene_bc_matrices_h5.h5",
+                "size": "54196209"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3984794": {
+                "accession": "SRS3984794",
+                "title": "HAECs_Pneumacult_ALI28",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Human airway epithellial cells differentiated in Pneumacult medium for 28 days",
+                    "cell type": "airway epithelial cells (HAECs)",
+                    "differentiation day": "28",
+                    "cell origin": "Primary culture",
+                    "donor": "D275",
+                    "ENA-SPOT-COUNT": 183529504,
+                    "ENA-BASE-COUNT": 24225894528,
+                    "ENA-FIRST-PUBLIC": "2019-09-21",
+                    "ENA-LAST-UPDATE": "2019-09-21"
+                },
+                "experiment": "SRX4912117"
+            }
+        }
+    }
+}

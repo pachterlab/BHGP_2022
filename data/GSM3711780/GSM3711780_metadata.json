@@ -1,0 +1,28 @@
+{
+    "GSM3711780": {
+        "accession": "GSM3711780",
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4590184": {
+                "accession": "SRS4590184",
+                "title": "AT-15-VAT",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "adipose derived stromal vascular fraction (SVF)",
+                    "subject status": "obese individual",
+                    "diabetic status": "Non Diabetic",
+                    "tissue": "Visceral adipose tissue",
+                    "cd34 sorting": "Not FACS Sorted",
+                    "ENA-SPOT-COUNT": 84697047,
+                    "ENA-BASE-COUNT": 8300310606,
+                    "ENA-FIRST-PUBLIC": "2019-11-05",
+                    "ENA-LAST-UPDATE": "2019-11-06"
+                },
+                "experiment": "SRX5644491"
+            }
+        }
+    }
+}

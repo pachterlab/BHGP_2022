@@ -1,0 +1,44 @@
+{
+    "GSM3735994": {
+        "accession": "GSM3735994",
+        "supplementary_files": [
+            {
+                "filename": "GSM3735994_org_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3735nnn/GSM3735994/suppl/GSM3735994_org_barcodes.tsv.gz",
+                "size": "36974"
+            },
+            {
+                "filename": "GSM3735994_org_features.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3735nnn/GSM3735994/suppl/GSM3735994_org_features.tsv.gz",
+                "size": "541920"
+            },
+            {
+                "filename": "GSM3735994_org_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3735nnn/GSM3735994/suppl/GSM3735994_org_matrix.mtx.gz",
+                "size": "97043034"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4672672": {
+                "accession": "SRS4672672",
+                "title": "Organoid",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Primary Prostate Epithelial Cells",
+                    "cell type": "Primary Epithelial Cells",
+                    "tissue": "Prostate",
+                    "culture condition": "Matrigel",
+                    "ENA-SPOT-COUNT": 305168159,
+                    "ENA-BASE-COUNT": 30516815900,
+                    "ENA-FIRST-PUBLIC": "2019-07-12",
+                    "ENA-LAST-UPDATE": "2019-07-13"
+                },
+                "experiment": "SRX5735812"
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "GSM4037993": {
+        "accession": "GSM4037993",
+        "supplementary_files": [
+            {
+                "filename": "GSM4037993_peripheral_donor_6_enriched_expression.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM4037nnn/GSM4037993/suppl/GSM4037993_peripheral_donor_6_enriched_expression.tsv.gz",
+                "size": "7422336"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS5281881": {
+                "accession": "SRS5281881",
+                "title": "Peripheral-12mm-cd31-enriched-donor-6",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "RPE-choroid",
+                    "enrichment": "CD31-enrichment",
+                    "donor": "6",
+                    "tissue": "RPE-choroid",
+                    "location": "periphery",
+                    "punch-size": "12-mm",
+                    "ENA-SPOT-COUNT": 348113504,
+                    "ENA-BASE-COUNT": 41425506976,
+                    "ENA-FIRST-PUBLIC": "2019-10-31",
+                    "ENA-LAST-UPDATE": "2019-11-01"
+                },
+                "experiment": "SRX6730022"
+            }
+        }
+    }
+}

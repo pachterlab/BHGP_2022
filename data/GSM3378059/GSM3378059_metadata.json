@@ -1,0 +1,43 @@
+{
+    "GSM3378059": {
+        "accession": "GSM3378059",
+        "supplementary_files": [
+            {
+                "filename": "GSM3378059_ZFN_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3378nnn/GSM3378059/suppl/GSM3378059_ZFN_barcodes.tsv.gz",
+                "size": "16037"
+            },
+            {
+                "filename": "GSM3378059_ZFN_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3378nnn/GSM3378059/suppl/GSM3378059_ZFN_genes.tsv.gz",
+                "size": "284856"
+            },
+            {
+                "filename": "GSM3378059_ZFN_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3378nnn/GSM3378059/suppl/GSM3378059_ZFN_matrix.mtx.gz",
+                "size": "31416853"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3747198": {
+                "accession": "SRS3747198",
+                "title": "ZFN",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "FACS-sorted primitive and progenitors HSPC in ratio 1 to 1",
+                    "time point": "24h upon nuclease delivery",
+                    "cell type": "Cord blood derived CD34+ cells",
+                    "ENA-SPOT-COUNT": 159684897,
+                    "ENA-BASE-COUNT": 15649119906,
+                    "ENA-FIRST-PUBLIC": "2019-03-02",
+                    "ENA-LAST-UPDATE": "2019-03-02"
+                },
+                "experiment": "SRX4649197"
+            }
+        }
+    }
+}

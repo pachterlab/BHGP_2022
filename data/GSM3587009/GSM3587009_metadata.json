@@ -1,0 +1,27 @@
+{
+    "GSM3587009": {
+        "accession": "GSM3587009",
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4313818": {
+                "accession": "SRS4313818",
+                "title": "Ileum-2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "adult human ileum epithelial cells",
+                    "cell type": "Epithelia cell",
+                    "tissue": "small intestine",
+                    "age of human": "67",
+                    "ENA-SPOT-COUNT": 432775872,
+                    "ENA-BASE-COUNT": 129832761600,
+                    "ENA-FIRST-PUBLIC": "2019-10-23",
+                    "ENA-LAST-UPDATE": "2019-10-23"
+                },
+                "experiment": "SRX5317411"
+            }
+        }
+    }
+}

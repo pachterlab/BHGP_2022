@@ -1,0 +1,27 @@
+{
+    "GSM4272898": {
+        "accession": "GSM4272898",
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS6002997": {
+                "accession": "SRS6002997",
+                "title": "hu08_092618",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Left vastus lateralis",
+                    "age": "54",
+                    "Sex": "male",
+                    "tissue": "Left vastus lateralis",
+                    "ENA-SPOT-COUNT": 235694063,
+                    "ENA-BASE-COUNT": 19798301292,
+                    "ENA-FIRST-PUBLIC": "2020-06-03",
+                    "ENA-LAST-UPDATE": "2020-06-04"
+                },
+                "experiment": "SRX7566592"
+            }
+        }
+    }
+}

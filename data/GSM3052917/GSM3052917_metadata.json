@@ -1,0 +1,28 @@
+{
+    "GSM3052917": {
+        "accession": "GSM3052917",
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3065426": {
+                "accession": "SRS3065426",
+                "title": "Donor1_scRNA-seq_rep1",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Donor1_testicular cells",
+                    "subject status": "healthy men of peak reproductive age",
+                    "subject id": "donor 1",
+                    "tissue": "testicle",
+                    "cell type": "testicular cells",
+                    "ENA-SPOT-COUNT": 129389224,
+                    "ENA-BASE-COUNT": 12938922400,
+                    "ENA-FIRST-PUBLIC": "2018-10-16",
+                    "ENA-LAST-UPDATE": "2018-10-17"
+                },
+                "experiment": "SRX3815586"
+            }
+        }
+    }
+}

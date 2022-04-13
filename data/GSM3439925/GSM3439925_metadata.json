@@ -1,0 +1,35 @@
+{
+    "GSM3439925": {
+        "accession": "GSM3439925",
+        "supplementary_files": [
+            {
+                "filename": "GSM3439925_D314YP1_raw_gene_bc_matrices_h5.h5",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3439nnn/GSM3439925/suppl/GSM3439925_D314YP1_raw_gene_bc_matrices_h5.h5",
+                "size": "31234337"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3984789": {
+                "accession": "SRS3984789",
+                "title": "Bronchial_Biopsy",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Human bronchial biopsy epithelial cells",
+                    "cell type": "airway epithelial cells",
+                    "differentiation day": "NA",
+                    "cell origin": "Fresh tissue",
+                    "donor": "D314",
+                    "ENA-SPOT-COUNT": 363105044,
+                    "ENA-BASE-COUNT": 20696987508,
+                    "ENA-FIRST-PUBLIC": "2019-09-21",
+                    "ENA-LAST-UPDATE": "2019-09-21"
+                },
+                "experiment": "SRX4912120"
+            }
+        }
+    }
+}

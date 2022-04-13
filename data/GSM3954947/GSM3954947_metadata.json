@@ -1,0 +1,36 @@
+{
+    "GSM3954947": {
+        "accession": "GSM3954947",
+        "supplementary_files": [
+            {
+                "filename": "GSM3954947_processed_NAG2.txt.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3954nnn/GSM3954947/suppl/GSM3954947_processed_NAG2.txt.gz",
+                "size": "2909224"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS5119603": {
+                "accession": "SRS5119603",
+                "title": "Non-atrophic gastritis 2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "stomach",
+                    "Sex": "female",
+                    "age": "56",
+                    "pathological lesions": "Normal",
+                    "subject id": "P2",
+                    "agent": "None",
+                    "ENA-SPOT-COUNT": 412510114,
+                    "ENA-BASE-COUNT": 123753034200,
+                    "ENA-FIRST-PUBLIC": "2019-07-22",
+                    "ENA-LAST-UPDATE": "2019-07-22"
+                },
+                "experiment": "SRX6471039"
+            }
+        }
+    }
+}

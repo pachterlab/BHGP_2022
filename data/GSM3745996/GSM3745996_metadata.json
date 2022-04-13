@@ -1,0 +1,33 @@
+{
+    "GSM3745996": {
+        "accession": "GSM3745996",
+        "supplementary_files": [
+            {
+                "filename": "GSM3745996_peripheral_donor_2_expression.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3745nnn/GSM3745996/suppl/GSM3745996_peripheral_donor_2_expression.tsv.gz",
+                "size": "3577815"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4715841": {
+                "accession": "SRS4715841",
+                "title": "Peripheral donor 2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Retina",
+                    "location": "Periphery",
+                    "donor": "Donor 2",
+                    "ENA-SPOT-COUNT": 140981808,
+                    "ENA-BASE-COUNT": 42576506016,
+                    "ENA-FIRST-PUBLIC": "2019-05-18",
+                    "ENA-LAST-UPDATE": "2019-05-19"
+                },
+                "experiment": "SRX5783049"
+            }
+        }
+    }
+}

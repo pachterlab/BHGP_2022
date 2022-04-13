@@ -1,0 +1,42 @@
+{
+    "GSM2877959": {
+        "accession": "GSM2877959",
+        "supplementary_files": [
+            {
+                "filename": "GSM2877959_154.barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2877nnn/GSM2877959/suppl/GSM2877959_154.barcodes.tsv.gz",
+                "size": "29684"
+            },
+            {
+                "filename": "GSM2877959_154.genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2877nnn/GSM2877959/suppl/GSM2877959_154.genes.tsv.gz",
+                "size": "257276"
+            },
+            {
+                "filename": "GSM2877959_154.matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2877nnn/GSM2877959/suppl/GSM2877959_154.matrix.mtx.gz",
+                "size": "25945965"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS2737286": {
+                "accession": "SRS2737286",
+                "title": "Patient 1",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Blood sample",
+                    "cell type": "circulating tumor cells in hepatocellular carcinoma",
+                    "ENA-SPOT-COUNT": 134578497,
+                    "ENA-BASE-COUNT": 13188692706,
+                    "ENA-FIRST-PUBLIC": "2018-08-08",
+                    "ENA-LAST-UPDATE": "2018-08-08"
+                },
+                "experiment": "SRX3447334"
+            }
+        }
+    }
+}

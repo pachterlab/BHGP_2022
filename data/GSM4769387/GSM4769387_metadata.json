@@ -1,0 +1,49 @@
+{
+    "GSM4769387": {
+        "accession": "GSM4769387",
+        "supplementary_files": [
+            {
+                "filename": "GSM4769387_barcodes_S2.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM4769nnn/GSM4769387/suppl/GSM4769387_barcodes_S2.tsv.gz",
+                "size": "15922"
+            },
+            {
+                "filename": "GSM4769387_features_S2.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM4769nnn/GSM4769387/suppl/GSM4769387_features_S2.tsv.gz",
+                "size": "303112"
+            },
+            {
+                "filename": "GSM4769387_matrix_S2.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM4769nnn/GSM4769387/suppl/GSM4769387_matrix_S2.mtx.gz",
+                "size": "43088259"
+            }
+        ],
+        "platform": {
+            "accession": "GPL24676",
+            "title": "Illumina NovaSeq 6000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS7325385": {
+                "accession": "SRS7325385",
+                "title": "033_02_FL_S2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "human nHTBE cells",
+                    "biomaterial_provider": "Lonza CC-2540S",
+                    "tissue": "tracheal/bronchial scrapings",
+                    "cell type": "Normal human tracheal bronchial epithelial",
+                    "isolate": "Batch 18TL134625, Tissue acquisition number 35825",
+                    "age": "65",
+                    "Sex": "male",
+                    "treatment": "untreated",
+                    "infection status": "SARS-CoV-2 infected, MOI 5, 24 hours post infection",
+                    "ENA-SPOT-COUNT": 232183638,
+                    "ENA-BASE-COUNT": 22986180162,
+                    "ENA-FIRST-PUBLIC": "2020-09-06",
+                    "ENA-LAST-UPDATE": "2020-11-04"
+                },
+                "experiment": "SRX9078405"
+            }
+        }
+    }
+}

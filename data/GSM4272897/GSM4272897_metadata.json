@@ -1,0 +1,27 @@
+{
+    "GSM4272897": {
+        "accession": "GSM4272897",
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS6002996": {
+                "accession": "SRS6002996",
+                "title": "hu04_080619",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Eye lid",
+                    "age": "77",
+                    "Sex": "female",
+                    "tissue": "Eye lid",
+                    "ENA-SPOT-COUNT": 210524102,
+                    "ENA-BASE-COUNT": 17473500466,
+                    "ENA-FIRST-PUBLIC": "2020-06-03",
+                    "ENA-LAST-UPDATE": "2020-06-04"
+                },
+                "experiment": "SRX7566591"
+            }
+        }
+    }
+}

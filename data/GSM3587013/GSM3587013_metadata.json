@@ -1,0 +1,27 @@
+{
+    "GSM3587013": {
+        "accession": "GSM3587013",
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4313822": {
+                "accession": "SRS4313822",
+                "title": "Rectum-2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "adult human rectum epithelial cells",
+                    "cell type": "Epithelia cell",
+                    "tissue": "large intestine",
+                    "age of human": "49",
+                    "ENA-SPOT-COUNT": 431484970,
+                    "ENA-BASE-COUNT": 129445491000,
+                    "ENA-FIRST-PUBLIC": "2019-10-23",
+                    "ENA-LAST-UPDATE": "2019-10-23"
+                },
+                "experiment": "SRX5317415"
+            }
+        }
+    }
+}

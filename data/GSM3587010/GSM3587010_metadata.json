@@ -1,0 +1,27 @@
+{
+    "GSM3587010": {
+        "accession": "GSM3587010",
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4313819": {
+                "accession": "SRS4313819",
+                "title": "Colon-1",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "adult human colon epithelial cells",
+                    "cell type": "Epithelia cell",
+                    "tissue": "large intestine",
+                    "age of human": "55",
+                    "ENA-SPOT-COUNT": 439803104,
+                    "ENA-BASE-COUNT": 131940931200,
+                    "ENA-FIRST-PUBLIC": "2019-10-23",
+                    "ENA-LAST-UPDATE": "2019-10-23"
+                },
+                "experiment": "SRX5317412"
+            }
+        }
+    }
+}

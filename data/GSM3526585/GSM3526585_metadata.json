@@ -1,0 +1,44 @@
+{
+    "GSM3526585": {
+        "accession": "GSM3526585",
+        "supplementary_files": [
+            {
+                "filename": "GSM3526585_d7_I_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526585/suppl/GSM3526585_d7_I_barcodes.tsv.gz",
+                "size": "16030"
+            },
+            {
+                "filename": "GSM3526585_d7_I_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526585/suppl/GSM3526585_d7_I_genes.tsv.gz",
+                "size": "257277"
+            },
+            {
+                "filename": "GSM3526585_d7_I_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526585/suppl/GSM3526585_d7_I_matrix.mtx.gz",
+                "size": "17127406"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4181125": {
+                "accession": "SRS4181125",
+                "title": "neonatal day 7 ITGA6 enriched",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "neonatal",
+                    "tissue": "Testis",
+                    "age": "7 days",
+                    "sample": "D7_I",
+                    "ENA-SPOT-COUNT": 82352728,
+                    "ENA-BASE-COUNT": 10211738272,
+                    "ENA-FIRST-PUBLIC": "2018-12-23",
+                    "ENA-LAST-UPDATE": "2018-12-23"
+                },
+                "experiment": "SRX5173699"
+            }
+        }
+    }
+}

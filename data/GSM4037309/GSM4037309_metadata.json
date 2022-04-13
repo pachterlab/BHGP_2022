@@ -1,0 +1,26 @@
+{
+    "GSM4037309": {
+        "accession": "GSM4037309",
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS5278353": {
+                "accession": "SRS5278353",
+                "title": "Lung Biopsy, control, VUHD69",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Lung Biopsy",
+                    "disease state": "control",
+                    "tissue": "Lung Biopsy",
+                    "ENA-SPOT-COUNT": 64358680,
+                    "ENA-BASE-COUNT": 10554823520,
+                    "ENA-FIRST-PUBLIC": "2019-09-06",
+                    "ENA-LAST-UPDATE": "2019-09-06"
+                },
+                "experiment": "SRX6726377"
+            }
+        }
+    }
+}

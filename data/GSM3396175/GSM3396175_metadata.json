@@ -1,0 +1,43 @@
+{
+    "GSM3396175": {
+        "accession": "GSM3396175",
+        "supplementary_files": [
+            {
+                "filename": "GSM3396175_barcodes_O.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3396nnn/GSM3396175/suppl/GSM3396175_barcodes_O.tsv.gz",
+                "size": "20825"
+            },
+            {
+                "filename": "GSM3396175_genes_O.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3396nnn/GSM3396175/suppl/GSM3396175_genes_O.tsv.gz",
+                "size": "264785"
+            },
+            {
+                "filename": "GSM3396175_matrix_O.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3396nnn/GSM3396175/suppl/GSM3396175_matrix_O.mtx.gz",
+                "size": "16956634"
+            }
+        ],
+        "platform": {
+            "accession": "GPL21290",
+            "title": "Illumina HiSeq 3000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3805259": {
+                "accession": "SRS3805259",
+                "title": "Bone marrow O",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Bone marrow",
+                    "cell type": "bone marrow cells",
+                    "age": "50 years old",
+                    "ENA-SPOT-COUNT": 147705406,
+                    "ENA-BASE-COUNT": 14475129788,
+                    "ENA-FIRST-PUBLIC": "2018-09-22",
+                    "ENA-LAST-UPDATE": "2018-09-22"
+                },
+                "experiment": "SRX4720051"
+            }
+        }
+    }
+}

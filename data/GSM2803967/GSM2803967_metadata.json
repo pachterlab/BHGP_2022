@@ -1,0 +1,27 @@
+{
+    "GSM2803967": {
+        "accession": "GSM2803967",
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS2566664": {
+                "accession": "SRS2566664",
+                "title": "B cells pre therapy single cell RNA seq",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "CD19+ live cells",
+                    "treatment": "Pre-CCB",
+                    "cell type": "PBMCs",
+                    "cell subtype": "Sorted live B-cells",
+                    "ENA-SPOT-COUNT": 56395860,
+                    "ENA-BASE-COUNT": 5526794280,
+                    "ENA-FIRST-PUBLIC": "2017-11-30",
+                    "ENA-LAST-UPDATE": "2017-11-30"
+                },
+                "experiment": "SRX3243674"
+            }
+        }
+    }
+}

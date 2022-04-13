@@ -1,0 +1,36 @@
+{
+    "GSM3954956": {
+        "accession": "GSM3954956",
+        "supplementary_files": [
+            {
+                "filename": "GSM3954956_processed_IMS3.txt.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3954nnn/GSM3954956/suppl/GSM3954956_processed_IMS3.txt.gz",
+                "size": "5723185"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS5119599": {
+                "accession": "SRS5119599",
+                "title": "Severe Intestinal metaplasia 3",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "stomach",
+                    "Sex": "male",
+                    "age": "67",
+                    "pathological lesions": "Gastric Metaplasia (severe)",
+                    "subject id": "P8",
+                    "agent": "None",
+                    "ENA-SPOT-COUNT": 434471442,
+                    "ENA-BASE-COUNT": 130341432600,
+                    "ENA-FIRST-PUBLIC": "2019-07-22",
+                    "ENA-LAST-UPDATE": "2019-07-22"
+                },
+                "experiment": "SRX6471035"
+            }
+        }
+    }
+}

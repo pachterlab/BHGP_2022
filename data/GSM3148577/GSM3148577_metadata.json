@@ -1,0 +1,44 @@
+{
+    "GSM3148577": {
+        "accession": "GSM3148577",
+        "supplementary_files": [
+            {
+                "filename": "GSM3148577_BC10_TUMOR1_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3148nnn/GSM3148577/suppl/GSM3148577_BC10_TUMOR1_barcodes.tsv.gz",
+                "size": "20445"
+            },
+            {
+                "filename": "GSM3148577_BC10_TUMOR1_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3148nnn/GSM3148577/suppl/GSM3148577_BC10_TUMOR1_genes.tsv.gz",
+                "size": "264795"
+            },
+            {
+                "filename": "GSM3148577_BC10_TUMOR1_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3148nnn/GSM3148577/suppl/GSM3148577_BC10_TUMOR1_matrix.mtx.gz",
+                "size": "27225028"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3324256": {
+                "accession": "SRS3324256",
+                "title": "BC10_TUMOR1",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "CD3+ leukocytes",
+                    "donor": "BC10",
+                    "cell type": "CD3+ leukocytes",
+                    "resident tissue": "breast tumor",
+                    "ENA-SPOT-COUNT": 164964276,
+                    "ENA-BASE-COUNT": 20785498776,
+                    "ENA-FIRST-PUBLIC": "2018-06-29",
+                    "ENA-LAST-UPDATE": "2018-06-29"
+                },
+                "experiment": "SRX4108606"
+            }
+        }
+    }
+}

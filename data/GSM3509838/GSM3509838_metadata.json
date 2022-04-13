@@ -1,0 +1,43 @@
+{
+    "GSM3509838": {
+        "accession": "GSM3509838",
+        "supplementary_files": [
+            {
+                "filename": "GSM3509838_2_wk11_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3509nnn/GSM3509838/suppl/GSM3509838_2_wk11_barcodes.tsv.gz",
+                "size": "4560480"
+            },
+            {
+                "filename": "GSM3509838_2_wk11_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3509nnn/GSM3509838/suppl/GSM3509838_2_wk11_genes.tsv.gz",
+                "size": "264790"
+            },
+            {
+                "filename": "GSM3509838_2_wk11_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3509nnn/GSM3509838/suppl/GSM3509838_2_wk11_matrix.mtx.gz",
+                "size": "45823348"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4139633": {
+                "accession": "SRS4139633",
+                "title": "Week 11 fetal kidney",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "disociated human embryonic kidney",
+                    "age": "Week 11",
+                    "tissue": "embryonic kidney",
+                    "ENA-SPOT-COUNT": 137649201,
+                    "ENA-BASE-COUNT": 21748573758,
+                    "ENA-FIRST-PUBLIC": "2019-02-22",
+                    "ENA-LAST-UPDATE": "2019-02-23"
+                },
+                "experiment": "SRX5126512"
+            }
+        }
+    }
+}

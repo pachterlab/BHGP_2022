@@ -1,0 +1,42 @@
+{
+    "GSM3755687": {
+        "accession": "GSM3755687",
+        "supplementary_files": [
+            {
+                "filename": "GSM3755687_13barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3755nnn/GSM3755687/suppl/GSM3755687_13barcodes.tsv.gz",
+                "size": "38026"
+            },
+            {
+                "filename": "GSM3755687_13features.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3755nnn/GSM3755687/suppl/GSM3755687_13features.tsv.gz",
+                "size": "318733"
+            },
+            {
+                "filename": "GSM3755687_13matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3755nnn/GSM3755687/suppl/GSM3755687_13matrix.mtx.gz",
+                "size": "34803152"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4736471": {
+                "accession": "SRS4736471",
+                "title": "Short-term PD rep1",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Peritoneal dialysis fluid",
+                    "sample type": "Peritoneal cells from effluent of short-term PD patients",
+                    "ENA-SPOT-COUNT": 323731436,
+                    "ENA-BASE-COUNT": 40142698064,
+                    "ENA-FIRST-PUBLIC": "2019-06-10",
+                    "ENA-LAST-UPDATE": "2019-06-11"
+                },
+                "experiment": "SRX5807009"
+            }
+        }
+    }
+}

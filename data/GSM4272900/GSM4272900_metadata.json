@@ -1,0 +1,27 @@
+{
+    "GSM4272900": {
+        "accession": "GSM4272900",
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS6002999": {
+                "accession": "SRS6002999",
+                "title": "hu10_101018",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Left rectus abdominus",
+                    "age": "43",
+                    "Sex": "male",
+                    "tissue": "Left rectus abdominus",
+                    "ENA-SPOT-COUNT": 272220748,
+                    "ENA-BASE-COUNT": 22866542832,
+                    "ENA-FIRST-PUBLIC": "2020-06-03",
+                    "ENA-LAST-UPDATE": "2020-06-04"
+                },
+                "experiment": "SRX7566594"
+            }
+        }
+    }
+}

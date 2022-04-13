@@ -1,0 +1,26 @@
+{
+    "GSM4037316": {
+        "accession": "GSM4037316",
+        "platform": {
+            "accession": "GPL24676",
+            "title": "Illumina NovaSeq 6000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS5278360": {
+                "accession": "SRS5278360",
+                "title": "Lung Biopsy, control, VUHD70",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Lung Biopsy",
+                    "disease state": "control",
+                    "tissue": "Lung Biopsy",
+                    "ENA-SPOT-COUNT": 759577758,
+                    "ENA-BASE-COUNT": 227873327400,
+                    "ENA-FIRST-PUBLIC": "2019-09-06",
+                    "ENA-LAST-UPDATE": "2019-09-06"
+                },
+                "experiment": "SRX6726384"
+            }
+        }
+    }
+}

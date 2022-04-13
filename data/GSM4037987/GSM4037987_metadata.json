@@ -1,0 +1,32 @@
+{
+    "GSM4037987": {
+        "accession": "GSM4037987",
+        "supplementary_files": [
+            {
+                "filename": "GSM4037987_macula_donor_4_enriched_expression.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM4037nnn/GSM4037987/suppl/GSM4037987_macula_donor_4_enriched_expression.tsv.gz",
+                "size": "14713689"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS10746117": {
+                "accession": "SRS10746117",
+                "title": "Donor_11_AMD",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "CD31_choroid",
+                    "condition": "AMD",
+                    "tissue": "CD31_choroid",
+                    "region": "macula",
+                    "ENA-FIRST-PUBLIC": "2022-02-23",
+                    "ENA-LAST-UPDATE": "2022-02-23"
+                },
+                "experiment": ""
+            }
+        }
+    }
+}

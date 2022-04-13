@@ -1,0 +1,43 @@
+{
+    "GSM3516948": {
+        "accession": "GSM3516948",
+        "supplementary_files": [
+            {
+                "filename": "GSM3516948_PDX322-barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3516nnn/GSM3516948/suppl/GSM3516948_PDX322-barcodes.tsv.gz",
+                "size": "56586"
+            },
+            {
+                "filename": "GSM3516948_PDX322-genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3516nnn/GSM3516948/suppl/GSM3516948_PDX322-genes.tsv.gz",
+                "size": "264790"
+            },
+            {
+                "filename": "GSM3516948_PDX322-matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3516nnn/GSM3516948/suppl/GSM3516948_PDX322-matrix.mtx.gz",
+                "size": "75889217"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4151081": {
+                "accession": "SRS4151081",
+                "title": "Patient derived xenograft 322",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "mammary gland",
+                    "tissue": "total epithelium",
+                    "number of cells": "14681",
+                    "ENA-SPOT-COUNT": 309391827,
+                    "ENA-BASE-COUNT": 30320399046,
+                    "ENA-FIRST-PUBLIC": "2019-02-28",
+                    "ENA-LAST-UPDATE": "2019-10-19"
+                },
+                "experiment": "SRX5139571"
+            }
+        }
+    }
+}

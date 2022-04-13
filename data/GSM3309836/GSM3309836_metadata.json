@@ -1,0 +1,50 @@
+{
+    "GSM3309836": {
+        "accession": "GSM3309836",
+        "supplementary_files": [
+            {
+                "filename": "GSM3309836_MF05.genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3309nnn/GSM3309836/suppl/GSM3309836_MF05.genes.tsv.gz",
+                "size": "264788"
+            },
+            {
+                "filename": "GSM3309836_MF05.matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3309nnn/GSM3309836/suppl/GSM3309836_MF05.matrix.mtx.gz",
+                "size": "62107142"
+            },
+            {
+                "filename": "GSM3309836_MF05.barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3309nnn/GSM3309836/suppl/GSM3309836_MF05.barcodes.tsv.gz",
+                "size": "34824"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3603374": {
+                "accession": "SRS3603374",
+                "title": "10x.MF05",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "MF05, scRNA-seq",
+                    "source": "PBMC",
+                    "targeted mutation": "CALR exon9 K385fs*47 (c.1154_1155insTTGTC)",
+                    "Sex": "female",
+                    "age": "54",
+                    "diagnosis": "Myelofibrotic myeloid neoplasm",
+                    "pb blast count": "0.01",
+                    "bm blast count": "Indeterminate",
+                    "bm fibrosis": "MF-3/3",
+                    "treatment": "Procrit; previously hydroxyurea and anagrelide",
+                    "ENA-SPOT-COUNT": 232414702,
+                    "ENA-BASE-COUNT": 22776640796,
+                    "ENA-FIRST-PUBLIC": "2019-01-02",
+                    "ENA-LAST-UPDATE": "2019-06-02"
+                },
+                "experiment": "SRX4478356"
+            }
+        }
+    }
+}

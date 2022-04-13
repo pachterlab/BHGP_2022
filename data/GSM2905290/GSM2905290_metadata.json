@@ -1,0 +1,34 @@
+{
+    "GSM2905290": {
+        "accession": "GSM2905290",
+        "supplementary_files": [
+            {
+                "filename": "GSM2905290_J4_filtered_gene_bc_matrices_h5.h5",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2905nnn/GSM2905290/suppl/GSM2905290_J4_filtered_gene_bc_matrices_h5.h5",
+                "size": "7616620"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS2792432": {
+                "accession": "SRS2792432",
+                "title": "BMPi-1",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Brain organoid",
+                    "developmental stage": "day 32",
+                    "stem cell line": "H9",
+                    "protocol": "BMPi",
+                    "ENA-SPOT-COUNT": 281246096,
+                    "ENA-BASE-COUNT": 84373828800,
+                    "ENA-FIRST-PUBLIC": "2017-12-29",
+                    "ENA-LAST-UPDATE": "2017-12-29"
+                },
+                "experiment": "SRX3517581"
+            }
+        }
+    }
+}

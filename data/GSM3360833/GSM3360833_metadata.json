@@ -1,0 +1,26 @@
+{
+    "GSM3360833": {
+        "accession": "GSM3360833",
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3725283": {
+                "accession": "SRS3725283",
+                "title": "GW16_Hippocampus",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "human embryonic hippocampus",
+                    "gestational week": "GW16",
+                    "tissue": "hippocampus",
+                    "ENA-SPOT-COUNT": 268465163,
+                    "ENA-BASE-COUNT": 40269774450,
+                    "ENA-FIRST-PUBLIC": "2019-11-15",
+                    "ENA-LAST-UPDATE": "2019-11-15"
+                },
+                "experiment": "SRX4623329"
+            }
+        }
+    }
+}

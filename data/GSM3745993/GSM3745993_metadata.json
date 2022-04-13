@@ -1,0 +1,33 @@
+{
+    "GSM3745993": {
+        "accession": "GSM3745993",
+        "supplementary_files": [
+            {
+                "filename": "GSM3745993_fovea_donor_2_expression.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3745nnn/GSM3745993/suppl/GSM3745993_fovea_donor_2_expression.tsv.gz",
+                "size": "4310259"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4715844": {
+                "accession": "SRS4715844",
+                "title": "Fovea donor 2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Retina",
+                    "location": "Fovea",
+                    "donor": "Donor 2",
+                    "ENA-SPOT-COUNT": 179404690,
+                    "ENA-BASE-COUNT": 54180216380,
+                    "ENA-FIRST-PUBLIC": "2019-05-18",
+                    "ENA-LAST-UPDATE": "2019-05-19"
+                },
+                "experiment": "SRX5783052"
+            }
+        }
+    }
+}

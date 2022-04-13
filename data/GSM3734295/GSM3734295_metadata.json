@@ -1,0 +1,45 @@
+{
+    "GSM3734295": {
+        "accession": "GSM3734295",
+        "supplementary_files": [
+            {
+                "filename": "GSM3734295_3M_cortical_organoids_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3734nnn/GSM3734295/suppl/GSM3734295_3M_cortical_organoids_barcodes.tsv.gz",
+                "size": "13739"
+            },
+            {
+                "filename": "GSM3734295_3M_cortical_organoids_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3734nnn/GSM3734295/suppl/GSM3734295_3M_cortical_organoids_genes.tsv.gz",
+                "size": "264505"
+            },
+            {
+                "filename": "GSM3734295_3M_cortical_organoids_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3734nnn/GSM3734295/suppl/GSM3734295_3M_cortical_organoids_matrix.mtx.gz",
+                "size": "21109975"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4666812": {
+                "accession": "SRS4666812",
+                "title": "3 month cortical organoids",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Cortical organoids",
+                    "cell line": "WT - iPSC",
+                    "passage": "37",
+                    "age of organoid": "3 month",
+                    "reprogramming strategy": "Retroviral",
+                    "ENA-SPOT-COUNT": 136833052,
+                    "ENA-BASE-COUNT": 16967298448,
+                    "ENA-FIRST-PUBLIC": "2019-04-28",
+                    "ENA-LAST-UPDATE": "2019-04-28"
+                },
+                "experiment": "SRX5728925"
+            }
+        }
+    }
+}

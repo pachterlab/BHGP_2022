@@ -1,0 +1,43 @@
+{
+    "GSM3732871": {
+        "accession": "GSM3732871",
+        "supplementary_files": [
+            {
+                "filename": "GSM3732871_KS4_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3732nnn/GSM3732871/suppl/GSM3732871_KS4_barcodes.tsv.gz",
+                "size": "14240"
+            },
+            {
+                "filename": "GSM3732871_KS4_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3732nnn/GSM3732871/suppl/GSM3732871_KS4_genes.tsv.gz",
+                "size": "264787"
+            },
+            {
+                "filename": "GSM3732871_KS4_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3732nnn/GSM3732871/suppl/GSM3732871_KS4_matrix.mtx.gz",
+                "size": "13389711"
+            }
+        ],
+        "platform": {
+            "accession": "GPL24676",
+            "title": "Illumina NovaSeq 6000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4661019": {
+                "accession": "SRS4661019",
+                "title": "single-cell RNAseq",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Testicular cells",
+                    "tissue": "testis",
+                    "syndrome": "Klinefelter",
+                    "ENA-SPOT-COUNT": 219812292,
+                    "ENA-BASE-COUNT": 66383312184,
+                    "ENA-FIRST-PUBLIC": "2019-09-01",
+                    "ENA-LAST-UPDATE": "2019-09-01"
+                },
+                "experiment": "SRX5722806"
+            }
+        }
+    }
+}

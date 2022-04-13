@@ -1,0 +1,43 @@
+{
+    "GSM3558027": {
+        "accession": "GSM3558027",
+        "supplementary_files": [
+            {
+                "filename": "GSM3558027_P5_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3558nnn/GSM3558027/suppl/GSM3558027_P5_barcodes.tsv.gz",
+                "size": "15829"
+            },
+            {
+                "filename": "GSM3558027_P5_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3558nnn/GSM3558027/suppl/GSM3558027_P5_genes.tsv.gz",
+                "size": "264786"
+            },
+            {
+                "filename": "GSM3558027_P5_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3558nnn/GSM3558027/suppl/GSM3558027_P5_matrix.mtx.gz",
+                "size": "15780966"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4239508": {
+                "accession": "SRS4239508",
+                "title": "Patient1_Nonmalignant after the patient progressed on the therapy",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "PBMC",
+                    "condition": "Normal PBMC T Cells",
+                    "cell type": "CD3+CD4+CD5intSSCint",
+                    "ENA-SPOT-COUNT": 319003448,
+                    "ENA-BASE-COUNT": 96339041296,
+                    "ENA-FIRST-PUBLIC": "2019-06-27",
+                    "ENA-LAST-UPDATE": "2019-06-27"
+                },
+                "experiment": "SRX5236433"
+            }
+        }
+    }
+}

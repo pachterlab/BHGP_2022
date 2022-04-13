@@ -1,0 +1,26 @@
+{
+    "GSM3302525": {
+        "accession": "GSM3302525",
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3572595": {
+                "accession": "SRS3572595",
+                "title": "AdultHuman-Spermatids_17-11",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Adult testis",
+                    "number of cells": "4348",
+                    "cell type": "Sta-Put enriched Spermatids",
+                    "ENA-SPOT-COUNT": 202957093,
+                    "ENA-BASE-COUNT": 20295709300,
+                    "ENA-FIRST-PUBLIC": "2018-11-07",
+                    "ENA-LAST-UPDATE": "2018-11-07"
+                },
+                "experiment": "SRX4419806"
+            }
+        }
+    }
+}

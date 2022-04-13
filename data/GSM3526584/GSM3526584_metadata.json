@@ -1,0 +1,44 @@
+{
+    "GSM3526584": {
+        "accession": "GSM3526584",
+        "supplementary_files": [
+            {
+                "filename": "GSM3526584_D2Total_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526584/suppl/GSM3526584_D2Total_barcodes.tsv.gz",
+                "size": "15496"
+            },
+            {
+                "filename": "GSM3526584_D2Total_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526584/suppl/GSM3526584_D2Total_genes.tsv.gz",
+                "size": "257280"
+            },
+            {
+                "filename": "GSM3526584_D2Total_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526584/suppl/GSM3526584_D2Total_matrix.mtx.gz",
+                "size": "15578497"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4181123": {
+                "accession": "SRS4181123",
+                "title": "neonatal day 2 unfractionated",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "neonatal",
+                    "tissue": "Testis",
+                    "age": "2 days",
+                    "sample": "D2_T",
+                    "ENA-SPOT-COUNT": 78866849,
+                    "ENA-BASE-COUNT": 9779489276,
+                    "ENA-FIRST-PUBLIC": "2018-12-23",
+                    "ENA-LAST-UPDATE": "2018-12-23"
+                },
+                "experiment": "SRX5173698"
+            }
+        }
+    }
+}

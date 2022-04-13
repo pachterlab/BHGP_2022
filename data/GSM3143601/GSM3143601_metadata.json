@@ -1,0 +1,42 @@
+{
+    "GSM3143601": {
+        "accession": "GSM3143601",
+        "supplementary_files": [
+            {
+                "filename": "GSM3143601_4_w16_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3143nnn/GSM3143601/suppl/GSM3143601_4_w16_barcodes.tsv.gz",
+                "size": "33923"
+            },
+            {
+                "filename": "GSM3143601_4_w16_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3143nnn/GSM3143601/suppl/GSM3143601_4_w16_genes.tsv.gz",
+                "size": "264789"
+            },
+            {
+                "filename": "GSM3143601_4_w16_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3143nnn/GSM3143601/suppl/GSM3143601_4_w16_matrix.mtx.gz",
+                "size": "48022077"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3306242": {
+                "accession": "SRS3306242",
+                "title": "w16 human embryonic kidney",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "disociated human embryonic kidney",
+                    "tissue": "embryonic kidney",
+                    "ENA-SPOT-COUNT": 169704081,
+                    "ENA-BASE-COUNT": 23588867259,
+                    "ENA-FIRST-PUBLIC": "2019-02-22",
+                    "ENA-LAST-UPDATE": "2019-02-23"
+                },
+                "experiment": "SRX4089486"
+            }
+        }
+    }
+}

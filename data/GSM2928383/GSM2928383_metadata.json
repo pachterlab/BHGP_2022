@@ -1,0 +1,43 @@
+{
+    "GSM2928383": {
+        "accession": "GSM2928383",
+        "supplementary_files": [
+            {
+                "filename": "GSM2928383_AdultHuman-Spermatocytes_17-6_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2928nnn/GSM2928383/suppl/GSM2928383_AdultHuman-Spermatocytes_17-6_barcodes.tsv.gz",
+                "size": "12168"
+            },
+            {
+                "filename": "GSM2928383_AdultHuman-Spermatocytes_17-6_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2928nnn/GSM2928383/suppl/GSM2928383_AdultHuman-Spermatocytes_17-6_genes.tsv.gz",
+                "size": "264813"
+            },
+            {
+                "filename": "GSM2928383_AdultHuman-Spermatocytes_17-6_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2928nnn/GSM2928383/suppl/GSM2928383_AdultHuman-Spermatocytes_17-6_matrix.mtx.gz",
+                "size": "49750737"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS2823410": {
+                "accession": "SRS2823410",
+                "title": "AdultHuman-Spermatocytes_17-6",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Adult testis",
+                    "number of cells": "2757",
+                    "cell type": "Sta-Put enriched Spermatocytes",
+                    "ENA-SPOT-COUNT": 250943197,
+                    "ENA-BASE-COUNT": 25345262897,
+                    "ENA-FIRST-PUBLIC": "2018-11-07",
+                    "ENA-LAST-UPDATE": "2018-11-07"
+                },
+                "experiment": "SRX3549440"
+            }
+        }
+    }
+}

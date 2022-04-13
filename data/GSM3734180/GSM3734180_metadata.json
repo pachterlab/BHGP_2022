@@ -1,0 +1,35 @@
+{
+    "GSM3734180": {
+        "accession": "GSM3734180",
+        "supplementary_files": [
+            {
+                "filename": "GSM3734180_SA1218-60_HHT_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3734nnn/GSM3734180/suppl/GSM3734180_SA1218-60_HHT_matrix.mtx.gz",
+                "size": "21118819"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4665018": {
+                "accession": "SRS4665018",
+                "title": "Pre-THC-S2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "PBMC",
+                    "cell type": "PBMC",
+                    "gender": "male",
+                    "race": "Caucasian",
+                    "age": "21",
+                    "treatment": "None",
+                    "subject id": "S2",
+                    "ENA-FIRST-PUBLIC": "2020-04-15",
+                    "ENA-LAST-UPDATE": "2020-04-15"
+                },
+                "experiment": "SRX5727023"
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "GSM3665016": {
+        "accession": "GSM3665016",
+        "supplementary_files": [
+            {
+                "filename": "GSM3665016_CS_PBL_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3665nnn/GSM3665016/suppl/GSM3665016_CS_PBL_barcodes.tsv.gz",
+                "size": "8148"
+            },
+            {
+                "filename": "GSM3665016_CS_PBL_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3665nnn/GSM3665016/suppl/GSM3665016_CS_PBL_genes.tsv.gz",
+                "size": "257279"
+            },
+            {
+                "filename": "GSM3665016_CS_PBL_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3665nnn/GSM3665016/suppl/GSM3665016_CS_PBL_matrix.mtx.gz",
+                "size": "7346347"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4474995": {
+                "accession": "SRS4474995",
+                "title": "scRNA data of peripheral blood mononuclear cells from healthy donor_sample 1_CS",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "peripheral blood",
+                    "subject status": "healthy donor",
+                    "tissue": "whole blood",
+                    "cell type": "peripheral blood mononuclear cells (PBMCs)",
+                    "ENA-SPOT-COUNT": 253331105,
+                    "ENA-BASE-COUNT": 24826448290,
+                    "ENA-FIRST-PUBLIC": "2019-03-13",
+                    "ENA-LAST-UPDATE": "2019-03-13"
+                },
+                "experiment": "SRX5506684"
+            }
+        }
+    }
+}

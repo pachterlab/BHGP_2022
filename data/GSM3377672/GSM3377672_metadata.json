@@ -1,0 +1,43 @@
+{
+    "GSM3377672": {
+        "accession": "GSM3377672",
+        "supplementary_files": [
+            {
+                "filename": "GSM3377672_SIX2_CRE_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3377nnn/GSM3377672/suppl/GSM3377672_SIX2_CRE_barcodes.tsv.gz",
+                "size": "2280352"
+            },
+            {
+                "filename": "GSM3377672_SIX2_CRE_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3377nnn/GSM3377672/suppl/GSM3377672_SIX2_CRE_genes.tsv.gz",
+                "size": "264842"
+            },
+            {
+                "filename": "GSM3377672_SIX2_CRE_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3377nnn/GSM3377672/suppl/GSM3377672_SIX2_CRE_matrix.mtx.gz",
+                "size": "68025222"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3744978": {
+                "accession": "SRS3744978",
+                "title": "D18 SIX2CRE lineage tracing organoid",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "SIX2:cre/GAPDH:dual lineage tracing reporter",
+                    "cell type": "iPSC-derived kidney organoid",
+                    "day of differentiation": "18",
+                    "ENA-SPOT-COUNT": 257889474,
+                    "ENA-BASE-COUNT": 52093673748,
+                    "ENA-FIRST-PUBLIC": "2019-03-14",
+                    "ENA-LAST-UPDATE": "2019-03-14"
+                },
+                "experiment": "SRX4646944"
+            }
+        }
+    }
+}

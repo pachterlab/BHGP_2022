@@ -1,0 +1,28 @@
+{
+    "GSM3402080": {
+        "accession": "GSM3402080",
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3822683": {
+                "accession": "SRS3822683",
+                "title": "Infant2_scRNA-seq_rep1",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Testicular cells",
+                    "gender": "male",
+                    "age": "13 months",
+                    "tissue": "Testicle",
+                    "cell type": "Testicular cells",
+                    "ENA-SPOT-COUNT": 112307299,
+                    "ENA-BASE-COUNT": 11230729900,
+                    "ENA-FIRST-PUBLIC": "2018-10-16",
+                    "ENA-LAST-UPDATE": "2018-10-17"
+                },
+                "experiment": "SRX4741352"
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "GSM3667329": {
+        "accession": "GSM3667329",
+        "supplementary_files": [
+            {
+                "filename": "GSM3667329_SC125_S3_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3667nnn/GSM3667329/suppl/GSM3667329_SC125_S3_barcodes.tsv.gz",
+                "size": "7649"
+            },
+            {
+                "filename": "GSM3667329_SC125_S3_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3667nnn/GSM3667329/suppl/GSM3667329_SC125_S3_genes.tsv.gz",
+                "size": "257281"
+            },
+            {
+                "filename": "GSM3667329_SC125_S3_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3667nnn/GSM3667329/suppl/GSM3667329_SC125_S3_matrix.mtx.gz",
+                "size": "13469230"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4488612": {
+                "accession": "SRS4488612",
+                "title": "scRNA data of skin cells from healthy donor_sample_SC125",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "scRNA data of skin cells from healthy donor",
+                    "subject status": "healthy",
+                    "tissue": "dorsal mid-forearm",
+                    "cell type": "skin cells",
+                    "ENA-SPOT-COUNT": 175746906,
+                    "ENA-BASE-COUNT": 17223196788,
+                    "ENA-FIRST-PUBLIC": "2019-03-15",
+                    "ENA-LAST-UPDATE": "2019-03-15"
+                },
+                "experiment": "SRX5521353"
+            }
+        }
+    }
+}

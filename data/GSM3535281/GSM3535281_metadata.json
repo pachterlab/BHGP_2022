@@ -1,0 +1,44 @@
+{
+    "GSM3535281": {
+        "accession": "GSM3535281",
+        "supplementary_files": [
+            {
+                "filename": "GSM3535281_HNLN2_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3535nnn/GSM3535281/suppl/GSM3535281_HNLN2_barcodes.tsv.gz",
+                "size": "15247"
+            },
+            {
+                "filename": "GSM3535281_HNLN2_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3535nnn/GSM3535281/suppl/GSM3535281_HNLN2_genes.tsv.gz",
+                "size": "257278"
+            },
+            {
+                "filename": "GSM3535281_HNLN2_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3535nnn/GSM3535281/suppl/GSM3535281_HNLN2_matrix.mtx.gz",
+                "size": "19953241"
+            }
+        ],
+        "platform": {
+            "accession": "GPL21290",
+            "title": "Illumina HiSeq 3000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4203427": {
+                "accession": "SRS4203427",
+                "title": "HNLN2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "HNLN2 lymphatic endothelial cells",
+                    "tissue": "Head and neck lymph node",
+                    "individual": "Individual 5",
+                    "cell type": "LN CD45- PDPN+ CD31+ cells",
+                    "ENA-SPOT-COUNT": 343615247,
+                    "ENA-BASE-COUNT": 34017909453,
+                    "ENA-FIRST-PUBLIC": "2019-08-09",
+                    "ENA-LAST-UPDATE": "2019-08-09"
+                },
+                "experiment": "SRX5197638"
+            }
+        }
+    }
+}

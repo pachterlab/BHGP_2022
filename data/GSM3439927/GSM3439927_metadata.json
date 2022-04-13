@@ -1,0 +1,35 @@
+{
+    "GSM3439927": {
+        "accession": "GSM3439927",
+        "supplementary_files": [
+            {
+                "filename": "GSM3439927_D311TN1_raw_gene_bc_matrices_h5.h5",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3439nnn/GSM3439927/suppl/GSM3439927_D311TN1_raw_gene_bc_matrices_h5.h5",
+                "size": "37856629"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3984790": {
+                "accession": "SRS3984790",
+                "title": "Turbinate",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Human nasal turbinate epithelial cells",
+                    "cell type": "airway epithelial cells",
+                    "differentiation day": "NA",
+                    "cell origin": "Fresh tissue",
+                    "donor": "D311",
+                    "ENA-SPOT-COUNT": 195231529,
+                    "ENA-BASE-COUNT": 11128197153,
+                    "ENA-FIRST-PUBLIC": "2019-09-21",
+                    "ENA-LAST-UPDATE": "2019-09-21"
+                },
+                "experiment": "SRX4912122"
+            }
+        }
+    }
+}

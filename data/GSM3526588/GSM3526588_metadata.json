@@ -1,0 +1,44 @@
+{
+    "GSM3526588": {
+        "accession": "GSM3526588",
+        "supplementary_files": [
+            {
+                "filename": "GSM3526588_A1Total_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526588/suppl/GSM3526588_A1Total_barcodes.tsv.gz",
+                "size": "20593"
+            },
+            {
+                "filename": "GSM3526588_A1Total_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526588/suppl/GSM3526588_A1Total_genes.tsv.gz",
+                "size": "257280"
+            },
+            {
+                "filename": "GSM3526588_A1Total_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526588/suppl/GSM3526588_A1Total_matrix.mtx.gz",
+                "size": "34155743"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4181127": {
+                "accession": "SRS4181127",
+                "title": "Adult 1 unfractionated",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "adult",
+                    "tissue": "Testis",
+                    "age": "37 yr",
+                    "sample": "A1_T",
+                    "ENA-SPOT-COUNT": 97069723,
+                    "ENA-BASE-COUNT": 12036645652,
+                    "ENA-FIRST-PUBLIC": "2018-12-23",
+                    "ENA-LAST-UPDATE": "2018-12-23"
+                },
+                "experiment": "SRX5173702"
+            }
+        }
+    }
+}

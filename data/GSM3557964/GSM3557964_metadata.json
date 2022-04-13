@@ -1,0 +1,32 @@
+{
+    "GSM3557964": {
+        "accession": "GSM3557964",
+        "supplementary_files": [
+            {
+                "filename": "GSM3557964_sample145_B1_i12D_filtered_gene_bc_matrices_h5.h5",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3557nnn/GSM3557964/suppl/GSM3557964_sample145_B1_i12D_filtered_gene_bc_matrices_h5.h5",
+                "size": "2160488"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4239385": {
+                "accession": "SRS4239385",
+                "title": "sample145_B1_i12D",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Adult Ovary Tissue",
+                    "patient id": "P7",
+                    "batch": "1",
+                    "tissue": "Follicle 2-5mm",
+                    "ENA-FIRST-PUBLIC": "2019-06-02",
+                    "ENA-LAST-UPDATE": "2019-06-02"
+                },
+                "experiment": "SRX5236310"
+            }
+        }
+    }
+}

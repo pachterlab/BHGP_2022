@@ -1,0 +1,36 @@
+{
+    "GSM4037982": {
+        "accession": "GSM4037982",
+        "supplementary_files": [
+            {
+                "filename": "GSM4037982_macula_donor_2_expression.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM4037nnn/GSM4037982/suppl/GSM4037982_macula_donor_2_expression.tsv.gz",
+                "size": "2421497"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS5281870": {
+                "accession": "SRS5281870",
+                "title": "Macula-8mm-rpe-cho-donor-2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "RPE-choroid",
+                    "enrichment": "unenriched",
+                    "donor": "2",
+                    "tissue": "RPE-choroid",
+                    "location": "macula",
+                    "punch-size": "8-mm",
+                    "ENA-SPOT-COUNT": 241530032,
+                    "ENA-BASE-COUNT": 64810645102,
+                    "ENA-FIRST-PUBLIC": "2019-10-31",
+                    "ENA-LAST-UPDATE": "2019-11-01"
+                },
+                "experiment": "SRX6730011"
+            }
+        }
+    }
+}

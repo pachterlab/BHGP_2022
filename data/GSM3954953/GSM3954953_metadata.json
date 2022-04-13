@@ -1,0 +1,36 @@
+{
+    "GSM3954953": {
+        "accession": "GSM3954953",
+        "supplementary_files": [
+            {
+                "filename": "GSM3954953_processed_IMW2.txt.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3954nnn/GSM3954953/suppl/GSM3954953_processed_IMW2.txt.gz",
+                "size": "3359666"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS5119596": {
+                "accession": "SRS5119596",
+                "title": "Wild Intestinal metaplasia 2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "stomach",
+                    "Sex": "female",
+                    "age": "48",
+                    "pathological lesions": "Gastric Metaplasia (wild)",
+                    "subject id": "P6",
+                    "agent": "None",
+                    "ENA-SPOT-COUNT": 419293975,
+                    "ENA-BASE-COUNT": 125788192500,
+                    "ENA-FIRST-PUBLIC": "2019-07-22",
+                    "ENA-LAST-UPDATE": "2019-07-22"
+                },
+                "experiment": "SRX6471032"
+            }
+        }
+    }
+}

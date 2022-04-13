@@ -1,0 +1,44 @@
+{
+    "GSM3526587": {
+        "accession": "GSM3526587",
+        "supplementary_files": [
+            {
+                "filename": "GSM3526587_A1_I_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526587/suppl/GSM3526587_A1_I_barcodes.tsv.gz",
+                "size": "17628"
+            },
+            {
+                "filename": "GSM3526587_A1_I_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526587/suppl/GSM3526587_A1_I_genes.tsv.gz",
+                "size": "257277"
+            },
+            {
+                "filename": "GSM3526587_A1_I_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3526nnn/GSM3526587/suppl/GSM3526587_A1_I_matrix.mtx.gz",
+                "size": "35942319"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4181128": {
+                "accession": "SRS4181128",
+                "title": "Adult 1 ITGA6 enriched",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "adult",
+                    "tissue": "Testis",
+                    "age": "37 yr",
+                    "sample": "A1_I",
+                    "ENA-SPOT-COUNT": 130766252,
+                    "ENA-BASE-COUNT": 16215015248,
+                    "ENA-FIRST-PUBLIC": "2018-12-23",
+                    "ENA-LAST-UPDATE": "2018-12-23"
+                },
+                "experiment": "SRX5173701"
+            }
+        }
+    }
+}

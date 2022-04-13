@@ -1,0 +1,42 @@
+{
+    "GSM3375767": {
+        "accession": "GSM3375767",
+        "supplementary_files": [
+            {
+                "filename": "GSM3375767_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3375nnn/GSM3375767/suppl/GSM3375767_barcodes.tsv.gz",
+                "size": "7700"
+            },
+            {
+                "filename": "GSM3375767_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3375nnn/GSM3375767/suppl/GSM3375767_genes.tsv.gz",
+                "size": "264783"
+            },
+            {
+                "filename": "GSM3375767_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3375nnn/GSM3375767/suppl/GSM3375767_matrix.mtx.gz",
+                "size": "10316704"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3741870": {
+                "accession": "SRS3741870",
+                "title": "tonsil CD14+ cells",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "tonsil CD14+ cells",
+                    "individual": "donor 1",
+                    "ENA-SPOT-COUNT": 199264201,
+                    "ENA-BASE-COUNT": 19527891698,
+                    "ENA-FIRST-PUBLIC": "2019-04-28",
+                    "ENA-LAST-UPDATE": "2019-04-28"
+                },
+                "experiment": "SRX4643789"
+            }
+        }
+    }
+}

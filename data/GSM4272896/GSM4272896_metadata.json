@@ -1,0 +1,27 @@
+{
+    "GSM4272896": {
+        "accession": "GSM4272896",
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS6002995": {
+                "accession": "SRS6002995",
+                "title": "hu03_062719",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Orbicularis oris",
+                    "age": "74",
+                    "Sex": "male",
+                    "tissue": "Orbicularis oris",
+                    "ENA-SPOT-COUNT": 221645556,
+                    "ENA-BASE-COUNT": 18396581148,
+                    "ENA-FIRST-PUBLIC": "2020-06-03",
+                    "ENA-LAST-UPDATE": "2020-06-04"
+                },
+                "experiment": "SRX7566590"
+            }
+        }
+    }
+}

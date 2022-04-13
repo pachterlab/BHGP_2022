@@ -1,0 +1,44 @@
+{
+    "GSM3735993": {
+        "accession": "GSM3735993",
+        "supplementary_files": [
+            {
+                "filename": "GSM3735993_monolayer_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3735nnn/GSM3735993/suppl/GSM3735993_monolayer_barcodes.tsv.gz",
+                "size": "26472"
+            },
+            {
+                "filename": "GSM3735993_monolayer_features.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3735nnn/GSM3735993/suppl/GSM3735993_monolayer_features.tsv.gz",
+                "size": "541920"
+            },
+            {
+                "filename": "GSM3735993_monolayer_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3735nnn/GSM3735993/suppl/GSM3735993_monolayer_matrix.mtx.gz",
+                "size": "62638792"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4672671": {
+                "accession": "SRS4672671",
+                "title": "Monolayer",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Primary Prostate Epithelial Cells",
+                    "cell type": "Primary Epithelial Cells",
+                    "tissue": "Prostate",
+                    "culture condition": "Cell culture plate",
+                    "ENA-SPOT-COUNT": 164281631,
+                    "ENA-BASE-COUNT": 16428163100,
+                    "ENA-FIRST-PUBLIC": "2019-07-12",
+                    "ENA-LAST-UPDATE": "2019-07-13"
+                },
+                "experiment": "SRX5735811"
+            }
+        }
+    }
+}

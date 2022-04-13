@@ -1,0 +1,27 @@
+{
+    "GSM3168248": {
+        "accession": "GSM3168248",
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3360132": {
+                "accession": "SRS3360132",
+                "title": "EM1_un_scRNA-Seq",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Bone marrow-derived MSCs",
+                    "cell type": "mesenchymal stem cells (MSCs)",
+                    "treatment": "none",
+                    "passage": "3",
+                    "ENA-SPOT-COUNT": 195138455,
+                    "ENA-BASE-COUNT": 19123568590,
+                    "ENA-FIRST-PUBLIC": "2019-06-01",
+                    "ENA-LAST-UPDATE": "2019-06-01"
+                },
+                "experiment": "SRX4146514"
+            }
+        }
+    }
+}

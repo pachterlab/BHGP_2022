@@ -1,0 +1,36 @@
+{
+    "GSM3954958": {
+        "accession": "GSM3954958",
+        "supplementary_files": [
+            {
+                "filename": "GSM3954958_processed_EGC.txt.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3954nnn/GSM3954958/suppl/GSM3954958_processed_EGC.txt.gz",
+                "size": "8740616"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS5119601": {
+                "accession": "SRS5119601",
+                "title": "Early gastric cancer",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "stomach",
+                    "Sex": "male",
+                    "age": "67",
+                    "pathological lesions": "Early gastric caner",
+                    "subject id": "P8",
+                    "agent": "None",
+                    "ENA-SPOT-COUNT": 437014224,
+                    "ENA-BASE-COUNT": 131104267200,
+                    "ENA-FIRST-PUBLIC": "2019-07-22",
+                    "ENA-LAST-UPDATE": "2019-07-22"
+                },
+                "experiment": "SRX6471037"
+            }
+        }
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "GSM2928379": {
+        "accession": "GSM2928379",
+        "supplementary_files": [
+            {
+                "filename": "GSM2928379_HumanSpermatogonia_17-5_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2928nnn/GSM2928379/suppl/GSM2928379_HumanSpermatogonia_17-5_barcodes.tsv.gz",
+                "size": "15129"
+            },
+            {
+                "filename": "GSM2928379_HumanSpermatogonia_17-5_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2928nnn/GSM2928379/suppl/GSM2928379_HumanSpermatogonia_17-5_genes.tsv.gz",
+                "size": "264807"
+            },
+            {
+                "filename": "GSM2928379_HumanSpermatogonia_17-5_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM2928nnn/GSM2928379/suppl/GSM2928379_HumanSpermatogonia_17-5_matrix.mtx.gz",
+                "size": "47547740"
+            }
+        ],
+        "platform": {
+            "accession": "GPL21290",
+            "title": "Illumina HiSeq 3000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS2823406": {
+                "accession": "SRS2823406",
+                "title": "HumanSpermatogonia_17-5",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Adult testis",
+                    "number of cells": "3522",
+                    "cell type": "Spermatogonia",
+                    "ENA-SPOT-COUNT": 386908654,
+                    "ENA-BASE-COUNT": 38690865400,
+                    "ENA-FIRST-PUBLIC": "2018-11-07",
+                    "ENA-LAST-UPDATE": "2018-11-07"
+                },
+                "experiment": "SRX3549436"
+            }
+        }
+    }
+}

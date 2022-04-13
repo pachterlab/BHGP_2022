@@ -1,0 +1,44 @@
+{
+    "GSM3717979": {
+        "accession": "GSM3717979",
+        "supplementary_files": [
+            {
+                "filename": "GSM3717979_SCHuman_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3717nnn/GSM3717979/suppl/GSM3717979_SCHuman_barcodes.tsv.gz",
+                "size": "54886"
+            },
+            {
+                "filename": "GSM3717979_SCHuman_features.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3717nnn/GSM3717979/suppl/GSM3717979_SCHuman_features.tsv.gz",
+                "size": "304728"
+            },
+            {
+                "filename": "GSM3717979_SCHuman_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3717nnn/GSM3717979/suppl/GSM3717979_SCHuman_matrix.mtx.gz",
+                "size": "56300584"
+            }
+        ],
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4631627": {
+                "accession": "SRS4631627",
+                "title": "scRNA-seq_Human: Single cell human subcutaneous SVF",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Human",
+                    "gender": "female",
+                    "tissue": "Subcutaneous WAT (abdominal)",
+                    "developmental stage": "31 Years",
+                    "ENA-SPOT-COUNT": 113562093,
+                    "ENA-BASE-COUNT": 11129085114,
+                    "ENA-FIRST-PUBLIC": "2019-05-02",
+                    "ENA-LAST-UPDATE": "2019-05-02"
+                },
+                "experiment": "SRX5692095"
+            }
+        }
+    }
+}

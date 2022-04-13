@@ -1,0 +1,25 @@
+{
+    "GSM3758118": {
+        "accession": "GSM3758118",
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4742708": {
+                "accession": "SRS4742708",
+                "title": "skin samples from subject o2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "skin",
+                    "subject": "o2, 70 y/o",
+                    "ENA-SPOT-COUNT": 378219220,
+                    "ENA-BASE-COUNT": 37821922000,
+                    "ENA-FIRST-PUBLIC": "2020-04-14",
+                    "ENA-LAST-UPDATE": "2020-08-01"
+                },
+                "experiment": "SRX5813547"
+            }
+        }
+    }
+}

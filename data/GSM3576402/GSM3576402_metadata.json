@@ -1,0 +1,35 @@
+{
+    "GSM3576402": {
+        "accession": "GSM3576402",
+        "supplementary_files": [
+            {
+                "filename": "GSM3576402_U35_R_cell-gene_UMI_table.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3576nnn/GSM3576402/suppl/GSM3576402_U35_R_cell-gene_UMI_table.tsv.gz",
+                "size": "3885926"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4283294": {
+                "accession": "SRS4283294",
+                "title": "U35_R_10x_scRNA",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Rectum immune cell",
+                    "subject status": "UC",
+                    "tissue": "rectum",
+                    "cell subtype surface markers": "CD45+",
+                    "cell subtype": "immune cells",
+                    "ENA-SPOT-COUNT": 51206880,
+                    "ENA-BASE-COUNT": 6349653120,
+                    "ENA-FIRST-PUBLIC": "2020-07-18",
+                    "ENA-LAST-UPDATE": "2020-07-18"
+                },
+                "experiment": "SRX5283546"
+            }
+        }
+    }
+}

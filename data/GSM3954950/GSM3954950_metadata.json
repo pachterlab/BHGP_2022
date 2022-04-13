@@ -1,0 +1,36 @@
+{
+    "GSM3954950": {
+        "accession": "GSM3954950",
+        "supplementary_files": [
+            {
+                "filename": "GSM3954950_processed_CAG2.txt.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3954nnn/GSM3954950/suppl/GSM3954950_processed_CAG2.txt.gz",
+                "size": "14312226"
+            }
+        ],
+        "platform": {
+            "accession": "GPL20795",
+            "title": "HiSeq X Ten (Homo sapiens)"
+        },
+        "sample": {
+            "SRS5119593": {
+                "accession": "SRS5119593",
+                "title": "Chronic atrophic gastritis 2",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "stomach",
+                    "Sex": "female",
+                    "age": "62",
+                    "pathological lesions": "Chronic atrophic gastritis",
+                    "subject id": "P4",
+                    "agent": "None",
+                    "ENA-SPOT-COUNT": 484893774,
+                    "ENA-BASE-COUNT": 145468132200,
+                    "ENA-FIRST-PUBLIC": "2019-07-22",
+                    "ENA-LAST-UPDATE": "2019-07-22"
+                },
+                "experiment": "SRX6471029"
+            }
+        }
+    }
+}

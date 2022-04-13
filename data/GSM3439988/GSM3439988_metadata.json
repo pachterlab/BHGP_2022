@@ -1,0 +1,30 @@
+{
+    "GSM3439988": {
+        "accession": "GSM3439988",
+        "platform": {
+            "accession": "GPL20301",
+            "title": "Illumina HiSeq 4000 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3957860": {
+                "accession": "SRS3957860",
+                "title": "Donor1_Control",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "DCs sham-treated",
+                    "subject id": "Donor1",
+                    "source type": "Healthy individuals",
+                    "tissue": "Peripheral Blood",
+                    "cell type": "MACS sorted CD14+ cells",
+                    "cell stage": "Monocyte derived DCs",
+                    "treatment": "sham control",
+                    "ENA-SPOT-COUNT": 36272422,
+                    "ENA-BASE-COUNT": 10954271444,
+                    "ENA-FIRST-PUBLIC": "2019-01-04",
+                    "ENA-LAST-UPDATE": "2019-01-04"
+                },
+                "experiment": "SRX4912481"
+            }
+        }
+    }
+}

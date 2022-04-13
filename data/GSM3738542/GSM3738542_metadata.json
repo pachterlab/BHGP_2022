@@ -1,0 +1,46 @@
+{
+    "GSM3738542": {
+        "accession": "GSM3738542",
+        "supplementary_files": [
+            {
+                "filename": "GSM3738542_25y_F_2_PB_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3738nnn/GSM3738542/suppl/GSM3738542_25y_F_2_PB_barcodes.tsv.gz",
+                "size": "7631"
+            },
+            {
+                "filename": "GSM3738542_25y_F_2_PB_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3738nnn/GSM3738542/suppl/GSM3738542_25y_F_2_PB_genes.tsv.gz",
+                "size": "257283"
+            },
+            {
+                "filename": "GSM3738542_25y_F_2_PB_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3738nnn/GSM3738542/suppl/GSM3738542_25y_F_2_PB_matrix.mtx.gz",
+                "size": "7722268"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS4698195": {
+                "accession": "SRS4698195",
+                "title": "25y_F_2_PB",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Blood",
+                    "tissue": "Blood",
+                    "cell type": "NK cells",
+                    "sorting population": "Lin-CD7+",
+                    "genotype/variation": "healthy donor",
+                    "gender": "female",
+                    "ENA-SPOT-COUNT": 208584088,
+                    "ENA-BASE-COUNT": 20441240624,
+                    "ENA-FIRST-PUBLIC": "2019-07-16",
+                    "ENA-LAST-UPDATE": "2019-07-16"
+                },
+                "experiment": "SRX5763726"
+            }
+        }
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "GSM3378054": {
+        "accession": "GSM3378054",
+        "supplementary_files": [
+            {
+                "filename": "GSM3378054_GTGFPneg_barcodes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3378nnn/GSM3378054/suppl/GSM3378054_GTGFPneg_barcodes.tsv.gz",
+                "size": "11049"
+            },
+            {
+                "filename": "GSM3378054_GTGFPneg_genes.tsv.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3378nnn/GSM3378054/suppl/GSM3378054_GTGFPneg_genes.tsv.gz",
+                "size": "284861"
+            },
+            {
+                "filename": "GSM3378054_GTGFPneg_matrix.mtx.gz",
+                "url": "ftp.ncbi.nlm.nih.gov/geo/samples/GSM3378nnn/GSM3378054/suppl/GSM3378054_GTGFPneg_matrix.mtx.gz",
+                "size": "23020190"
+            }
+        ],
+        "platform": {
+            "accession": "GPL18573",
+            "title": "Illumina NextSeq 500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3747194": {
+                "accession": "SRS3747194",
+                "title": "HS/AAV6 GFP-",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "FACS-sorted primitive and progenitors HSPC in ratio 1 to 1",
+                    "time point": "24h upon nuclease delivery",
+                    "cell type": "Cord blood derived CD34+ cells",
+                    "ENA-SPOT-COUNT": 166207978,
+                    "ENA-BASE-COUNT": 16288381844,
+                    "ENA-FIRST-PUBLIC": "2019-03-02",
+                    "ENA-LAST-UPDATE": "2019-03-02"
+                },
+                "experiment": "SRX4649192"
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "GSM3178783": {
+        "accession": "GSM3178783",
+        "platform": {
+            "accession": "GPL16791",
+            "title": "Illumina HiSeq 2500 (Homo sapiens)"
+        },
+        "sample": {
+            "SRS3391631": {
+                "accession": "SRS3391631",
+                "title": "Patient 2 Total Liver Homogenate",
+                "organism": "Homo sapiens",
+                "attributes": {
+                    "source_name": "Liver",
+                    "tissue": "Total Liver Homogenate",
+                    "ENA-SPOT-COUNT": 392750718,
+                    "ENA-BASE-COUNT": 38489570364,
+                    "ENA-FIRST-PUBLIC": "2018-10-23",
+                    "ENA-LAST-UPDATE": "2018-10-23"
+                },
+                "experiment": "SRX4180080"
+            }
+        }
+    }
+}
