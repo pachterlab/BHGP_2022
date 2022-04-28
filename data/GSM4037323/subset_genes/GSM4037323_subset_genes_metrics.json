@@ -1,0 +1,72 @@
+{
+  "ncells": 7290,
+  "ngenes": 10806,
+  "nvals": 472985,
+  "density": 0.0060041962157385,
+  "total_counts": 787650,
+  "overdispersion": 1.1251454306706201,
+  "avg_per_cell": 108.04526748971193,
+  "avg_per_gene": 72.89006107717934,
+  "max_cell": 694,
+  "min_cell": 1,
+  "raw": {
+    "cov_gene": 39.389347730749115,
+    "cov_cell": 0.5778440184400839,
+    "r2_depth": 1,
+    "r_mono": 1
+  },
+  "PF": {
+    "cov_gene": 34.055255809453755,
+    "cov_cell": 1.1457995572523895e-15,
+    "r2_depth": 0,
+    "r_mono": 1
+  },
+  "sqrt": {
+    "cov_gene": 7.502585484513055,
+    "cov_cell": 0.5289674858186518,
+    "r2_depth": 0.9361448307736916,
+    "r_mono": 1
+  },
+  "log1p": {
+    "cov_gene": 7.504146330664689,
+    "cov_cell": 0.5266083528142543,
+    "r2_depth": 0.93330203135723,
+    "r_mono": 1
+  },
+  "log1pCP10k": {
+    "cov_gene": 3.697376008377385,
+    "cov_cell": 0.39680847764857674,
+    "r2_depth": 0.8264749310598942,
+    "r_mono": 1
+  },
+  "log1pCPM": {
+    "cov_gene": 3.403094601610366,
+    "cov_cell": 0.45918788661539434,
+    "r2_depth": 0.8652488052676486,
+    "r_mono": 1
+  },
+  "scalelog1pCP10k": {
+    "cov_gene": 1.1261911865246112e-13,
+    "cov_cell": null,
+    "r2_depth": 0.6495941257411979,
+    "r_mono": 0.12644478576181956
+  },
+  "sctransform": {
+    "cov_gene": null,
+    "cov_cell": null,
+    "r2_depth": null,
+    "r_mono": null
+  },
+  "log1pPF": {
+    "cov_gene": 7.410752142368837,
+    "cov_cell": 0.18791389414988363,
+    "r2_depth": 0.4309620004531368,
+    "r_mono": 1
+  },
+  "PFlog1pPF": {
+    "cov_gene": 17.573641558357245,
+    "cov_cell": 1.0776098416841555e-15,
+    "r2_depth": 0,
+    "r_mono": 1
+  }
+}
