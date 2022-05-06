@@ -4,7 +4,7 @@
   "nvals": 1475562,
   "density": 0.007534363602902915,
   "total_counts": 2297171,
-  "overdispersion": null,
+  "overdispersion": 3.0542210554358227,
   "avg_per_cell": 218.4868746433327,
   "avg_per_gene": 123.32479733719869,
   "max_cell": 3906,
