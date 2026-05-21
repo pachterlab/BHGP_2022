@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# uv / virtualenv
+.venv/
+venv/
+env/
+
+# Internal working docs (manuscript drafts, notes, runbooks — kept local only)
+docs/
+
+# Data products (regenerable; keep out of git to stay lightweight).
+# data/datasets.txt and data/release_date.txt ARE tracked — everything else under data/ is not.
+data/*/
+data/all_genes.tar.gz
+data/subset_genes.tar.gz
+data/size_*.txt
+
+# Jupyter
+**/.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Analysis figures (regenerable from notebooks)
+analysis/figures/
+analysis/synchromesh
+
+# Regen sandbox
+regen_test/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Local-only Claude / AI assistant settings
+.claude/

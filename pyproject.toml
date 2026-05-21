@@ -1,0 +1,45 @@
+[project]
+name = "synchromesh"
+version = "0.2.0.dev0"
+description = "Depth normalization for single-cell genomics count data — manuscript and analysis pipeline (Booeshaghi, Hallgrímsdóttir, Gálvez-Merchán, Pachter)."
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "BSD-2-Clause" }
+authors = [
+    { name = "A. Sina Booeshaghi", email = "sbooeshaghi@gmail.com" },
+    { name = "Lior Pachter" },
+]
+
+# Core deps used by scripts/ and the analysis/ notebooks (excluding sctransform).
+dependencies = [
+    "numpy>=1.26,<3",
+    "scipy>=1.11,<2",
+    "pandas>=2.0,<3",
+    "scikit-learn>=1.3,<2",
+    "matplotlib>=3.8,<4",
+    "anndata>=0.10,<1",
+    "scanpy>=1.10,<2",
+    # Pin h5py to a version with reliable wheels (avoid sdist build needing newer HDF5 than system has)
+    "h5py>=3.10,<3.13",
+    "jupyter>=1.0",
+    "nbconvert>=7.0",
+    "ipykernel>=6.0",
+]
+
+[project.optional-dependencies]
+# Visual-diff tooling for regen workflow (ImageMagick is system-level).
+dev = [
+    "pytest>=7.0",
+]
+
+# sctransform integration is not available on PyPI by name. To enable
+# norm_sctransform.py, install pysctransform manually after `uv sync`:
+#     uv pip install "pysctransform @ git+https://github.com/saketkc/pySCTransform"
+# It requires R and R's sctransform package on the system.
+
+[tool.uv]
+# Pin a single Python interpreter for reproducibility.
+python-preference = "managed"
+
+[tool.uv.sources]
+# Add per-package source overrides here if needed (e.g., git URLs).
