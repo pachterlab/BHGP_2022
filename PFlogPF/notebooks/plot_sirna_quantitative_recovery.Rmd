@@ -1,0 +1,67 @@
+---
+title: "R Notebook"
+---
+
+```{r}
+library(tidyverse)
+library(cowplot)
+library(ggbeeswarm)
+source("utils.R")
+source("annotation_helper.R")
+```
+
+```{r}
+res <- read_tsv("../benchmark/output/benchmark_results/sirna_quantitative_recovery_results.tsv", show_col_types = FALSE) %>%
+  mutate(
+    transformation = factor(transformation, levels = trans_families$transformation),
+    alpha = as.character(alpha)
+  ) %>%
+  left_join(trans_families, by = "transformation") %>%
+  group_by(seed, perturbation) %>%
+  mutate(relative_pearson = pearson / mean(pearson, na.rm = TRUE)) %>%
+  ungroup()
+
+trans_labels_plain["clr"] <- "PFlogPF (CLR)"
+```
+
+```{r}
+plot_metric <- function(metric_name, title, x_limits = NULL){
+  tmp <- res %>%
+    filter(is.finite(.data[[metric_name]])) %>%
+    mutate(
+      transformation = forcats::fct_reorder(
+        transformation, .data[[metric_name]], .fun = mean, .desc = FALSE
+      )
+    )
+
+  ggplot(tmp, aes(x = .data[[metric_name]], y = transformation, color = family)) +
+    ggbeeswarm::geom_quasirandom(size = 0.9, alpha = 0.5, groupOnX = FALSE, show.legend = FALSE) +
+    stat_summary(fun = mean, geom = "point", size = 2.2, show.legend = FALSE) +
+    scale_y_discrete(labels = trans_labels_plain) +
+    scale_color_manual(values = trans_families_colors) +
+    coord_cartesian(xlim = x_limits) +
+    labs(x = title, y = NULL) +
+    theme(
+      axis.text.y = element_text(size = font_size_small),
+      axis.text.x = element_text(size = font_size_small),
+      axis.title.x = element_text(size = font_size_small),
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor = element_blank()
+    )
+}
+```
+
+```{r}
+pl_pearson <- plot_metric("relative_pearson", "Relative Pearson correlation", c(0.9, 1.1)) +
+  geom_vline(xintercept = 1, linewidth = 0.3, linetype = 2, color = "grey40")
+
+fig <- plot_grid(pl_pearson, nrow = 1, labels = "(A)")
+
+ggsave("../output/sirna_quantitative_recovery.pdf", fig, width = 12, height = 8, device = cairo_pdf)
+ggsave("../output/sirna_quantitative_recovery.png", fig, width = 12, height = 8, dpi = 150)
+```
+
+```{r}
+res %>%
+  write_tsv("../output/sirna_quantitative_recovery_source_data.tsv")
+```
