@@ -1,6 +1,6 @@
 # BHGP_2022
 
-Code and analysis for *"Depth normalization for single-cell genomics count data"* (Booeshaghi, Hallgrímsdóttir, Gálvez-Merchán, Pachter).
+Code and analysis for *"Depth normalization for single-cell genomics count data"* (Booeshaghi, Hallgrímsdóttir, Gálvez-Merchán, Pachter). The code to reproduce the figures and results in v1 of the preprint are in [https://github.com/pachterlab/BHGP_2022_v1](https://github.com/pachterlab/BHGP_2022_v1).
 
 ## What's here
 
