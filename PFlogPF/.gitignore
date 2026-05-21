@@ -13,6 +13,8 @@ benchmark/renv/staging/
 !/output/main_benchmark_fig_source_data.xlsx
 *.html
 *.pdf
+!/illustrations/
+!/illustrations/*.pdf
 *.png
 Rplots.pdf
 
