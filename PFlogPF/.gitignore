@@ -1,10 +1,14 @@
 # Local benchmark output and downloaded data
-benchmark/output/
+benchmark/output/*
+!benchmark/output/benchmark_results/
+!benchmark/output/benchmark_results/*.tsv
+!benchmark/output/benchmark_results/*.RDS
+!benchmark/output/benchmark_results/*.rds
 benchmark/renv/library/
 benchmark/renv/staging/
 
 # Rendered/generated figures and notebooks
-output/
+/output/
 *.html
 *.pdf
 *.png
@@ -15,4 +19,3 @@ Rplots.pdf
 .RData
 .Rproj.user/
 .DS_Store
-
