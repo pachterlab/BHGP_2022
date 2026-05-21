@@ -9,6 +9,8 @@ benchmark/renv/staging/
 
 # Rendered/generated figures and notebooks
 /output/
+!/output/
+!/output/main_benchmark_fig_source_data.xlsx
 *.html
 *.pdf
 *.png
