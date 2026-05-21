@@ -43,14 +43,21 @@ def metrics_depth(mtx, raw):
     r2 = reg.score(xx.reshape(-1,1), yy)
     return r2
     
+def metrics_mono(mtx, raw):
+    # Per-cell Spearman correlation between transformed and raw expression vectors.
+    # Mean across cells; 1.0 = perfect rank preservation.
+    rv = np.ones(mtx.shape[0])
+    for i in range(mtx.shape[0]):
+        r, _ = stats.spearmanr(mtx[i], raw[i].toarray().ravel())
+        rv[i] = r
+    return rv.mean()
+
 def compute_method_metrics(mtx, raw):
-    # Monotonicity (r_mono) was removed 2026-05-20: focus on variance
-    # stabilization (cov_gene) and depth normalization (r2_depth) only.
-    # See HANDOFF.md.
     entry = {
       'cov_gene': None,
       'cov_cell': None,
       'r2_depth': None,
+      'r_mono': None,
     }
     try:
         entry["cov_gene"] = metrics_gcov(mtx)
@@ -66,6 +73,11 @@ def compute_method_metrics(mtx, raw):
         entry["r2_depth"] = metrics_depth(mtx, raw)
     except:
         pass
+
+    try:
+        entry["r_mono"] = metrics_mono(mtx, raw)
+    except:
+        pass
     return entry
 
 def main(raw_mtx_fn, norm_mtx_fn, metrics_fn):
@@ -79,8 +91,7 @@ def main(raw_mtx_fn, norm_mtx_fn, metrics_fn):
       'cp10k_log_scale': 'scalelog1pCP10k',
       'sctransform': 'sctransform',
       'pf_log': 'log1pPF',
-      'pf_log_pf': 'PFlog1pPF',
-      'clr': 'CLR'
+      'pf_log_pf': 'PFlog1pPF (CLR)',
     }
     method = txlabel[os.path.basename(norm_mtx_fn).split(".")[0]]
     

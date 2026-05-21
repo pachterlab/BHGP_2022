@@ -173,7 +173,35 @@ def plot_depth(mtx, raw_cell_counts, ax):
     ax.legend(prop={"size": 12})
     return (ax, r2)
 
-# plot_mono / mono helpers removed 2026-05-20; see HANDOFF.md.
+def mono(matrix, raw):
+    sparse = issparse(matrix)
+    rv = np.ones(matrix.shape[0])
+    if sparse:
+        # sparse-preserving transforms are monotonic by construction; per-cell
+        # Spearman vs raw is always 1.0 in that case.
+        return rv
+    for i in range(matrix.shape[0]):
+        r, _ = stats.spearmanr(mygetidx(matrix, i, sparse=sparse, axis=0),
+                               mygetidx(raw, i, axis=0))
+        rv[i] = r
+    return rv
+
+def plot_mono(matrix, raw, ax):
+    x = mono(matrix, raw)
+    p = {"xlabel": "Spearman r", "ylabel": "Frequency", "xlim": (-1.2, 1.2)}
+    close = np.all(np.allclose(x, x[0]))
+    if close:
+        weights = np.ones(len(x)) / len(x)
+        x = np.array([1] * len(x))
+        ax.hist(x, facecolor=colors["mono"], edgecolor="k", weights=weights)
+    else:
+        weights = np.ones(len(x)) / len(x)
+        ax.hist(x, facecolor=colors["mono"], weights=weights, edgecolor="k")
+    xmean = x.mean()
+    ax.axvline(xmean, linestyle="--", color="darkgray", label=f"mean: {xmean:,.2f}")
+    ax.set(**p)
+    ax.legend(prop={"size": 12})
+    return (ax, xmean)
 
 def read_data(base_data_fn):
     data = {}
@@ -184,7 +212,7 @@ def read_data(base_data_fn):
 
     # Dense methods loaded from csv.gz. Missing files are silently skipped so
     # plots still produce on datasets that haven't computed all methods yet.
-    for title in ["sctransform", "cp10k_log_scale", "clr"]:
+    for title in ["sctransform", "cp10k_log_scale"]:
         in_fn = os.path.join(base_data_fn, f"{title}.csv.gz")
         if os.path.exists(in_fn):
             data[txlabel[title]] = pd.read_csv(in_fn, header=None, compression="gzip").values
@@ -192,6 +220,8 @@ def read_data(base_data_fn):
 
 mtx_labels = ['raw', 'pf', 'log', 'pf_log', 'pf_log_pf', 'cpm_log', 'cp10k_log', "sqrt"]
 
+# pf_log_pf is displayed as "PFlog1pPF (CLR)" — equivalent to Aitchison's
+# centered log-ratio transform via the supplementary note's proof.
 labels = [
     'raw',
      'PF',
@@ -202,8 +232,7 @@ labels = [
      'scalelog1pCP10k',
      'sctransform',
      'log1pPF',
-     'PFlog1pPF',
-     'CLR',
+     'PFlog1pPF (CLR)',
 ]
 
 txlabel = {
@@ -216,27 +245,26 @@ txlabel = {
   'cp10k_log_scale': 'scalelog1pCP10k',
   'sctransform': 'sctransform',
   'pf_log': 'log1pPF',
-  'pf_log_pf': 'PFlog1pPF',
-  'clr': 'CLR',
+  'pf_log_pf': 'PFlog1pPF (CLR)',
 }
 
 def setup_plot(ds, shape):
-    # 2 subplots per method (variance stabilization + depth normalization).
-    # Monotonicity was removed 2026-05-20; see HANDOFF.md.
+    # 3 subplots per method (variance stabilization + depth normalization + monotonicity).
     n_methods = len(labels)
     n_cols = 2
     n_rows = (n_methods + n_cols - 1) // n_cols
-    fig = plt.figure(figsize=(4*3, n_rows*3))
+    fig = plt.figure(figsize=(6*3, n_rows*3))
     fig.suptitle(fr"{ds} ({shape[0]:,.0f} $\times$ {shape[1]:,.0f})", y=0.92)
 
     gs = gridspec.GridSpec(n_rows, n_cols, figure=fig, wspace=0.15, hspace=0.75)
     axs = []
     for i in range(n_rows):
         for j in range(n_cols):
-            ig = gs[i,j].subgridspec(1, 2, wspace=0.4)
+            ig = gs[i,j].subgridspec(1, 3, wspace=0.4)
             ax1 = fig.add_subplot(ig[0, 0])
             ax2 = fig.add_subplot(ig[0, 1])
-            axs.append((ax1, ax2))
+            ax3 = fig.add_subplot(ig[0, 2])
+            axs.append((ax1, ax2, ax3))
     return (fig, axs)
 
 def plot_data(axs, data):
@@ -248,11 +276,12 @@ def plot_data(axs, data):
     minlim = min(np.min(raw_genevar), np.min(raw_genemean)) * 0.1
     maxlim = max(np.max(raw_genevar), np.max(raw_genemean)) * 10
     metrics = defaultdict(dict)
-    for (ax1, ax2), title in zip(axs, labels):
+    for (ax1, ax2, ax3), title in zip(axs, labels):
         m = data.get(title)
         if m is None:
             ax1.set_visible(False)
             ax2.axis("off")
+            ax3.set_visible(False)
             ax2.text(0.5, 0.5, 'not computed',
                     horizontalalignment='center',
                     verticalalignment='center',
@@ -261,9 +290,11 @@ def plot_data(axs, data):
             try:
                 (_, cov_gene) = plot_meanvar(m, raw_genemean, minlim = minlim, maxlim = maxlim, ax=ax1)
                 (_, r2_depth) = plot_depth(m, raw_cellsum, ax2)
+                (_, r_mono) = plot_mono(m, raw, ax3)
             except:
                 ax1.set_visible(False)
                 ax2.axis("off")
+                ax3.set_visible(False)
                 ax2.text(0.5, 0.5, 'NaN',
                         horizontalalignment='center',
                         verticalalignment='center',

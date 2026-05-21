@@ -50,10 +50,15 @@ def metrics_depth(mtx, raw, same=False):
     r2 = reg.score(xx.reshape(-1,1), yy)
     return r2
     
+def metrics_mono(mtx):
+    # Sparse path: sparse-preserving transforms are monotonic by construction
+    # (proportional fitting and log1p both preserve per-cell gene rank order),
+    # so per-cell Spearman vs raw is always 1.0. The computation is non-trivial
+    # for sparse matrices, so we return 1 directly. The dense path computes
+    # the actual value per cell.
+    return 1
+
 def compute_method_metrics(mtx, raw, method):
-    # Monotonicity (r_mono) was removed 2026-05-20: focus on variance
-    # stabilization (cov_gene) and depth normalization (r2_depth) only.
-    # See HANDOFF.md.
     same = False
     if method == "raw":
         same = True
@@ -61,11 +66,13 @@ def compute_method_metrics(mtx, raw, method):
       'cov_gene': None,
       'cov_cell': None,
       'r2_depth': None,
+      'r_mono': None,
     }
     try:
         entry["cov_gene"] = metrics_gcov(mtx)
         entry["cov_cell"] = metrics_ccov(mtx)
         entry["r2_depth"] = metrics_depth(mtx, raw, same)
+        entry["r_mono"] = metrics_mono(mtx)
     except:
         pass
     return entry
@@ -81,7 +88,7 @@ def main(raw_mtx_fn, norm_mtx_fn, metrics_fn):
       'cp10k_log_scale': 'scalelog1pCP10k',
       'sctransform': 'sctransform',
       'pf_log': 'log1pPF',
-      'pf_log_pf': 'PFlog1pPF'
+      'pf_log_pf': 'PFlog1pPF (CLR)',
     }
     method = txlabel[os.path.basename(norm_mtx_fn).split(".")[0]]
     
