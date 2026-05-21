@@ -1,0 +1,18 @@
+# Local benchmark output and downloaded data
+benchmark/output/
+benchmark/renv/library/
+benchmark/renv/staging/
+
+# Rendered/generated figures and notebooks
+output/
+*.html
+*.pdf
+*.png
+Rplots.pdf
+
+# R/session/editor artifacts
+.Rhistory
+.RData
+.Rproj.user/
+.DS_Store
+
