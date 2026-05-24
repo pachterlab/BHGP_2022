@@ -54,7 +54,7 @@ matplotlib.rcParams['font.family'] = 'STIXGeneral'
 matplotlib.rcParams["font.size"] = fsize
 #%config InlineBackend.figure_format = 'retina'
 
-cividis = matplotlib.cm.get_cmap("cividis")
+cividis = matplotlib.colormaps["cividis"]
 colors = {
     "cell": cividis(0.01),
     "gene": cividis(0.5),

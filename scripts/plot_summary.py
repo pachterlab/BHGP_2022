@@ -24,7 +24,6 @@ import matplotlib
 matplotlib.rcParams["mathtext.fontset"] = "cm"
 matplotlib.rcParams["font.family"] = "STIXGeneral"
 matplotlib.rcParams["font.size"] = 15
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -47,7 +46,7 @@ TOP_KEYS = [
     "nvals", "overdispersion",
 ]
 
-cividis = cm.get_cmap("cividis")
+cividis = matplotlib.colormaps["cividis"]
 COLORS = {"cell": cividis(0.01), "gene": cividis(0.5), "mono": cividis(0.99)}
 
 
