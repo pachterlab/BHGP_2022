@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # plot_fig2d_clr.R
 #
-# Reproduces Figure 2d (siRNA KD downsampling panel) with PFlogPF (CLR) added.
+# Reproduces Figure 2d (siRNA KD downsampling panel) with PFlog1pPF (CLR) added.
 # Run from notebooks/ directory: Rscript plot_fig2d_clr.R
 
 suppressPackageStartupMessages({
@@ -12,8 +12,8 @@ suppressPackageStartupMessages({
 source("utils.R")
 source("annotation_helper.R")
 
-# Rename CLR to PFlogPF (CLR)
-trans_labels_plain["clr"] <- "PFlogPF (CLR)"
+# Rename CLR to PFlog1pPF (CLR)
+trans_labels_plain["clr"] <- "PFlog1pPF (CLR)"
 
 # ── Load data ─────────────────────────────────────────────────────────────────
 res <- bind_rows(
@@ -54,7 +54,7 @@ label_pts <- sirna_dat %>%
   group_by(transformation) %>%
   slice_max(pca_dim, n = 1, with_ties = FALSE) %>%
   ungroup() %>%
-  mutate(label = c(clr = "PFlogPF (CLR)", scgpt = "scGPT")[as.character(transformation)])
+  mutate(label = c(clr = "PFlog1pPF (CLR)", scgpt = "scGPT")[as.character(transformation)])
 
 # ── Plot ──────────────────────────────────────────────────────────────────────
 p <- ggplot(sirna_dat, aes(x = pca_dim, y = knn_recovery)) +

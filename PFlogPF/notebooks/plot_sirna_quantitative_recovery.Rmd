@@ -21,7 +21,7 @@ res <- read_tsv("../benchmark/output/benchmark_results/sirna_quantitative_recove
   mutate(relative_pearson = pearson / mean(pearson, na.rm = TRUE)) %>%
   ungroup()
 
-trans_labels_plain["clr"] <- "PFlogPF (CLR)"
+trans_labels_plain["clr"] <- "PFlog1pPF (CLR)"
 ```
 
 ```{r}

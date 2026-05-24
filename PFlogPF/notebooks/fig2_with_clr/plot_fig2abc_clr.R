@@ -27,8 +27,8 @@ guide_grouped_axis  <- function(...) guide_axis(...)
 source("../utils.R")
 source("../annotation_helper.R")
 
-# Rename CLR to PFlogPF (CLR) in plain labels
-trans_labels_plain["clr"] <- "PFlogPF (CLR)"
+# Rename CLR to PFlog1pPF (CLR) in plain labels
+trans_labels_plain["clr"] <- "PFlog1pPF (CLR)"
 
 # ── Load data ─────────────────────────────────────────────────────────────────
 res <- bind_rows(
