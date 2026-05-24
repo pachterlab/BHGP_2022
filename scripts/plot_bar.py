@@ -18,7 +18,6 @@ import matplotlib
 matplotlib.rcParams["mathtext.fontset"] = "cm"
 matplotlib.rcParams["font.family"] = "STIXGeneral"
 matplotlib.rcParams["font.size"] = 14
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -35,7 +34,7 @@ METHODS = [
     "PFlog1pPF (CLR)",
 ]
 
-cividis = cm.get_cmap("cividis")
+cividis = matplotlib.colormaps["cividis"]
 COLORS = {"gene": cividis(0.5), "cell": cividis(0.01), "mono": cividis(0.99)}
 
 
