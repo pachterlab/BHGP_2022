@@ -26,8 +26,14 @@ data/size_*.txt
 **/.ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# Analysis figures (regenerable from notebooks)
-analysis/figures/
+# Analysis figures (regenerable from notebooks). Specific manuscript-bound
+# files are unignored below so collaborators can view them on GitHub.
+analysis/figures/*
+!analysis/figures/summary_subset_genes.pdf
+!analysis/figures/summary_subset_genes.png
+!analysis/figures/angelidis_2019_metrics-bar.pdf
+!analysis/figures/angelidis_2019_metrics-bar.png
+!analysis/figures/angelidis_2019_subset_genes_method_comparison.pdf
 analysis/synchromesh
 
 # Regen sandbox

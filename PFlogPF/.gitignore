@@ -15,6 +15,7 @@ benchmark/renv/staging/
 *.pdf
 !/illustrations/
 !/illustrations/*.pdf
+!/output/*.pdf
 *.png
 Rplots.pdf
 
