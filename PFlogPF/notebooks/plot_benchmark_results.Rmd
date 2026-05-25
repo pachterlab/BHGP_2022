@@ -107,7 +107,12 @@ simulation_pl <- res_main %>%
 downsampling_pl <- res_main %>%
   filter(benchmark == "downsampling") %>%
   make_main_plot_panel(add_group_label = FALSE) +
-  labs(x = "Relative $k$-NN Overlap", 
+  # PFlog1pPF (CLR) is ~5x more depth-robust than every other method, so its
+  # normalized recovery sits around 5; widen the downsampling-panel xlim so
+  # those datapoints are visible. Other 2 panels keep the default [0.2, 1.8].
+  coord_cartesian(xlim = c(0.2, 10)) +
+  scale_x_continuous(breaks = c(0.5, 1, 2, 5, 10)) +
+  labs(x = "Relative $k$-NN Overlap",
        subtitle = "Original vs. downsampled deep-seq data") +
   NULL
 
