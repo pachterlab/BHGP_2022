@@ -1,0 +1,15 @@
+name = "invariance"
+version = "0.1.0"
+defaultTargets = ["invariance"]
+
+[[require]]
+name = "Mathlib"
+scope = "leanprover-community"
+rev = "master"
+
+[[lean_lib]]
+name = "Invariance"
+
+[[lean_exe]]
+name = "invariance"
+root = "Main"
