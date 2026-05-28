@@ -117,6 +117,11 @@ consistency_pl <- res_main %>%
 simulation_pl <- res_main %>%
   filter(benchmark == "simulation") %>%
   make_main_plot_panel(add_group_label = FALSE) +
+  # Same widening rationale as the downsampling panel: PFlog1pPF (CLR) lands
+  # above the default xlim because of its scale-invariance, so its mean dot
+  # would be clipped off-screen. Widen to match downsampling's range.
+  coord_cartesian(xlim = c(0.2, 5)) +
+  scale_x_continuous(breaks = c(0.5, 1, 2, 5)) +
   labs(x = "Relative $k$-NN overlap",
        subtitle = "Ground truth versus simulated counts") +
   NULL
