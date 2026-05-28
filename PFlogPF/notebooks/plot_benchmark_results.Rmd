@@ -6,12 +6,29 @@ title: "R Notebook"
 ```{r}
 library(tidyverse)
 # library(gggroupedscale)  # incompatible with ggplot2 >= 4.0
-# Stub functions for gggroupedscale (visual grouping decorations omitted)
+# Use ggh4x's nested axis guide as the replacement — provides the bracketed
+# family labels (Delta method / GLM residuals / Lat. Expr. / Count / Neg.)
+# on the y-axis that match AE&H 2023 (Nature Methods) Figure 2.
+library(ggh4x)
 scale_y_grouped_discrete <- function(..., grouping = NULL, gap_size = 1, limits = NULL,
-                                    add_group_label = FALSE, guide = NULL) {
+                                    add_group_label = FALSE, guide = NULL,
+                                    labels = NULL) {
   args <- list(...)
   if (!is.null(limits)) args[["limits"]] <- limits
-  if (!is.null(guide)) args[["guide"]] <- guide_axis()
+  if (add_group_label && !is.null(grouping) && !is.null(labels)) {
+    # Prepend family label using a delimiter so ggh4x::guide_axis_nested
+    # can split into a 2-level nested guide.
+    methods <- names(labels)
+    grouping_fn <- if (inherits(grouping, "formula")) rlang::as_function(grouping)
+                   else if (is.function(grouping))    grouping
+                   else                               function(.x) grouping[.x]
+    fams <- vapply(methods, function(m) as.character(grouping_fn(m)), character(1))
+    args[["labels"]] <- setNames(paste0(fams, " | ", labels), methods)
+    args[["guide"]]  <- ggh4x::guide_axis_nested(delim = "|", n.dodge = 1)
+  } else {
+    args[["labels"]] <- labels
+    args[["guide"]]  <- guide_axis()
+  }
   do.call(scale_y_discrete, args)
 }
 scale_x_grouped_discrete <- function(..., grouping = NULL, gap_size = 1, limits = NULL,
@@ -78,8 +95,9 @@ res_main <- res %>%
 make_main_plot_panel <- function(data, add_group_label = FALSE){
   ggplot(data, aes(x= knn_recovery, y = transformation, color = family)) +
     geom_vline(xintercept = 1, size = 0.3, linetype = 2) +
-    ggbeeswarm::geom_quasirandom(color = "grey", size = 0.3, alpha = 0.7, groupOnX = FALSE) +
-    stat_summary(geom = "point", position = position_dodge2(width = 0.3), fun.data = mean_cl_boot) +
+    ggbeeswarm::geom_quasirandom(color = "grey", size = 0.4, alpha = 0.7, groupOnX = FALSE) +
+    # Family-colored mean dot, prominent (matches AE&H Fig 2 styling).
+    stat_summary(geom = "point", fun = mean, size = 2.5, stroke = 0) +
     scale_y_grouped_discrete(grouping = ~ trans_families_labels[deframe(trans_families)[.x]], gap_size = 1.3, limits = rev,
                              labels = trans_labels, add_group_label = add_group_label, guide = if(add_group_label) guide_grouped_axis() else guide_axis()) +
     scale_x_continuous(breaks = c(0.5, 1, 1.5)) +
@@ -92,15 +110,15 @@ make_main_plot_panel <- function(data, add_group_label = FALSE){
 consistency_pl <- res_main %>%
   filter(benchmark == "consistency") %>%
   make_main_plot_panel(add_group_label = TRUE) +
-  labs(x = "Relative $k$-NN Overlap", 
-       subtitle = "10X gene subset 1 vs. gene subset 2") +
+  labs(x = "Relative $k$-NN overlap",
+       subtitle = "10x gene subset 1 versus gene subset 2") +
   NULL
 
 simulation_pl <- res_main %>%
   filter(benchmark == "simulation") %>%
   make_main_plot_panel(add_group_label = FALSE) +
-  labs(x = "Relative $k$-NN Overlap", 
-       subtitle = "Ground truth vs. simulated counts") +
+  labs(x = "Relative $k$-NN overlap",
+       subtitle = "Ground truth versus simulated counts") +
   NULL
 
 
@@ -112,8 +130,8 @@ downsampling_pl <- res_main %>%
   # those datapoints are visible. Other 2 panels keep the default [0.2, 1.8].
   coord_cartesian(xlim = c(0.2, 10)) +
   scale_x_continuous(breaks = c(0.5, 1, 2, 5, 10)) +
-  labs(x = "Relative $k$-NN Overlap",
-       subtitle = "Original vs. downsampled deep-seq data") +
+  labs(x = "Relative $k$-NN overlap",
+       subtitle = "Original versus downsampled deep-seq data") +
   NULL
 
 consistency_pl
@@ -364,24 +382,25 @@ pca_pl_10X <- pca_dat %>%
 
 
 ```{r}
-plot_assemble(annotate_text("(A)", x = 2, y =1, vjust = 1, fontsize = font_size, fontface = "bold"),
-              annotate_text("Consistency", x = 21, y =1, vjust = 1, fontsize = font_size, fontface = "bold"),
-              annotate_text("(B)", x = 62, y = 1, vjust = 1, fontsize = font_size, fontface = "bold"),
-              annotate_text("Simulation", x = 82, y = 1, vjust = 1, fontsize = font_size, fontface = "bold"),
-              annotate_text("(C)", x = 122, y = 1, vjust = 1, fontsize = font_size, fontface = "bold"),
+# Panel D (k-NN overlap depends on #PCA-dimensions) is removed to match the
+# requested 3-panel layout. Lowercase panel labels (a/b/c) and reduced height
+# also match AE&H Fig 2 style.
+plot_assemble(annotate_text("a", x = 2,   y = 1, vjust = 1, fontsize = font_size, fontface = "bold"),
+              annotate_text("Consistency",  x = 21,  y = 1, vjust = 1, fontsize = font_size, fontface = "bold"),
+              annotate_text("b", x = 62,  y = 1, vjust = 1, fontsize = font_size, fontface = "bold"),
+              annotate_text("Simulation",   x = 82,  y = 1, vjust = 1, fontsize = font_size, fontface = "bold"),
+              annotate_text("c", x = 122, y = 1, vjust = 1, fontsize = font_size, fontface = "bold"),
               annotate_text("Downsampling", x = 137, y = 1, vjust = 1, fontsize = font_size, fontface = "bold"),
-              annotate_graphic("../illustrations/benchmark_overviewArtboard_1.pdf", x = 32,  y = 109, units = "mm"),
-              annotate_graphic("../illustrations/benchmark_overviewArtboard_3.pdf", x = 92,  y = 109, units = "mm"),
-              annotate_graphic("../illustrations/benchmark_overviewArtboard_2.pdf", x = 152, y = 109, units = "mm"),
-              list(plot = consistency_pl,     x = 0,  y = 18,    width = 60, height = 75),
-              list(plot = simulation_pl,      x = 60, y = 18,    width = 60, height = 75),
-              list(plot = downsampling_pl,    x = 120,  y = 18,   width = 60, height = 75),
-              annotate_text("(D) $k$-NN overlap depends on \\#PCA-dimensions", x = 2, y = 95.5, fontsize = font_size, fontface = "bold"),
-              list(plot = pca_pl_10X,         x = 0,   y = 97,  width = 44, height = 23),
-              list(plot = pca_pl_random_walk, x = 45,  y = 97,  width = 44, height = 23),
-              list(plot = pca_pl_scDesign2,   x = 90,  y = 97,  width = 44, height = 23),
-              list(plot = pca_pl_siRNA_kd,    x = 135, y = 97,  width = 44, height = 23),
-              width = 180, height = 120, units = "mm", show_grid_lines = FALSE,
+              # annotate_graphic y is FROM-BOTTOM (per utils.R comment);
+              # 91mm from bottom of 102mm canvas places schematics near top
+              annotate_graphic("../illustrations/benchmark_overviewArtboard_1.pdf", x = 32,  y = 91, units = "mm"),
+              annotate_graphic("../illustrations/benchmark_overviewArtboard_3.pdf", x = 92,  y = 91, units = "mm"),
+              annotate_graphic("../illustrations/benchmark_overviewArtboard_2.pdf", x = 152, y = 91, units = "mm"),
+              # plots use plotgardener (y from top); start below schematics
+              list(plot = consistency_pl,  x = 0,   y = 22, width = 60, height = 78),
+              list(plot = simulation_pl,   x = 60,  y = 22, width = 60, height = 78),
+              list(plot = downsampling_pl, x = 120, y = 22, width = 60, height = 78),
+              width = 180, height = 102, units = "mm", show_grid_lines = FALSE,
               filename = "../output/main_benchmark_fig.pdf", latex_support = TRUE)
 ```
 
