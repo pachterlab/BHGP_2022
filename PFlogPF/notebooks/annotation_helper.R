@@ -1,5 +1,6 @@
 
-trans_families <- list(delta_method = c("logp1", "acosh", "logp_alpha", "logp_cpm", "logp1_size_normed", "logp1_hvg", "logp1_zscore",  "logp1_hvg_zscore", "clr", "clr_alpha"),
+trans_families <- list(delta_method = c("logp1", "acosh", "logp_alpha", "logp_cpm", "logp1_size_normed", "logp1_hvg", "logp1_zscore",  "logp1_hvg_zscore"),
+                       compositional = c("clr", "clr_alpha"),
                        glm_residual = c("pearson_clip", "sctransform", "pearson_analytic", "rand_quantile", "pearson",  "pearson_clip_hvg", "pearson_clip_zscore", "pearson_clip_hvg_zscore"),
                        latent_expr = c("sanity_map", "sanity_dists", "dino", "normalisr_norm"),
                        value_binning = c("scgpt"),
@@ -48,9 +49,9 @@ trans_labels_plain <- c("acosh" = "acosh(2αy/s+1)", "logp_alpha" = "log(y/s+1/(
 
 trans_families$transformation <- factor(trans_families$transformation, levels = trans_families$transformation)
 
-trans_families_labels <- factor(c(delta_method = "Delta Method", glm_residual = "GLM Residuals", latent_expr = "Lat. Expr.", value_binning = "Value Bin.", count_model = "Count", negative_control = "Neg."), levels = c("Neg.", "Count", "Value Bin.", "Lat. Expr.", "GLM Residuals", "Delta Method"))
-trans_families_labels_long <- factor(c(delta_method = "Delta Method", glm_residual = "GLM Residuals", latent_expr = "Latent Expression", value_binning = "Value Binning", count_model = "Count Model", negative_control = "Negative Control"), levels = c("Negative Control", "Count Model", "Value Binning", "Latent Expression", "GLM Residuals", "Delta Method"))
-trans_families_colors <- c(delta_method = "#66C2A5", glm_residual = "#FC8D62", latent_expr = "#8DA0CB", value_binning = "#A6D854", count_model = "#e78ac3", negative_control = "#7d7d7d")
+trans_families_labels <- factor(c(delta_method = "Delta Method", compositional = "Comp.", glm_residual = "GLM Residuals", latent_expr = "Lat. Expr.", value_binning = "Value Bin.", count_model = "Count", negative_control = "Neg."), levels = c("Neg.", "Count", "Value Bin.", "Lat. Expr.", "GLM Residuals", "Comp.", "Delta Method"))
+trans_families_labels_long <- factor(c(delta_method = "Delta Method", compositional = "Compositional", glm_residual = "GLM Residuals", latent_expr = "Latent Expression", value_binning = "Value Binning", count_model = "Count Model", negative_control = "Negative Control"), levels = c("Negative Control", "Count Model", "Value Binning", "Latent Expression", "GLM Residuals", "Compositional", "Delta Method"))
+trans_families_colors <- c(delta_method = "#66C2A5", compositional = "#E41A1C", glm_residual = "#FC8D62", latent_expr = "#8DA0CB", value_binning = "#A6D854", count_model = "#e78ac3", negative_control = "#7d7d7d")
 
 dataset_labels <- c(dyngen = "Dyngen", linear_walk = "Linear Walk", muscat = "muscat", random_walk = "Random Walk", scDesign2 = "scDesign2",
                     smartSeq3_fibroblasts = "Fibroblasts (ss3)", smartSeq3_fibroblasts_alt = "Fibroblasts 2 (ss3)", 
