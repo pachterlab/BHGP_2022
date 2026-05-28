@@ -64,6 +64,12 @@ lemma permute_swap_basis {n : Nat} (i j : Fin n) :
       exact hk (hiff.mp hs)
     simp [permute, basis, hk, hs]
 
+lemma permute_smul {n : Nat} (sigma : Equiv.Perm (Fin n)) (r : ℝ)
+    (x : Fin n -> ℝ) :
+    permute sigma (r • x) = r • permute sigma x := by
+  ext k
+  rfl
+
 lemma permute_swap_basis_of_ne {n : Nat} {i p q : Fin n}
     (hp : i ≠ p) (hq : i ≠ q) :
     permute (Equiv.swap p q) (basis i) = basis i := by
@@ -127,17 +133,28 @@ lemma sum_mul_if_eq_add {n : Nat} (x : Fin n -> ℝ) (i : Fin n) (a b : ℝ) :
           rw [huniv]
 
 /--
+Standard one-dimensional Cauchy regularity lemma used in the monotone CLR proof.
+An additive real function that is positive on the positive half-line is linear.
+-/
+axiom additive_positive_linear (h : ℝ → ℝ)
+    (hadd : ∀ x y : ℝ, h (x + y) = h x + h y)
+    (hpos : ∀ x : ℝ, 0 < x → 0 < h x) :
+    ∀ x : ℝ, h x = h 1 * x
+
+/--
 Additive characterization of CLR on the log-domain.
 
 The formal dimension is `D + 2`, which is Lean's constructive way of saying
 that the number of coordinates is at least two.  The result is the first
 section of the supplement after passing to logarithmic coordinates: a
-continuous additive, permutation-equivariant, scale-invariant, naturally
+rank-monotone additive, permutation-equivariant, scale-invariant, naturally
 calibrated map is the centered log-ratio projection.
 -/
 theorem clr_characterization (D : Nat)
     (T : (Fin (D + 2) -> ℝ) -> (Fin (D + 2) -> ℝ))
-    (hcont : Continuous T)
+    (hmono :
+      ∀ x : Fin (D + 2) -> ℝ, ∀ i j : Fin (D + 2),
+        x i > x j ↔ T x i > T x j)
     (hadd : ∀ x y : Fin (D + 2) -> ℝ, T (x + y) = T x + T y)
     (hperm :
       ∀ sigma : Equiv.Perm (Fin (D + 2)), ∀ x : Fin (D + 2) -> ℝ,
@@ -156,7 +173,7 @@ theorem clr_characterization (D : Nat)
   have hdim_ne : (D + 2 : ℝ) ≠ 0 := by positivity
   have hdim1_ne : (D + 1 : ℝ) ≠ 0 := by positivity
 
-  let f : (Fin n -> ℝ) →+ (Fin n -> ℝ) := {
+  let F : (Fin n -> ℝ) →+ (Fin n -> ℝ) := {
     toFun := T
     map_zero' := by
       ext i
@@ -169,151 +186,246 @@ theorem clr_characterization (D : Nat)
       simpa using hzero
     map_add' := hadd
   }
-  let L : (Fin n -> ℝ) →L[ℝ] (Fin n -> ℝ) := f.toRealLinearMap hcont
 
-  have hLT : ∀ x : Fin n -> ℝ, L x = T x := by
+  have hFT : ∀ x : Fin n -> ℝ, F x = T x := by
     intro x
     rfl
-  have hpermL :
+  have hpermF :
       ∀ sigma : Equiv.Perm (Fin n), ∀ x : Fin n -> ℝ,
-        L (permute sigma x) = permute sigma (L x) := by
+        F (permute sigma x) = permute sigma (F x) := by
     intro sigma x
-    simpa [L, f] using hperm sigma x
+    simpa [F] using hperm sigma x
 
-  let a : ℝ := L (basis i0) i0
-  let b : ℝ := L (basis i0) i1
+  let f1 : ℝ → ℝ := fun r => F (r • basis i0) i0
+  let g1 : ℝ → ℝ := fun r => F (r • basis i0) i1
+  let h1 : ℝ → ℝ := fun r => f1 r - g1 r
+
+  have hfadd : ∀ x y : ℝ, f1 (x + y) = f1 x + f1 y := by
+    intro x y
+    have hs : (x + y) • basis i0 = x • basis i0 + y • basis i0 := by
+      ext k
+      by_cases hk : k = i0
+      · simp [basis, hk]
+      · simp [basis, hk]
+    calc
+      f1 (x + y) = F ((x + y) • basis i0) i0 := rfl
+      _ = F (x • basis i0 + y • basis i0) i0 := by rw [hs]
+      _ = (F (x • basis i0) + F (y • basis i0)) i0 := by
+            rw [F.map_add]
+      _ = f1 x + f1 y := rfl
+
+  have hgadd : ∀ x y : ℝ, g1 (x + y) = g1 x + g1 y := by
+    intro x y
+    have hs : (x + y) • basis i0 = x • basis i0 + y • basis i0 := by
+      ext k
+      by_cases hk : k = i0
+      · simp [basis, hk]
+      · simp [basis, hk]
+    calc
+      g1 (x + y) = F ((x + y) • basis i0) i1 := rfl
+      _ = F (x • basis i0 + y • basis i0) i1 := by rw [hs]
+      _ = (F (x • basis i0) + F (y • basis i0)) i1 := by
+            rw [F.map_add]
+      _ = g1 x + g1 y := rfl
+
+  have hhadd : ∀ x y : ℝ, h1 (x + y) = h1 x + h1 y := by
+    intro x y
+    dsimp [h1]
+    rw [hfadd, hgadd]
+    ring
+
+  have hhpos : ∀ x : ℝ, 0 < x → 0 < h1 x := by
+    intro x hx
+    have hb0 : (x • basis i0) i0 > (x • basis i0) i1 := by
+      simp [basis, hi01.symm, hx]
+    have hm := (hmono (x • basis i0) i0 i1).mp hb0
+    simpa [h1, f1, g1, F] using sub_pos.mpr hm
+
+  have hhlin : ∀ x : ℝ, h1 x = h1 1 * x :=
+    additive_positive_linear h1 hhadd hhpos
+
+  let alpha : ℝ := h1 1
+
+  have halpha_pos : 0 < alpha := by
+    simpa [alpha] using hhpos 1 zero_lt_one
 
   have hEi : ∀ i : Fin n,
-      L (basis i) = permute (Equiv.swap i0 i) (L (basis i0)) := by
+      F (basis i) = permute (Equiv.swap i0 i) (F (basis i0)) := by
     intro i
-    have h := hpermL (Equiv.swap i0 i) (basis i0)
+    have h := hpermF (Equiv.swap i0 i) (basis i0)
     simpa [permute_swap_basis] using h
 
-  have hdiag : ∀ i : Fin n, L (basis i) i = a := by
-    intro i
-    have h := congrArg (fun v => v i) (hEi i)
-    by_cases hi : i = i0
-    · subst hi
-      simp [a, permute] at h ⊢
-    · simpa [a, permute, hi] using h
-
-  have hOff0 : ∀ j : Fin n, j ≠ i0 -> L (basis i0) j = b := by
-    intro j hj
-    by_cases hj1 : j = i1
-    · subst hj1
+  have hoff0 : ∀ r : ℝ, ∀ q : Fin n, q ≠ i0 ->
+      F (r • basis i0) q = g1 r := by
+    intro r q hq
+    by_cases hqi : q = i1
+    · subst hqi
       rfl
     · have hfix :
-          permute (Equiv.swap i1 j) (basis i0) = basis i0 := by
-        exact permute_swap_basis_of_ne hi01 hj.symm
-      have hper := hpermL (Equiv.swap i1 j) (basis i0)
-      have hper0 : L (basis i0) =
-          permute (Equiv.swap i1 j) (L (basis i0)) := by
-        simpa [hfix] using hper
-      have hcoord := congrArg (fun v => v i1) hper0
-      have hb' : b = L (basis i0) j := by
-        simpa [b, permute, hj1] using hcoord
+          permute (Equiv.swap i1 q) (r • basis i0) = r • basis i0 := by
+        rw [permute_smul, permute_swap_basis_of_ne hi01 hq.symm]
+      have hp := hpermF (Equiv.swap i1 q) (r • basis i0)
+      have hp0 : F (r • basis i0) =
+          permute (Equiv.swap i1 q) (F (r • basis i0)) := by
+        simpa [hfix] using hp
+      have hc := congrArg (fun v => v i1) hp0
+      have hb' : g1 r = F (r • basis i0) q := by
+        simpa [g1, permute, hqi] using hc
       exact hb'.symm
 
-  have hOff : ∀ i j : Fin n, i ≠ j -> L (basis i) j = b := by
-    intro i j hij
-    have h := congrArg (fun v => v j) (hEi i)
-    by_cases hi : i = i0
-    · subst hi
-      simpa [permute] using hOff0 j hij.symm
-    · have hne : Equiv.swap i0 i j ≠ i0 := by
-        intro hs
-        have h' := congrArg (Equiv.swap i0 i) hs
-        have hswap0 : Equiv.swap i0 i i0 = i := by
-          simp
-        have hji : j = i := by
-          simpa [hswap0] using h'
-        exact hij hji.symm
-      calc
-        L (basis i) j = L (basis i0) (Equiv.swap i0 i j) := by
-          simpa [permute] using h
-        _ = b := hOff0 (Equiv.swap i0 i j) hne
-
-  have hscaleeq : a + (D + 1 : ℝ) * b = 0 := by
-    have hLone : L (1 : Fin n -> ℝ) = 0 := by
-      simpa [L, f, n] using hscale (1 : ℝ)
-    have hmap0 :
-        L (∑ j : Fin n, basis j) i0 =
-          (∑ j : Fin n, L (basis j) i0) := by
+  have hscale_fg : ∀ r : ℝ, f1 r + (D + 1 : ℝ) * g1 r = 0 := by
+    intro r
+    have hone : (r • (1 : Fin n -> ℝ)) = (fun _ : Fin n => r) := by
+      ext k
+      simp
+    have hsum_basis : (r • (1 : Fin n -> ℝ)) = ∑ j : Fin n, r • basis j := by
+      rw [← sum_basis_eq_one (n := n)]
+      simp [Finset.smul_sum]
+    have hzero : F (r • (1 : Fin n -> ℝ)) = 0 := by
+      simpa [F, hone] using hscale r
+    have hsum :
+        F (r • (1 : Fin n -> ℝ)) i0 =
+          (∑ j : Fin n, F (r • basis j) i0) := by
+      rw [hsum_basis]
       simpa using congrArg (fun v => v i0)
-        (map_sum L (fun j : Fin n => basis j) (Finset.univ : Finset (Fin n)))
-    have hsumL_zero : (∑ j : Fin n, L (basis j) i0) = 0 := by
-      have hleft : L (∑ j : Fin n, basis j) i0 = 0 := by
-        simpa [sum_basis_eq_one] using congrArg (fun v => v i0) hLone
-      linarith [hmap0, hleft]
+        (map_sum F (fun j : Fin n => r • basis j) (Finset.univ : Finset (Fin n)))
     have hcoeff :
-        (∑ j : Fin n, L (basis j) i0) =
-          (∑ j : Fin n, (if j = i0 then a else b)) := by
+        (∑ j : Fin n, F (r • basis j) i0) =
+          (∑ j : Fin n, (if j = i0 then f1 r else g1 r)) := by
       refine Finset.sum_congr rfl ?_
       intro j _
       by_cases hji : j = i0
       · subst hji
-        simp [a, hdiag]
-      · simp [hji, hOff j i0 hji]
+        simp [f1]
+      · have h := hpermF (Equiv.swap i0 j) (r • basis i0)
+        have hbasis : permute (Equiv.swap i0 j) (r • basis i0) = r • basis j := by
+          rw [permute_smul, permute_swap_basis]
+        have hcoord := congrArg (fun v => v i0) h
+        have hswap : Equiv.swap i0 j i0 = j := by simp
+        have hval : F (r • basis j) i0 = g1 r := by
+          have htmp : F (r • basis j) i0 = F (r • basis i0) j := by
+            simpa [hbasis, permute, hswap] using hcoord
+          rw [htmp]
+          exact hoff0 r j hji
+        simp [hji, hval]
     have hones : (∑ j : Fin n, (1 : ℝ)) = (D + 2 : ℝ) := by
       simp [n]
     have hsum_if :
-        (∑ j : Fin n, (if j = i0 then a else b)) =
-          a + (D + 1 : ℝ) * b := by
+        (∑ j : Fin n, (if j = i0 then f1 r else g1 r)) =
+          f1 r + (D + 1 : ℝ) * g1 r := by
       calc
-        (∑ j : Fin n, (if j = i0 then a else b))
-            = (∑ j : Fin n, (1 : ℝ) * (if j = i0 then a else b)) := by
+        (∑ j : Fin n, (if j = i0 then f1 r else g1 r))
+            = (∑ j : Fin n, (1 : ℝ) * (if j = i0 then f1 r else g1 r)) := by
                 simp
-        _ = (a - b) * (1 : ℝ) + b * (∑ j : Fin n, (1 : ℝ)) := by
-              simpa using sum_mul_if_eq_add (fun _ : Fin n => (1 : ℝ)) i0 a b
-        _ = a + (D + 1 : ℝ) * b := by
+        _ = (f1 r - g1 r) * (1 : ℝ) + g1 r * (∑ j : Fin n, (1 : ℝ)) := by
+              simpa using
+                sum_mul_if_eq_add (fun _ : Fin n => (1 : ℝ)) i0 (f1 r) (g1 r)
+        _ = f1 r + (D + 1 : ℝ) * g1 r := by
               rw [hones]
               ring
-    linarith [hsumL_zero, hcoeff, hsum_if]
+    have hleft : F (r • (1 : Fin n -> ℝ)) i0 = 0 := by
+      simpa using congrArg (fun v => v i0) hzero
+    linarith [hsum, hcoeff, hsum_if, hleft]
 
-  have hcalL : a = (D + 1 : ℝ) / (D + 2 : ℝ) := by
-    simpa [a, i0, L, f, n] using hcal
+  have hf_formula : ∀ r : ℝ, f1 r = alpha * ((D + 1 : ℝ) / (D + 2 : ℝ)) * r := by
+    intro r
+    have hdiff : f1 r - g1 r = alpha * r := by
+      simpa [h1, alpha] using hhlin r
+    have hsum := hscale_fg r
+    have hD : (D + 2 : ℝ) ≠ 0 := by positivity
+    field_simp [hD]
+    nlinarith [hdiff, hsum]
 
-  have hb : b = -(1 / (D + 2 : ℝ)) := by
-    have hmain : (D + 1 : ℝ) * (1 / (D + 2 : ℝ) + b) = 0 := by
+  have hg_formula : ∀ r : ℝ, g1 r = -alpha * (1 / (D + 2 : ℝ)) * r := by
+    intro r
+    have hdiff : f1 r - g1 r = alpha * r := by
+      simpa [h1, alpha] using hhlin r
+    have hsum := hscale_fg r
+    have hD : (D + 2 : ℝ) ≠ 0 := by positivity
+    field_simp [hD]
+    nlinarith [hdiff, hsum]
+
+  have hcalF : f1 1 = (D + 1 : ℝ) / (D + 2 : ℝ) := by
+    simpa [f1, F, i0, n] using hcal
+
+  have halpha : alpha = 1 := by
+    have hf1 := hf_formula 1
+    have hf1mul : f1 1 * (D + 2 : ℝ) = alpha * (D + 1 : ℝ) := by
+      field_simp [hdim_ne] at hf1
+      nlinarith [hf1]
+    have hcalFmul : f1 1 * (D + 2 : ℝ) = (D + 1 : ℝ) := by
+      field_simp [hdim_ne] at hcalF
+      nlinarith [hcalF]
+    have hdim1_pos : 0 < (D + 1 : ℝ) := by positivity
+    nlinarith [hf1mul, hcalFmul, hdim1_pos]
+
+  have hcoord_basis : ∀ r : ℝ, ∀ j i : Fin n,
+      F (r • basis j) i =
+        r * (if j = i then (D + 1 : ℝ) / (D + 2 : ℝ)
+             else -(1 / (D + 2 : ℝ))) := by
+    intro r j i
+    by_cases hji : j = i
+    · subst j
+      have h := hpermF (Equiv.swap i0 i) (r • basis i0)
+      have hbasis : permute (Equiv.swap i0 i) (r • basis i0) = r • basis i := by
+        rw [permute_smul, permute_swap_basis]
+      have hcoord := congrArg (fun v => v i) h
+      have hswap : Equiv.swap i0 i i = i0 := by
+        exact (swap_apply_eq_left_iff i0 i i).mpr rfl
       calc
-        (D + 1 : ℝ) * (1 / (D + 2 : ℝ) + b)
-            = (D + 1 : ℝ) / (D + 2 : ℝ) + (D + 1 : ℝ) * b := by
-                ring
-        _ = a + (D + 1 : ℝ) * b := by
-              simp [hcalL]
-        _ = 0 := hscaleeq
-    have hsum : 1 / (D + 2 : ℝ) + b = 0 := by
-      exact (mul_eq_zero.mp hmain).resolve_left hdim1_ne
-    linarith
-
-  have halpha : a - b = 1 := by
-    rw [hcalL, hb]
-    field_simp [hdim_ne]
-    ring
+        F (r • basis i) i = F (r • basis i0) i0 := by
+          simpa [hbasis, permute, hswap] using hcoord
+        _ = r * ((D + 1 : ℝ) / (D + 2 : ℝ)) := by
+          change f1 r = r * ((D + 1 : ℝ) / (D + 2 : ℝ))
+          rw [hf_formula, halpha]
+          ring
+        _ = r * (if i = i then (D + 1 : ℝ) / (D + 2 : ℝ)
+             else -(1 / (D + 2 : ℝ))) := by simp
+    · have h := hpermF (Equiv.swap i0 j) (r • basis i0)
+      have hbasis : permute (Equiv.swap i0 j) (r • basis i0) = r • basis j := by
+        rw [permute_smul, permute_swap_basis]
+      have hcoord := congrArg (fun v => v i) h
+      have hswap_ne : Equiv.swap i0 j i ≠ i0 := by
+        intro hs
+        have h' := congrArg (Equiv.swap i0 j) hs
+        have hswap0 : Equiv.swap i0 j i0 = j := by simp
+        have hij : i = j := by
+          simpa [hswap0] using h'
+        exact hji hij.symm
+      have hoff0' : F (r • basis i0) (Equiv.swap i0 j i) = g1 r :=
+        hoff0 r (Equiv.swap i0 j i) hswap_ne
+      calc
+        F (r • basis j) i =
+            F (r • basis i0) (Equiv.swap i0 j i) := by
+              simpa [hbasis, permute] using hcoord
+        _ = r * (-(1 / (D + 2 : ℝ))) := by
+              rw [hoff0', hg_formula, halpha]
+              ring
+        _ = r * (if j = i then (D + 1 : ℝ) / (D + 2 : ℝ)
+             else -(1 / (D + 2 : ℝ))) := by simp [hji]
 
   intro x
   ext i
   calc
-    T x i = L x i := by rfl
-    _ = L (∑ j : Fin n, x j • basis j) i := by
+    T x i = F x i := by rfl
+    _ = F (∑ j : Fin n, x j • basis j) i := by
           rw [sum_smul_basis]
-    _ = (∑ j : Fin n, L (x j • basis j) i) := by
+    _ = (∑ j : Fin n, F (x j • basis j) i) := by
           simpa using congrArg (fun v => v i)
-            (map_sum L (fun j : Fin n => x j • basis j)
+            (map_sum F (fun j : Fin n => x j • basis j)
               (Finset.univ : Finset (Fin n)))
-    _ = (∑ j : Fin n, x j * L (basis j) i) := by
-          simp
-    _ = (∑ j : Fin n, x j * (if j = i then a else b)) := by
+    _ = (∑ j : Fin n,
+          x j * (if j = i then (D + 1 : ℝ) / (D + 2 : ℝ)
+             else -(1 / (D + 2 : ℝ)))) := by
           refine Finset.sum_congr rfl ?_
           intro j _
-          by_cases hji : j = i
-          · subst hji
-            simp [hdiag, a]
-          · simp [hji, hOff j i hji]
-    _ = (a - b) * x i + b * (∑ j : Fin n, x j) :=
-          sum_mul_if_eq_add x i a b
+          exact hcoord_basis (x j) j i
+    _ = (((D + 1 : ℝ) / (D + 2 : ℝ)) - (-(1 / (D + 2 : ℝ)))) * x i
+          + (-(1 / (D + 2 : ℝ))) * (∑ j : Fin n, x j) := by
+          simpa using
+            sum_mul_if_eq_add x i ((D + 1 : ℝ) / (D + 2 : ℝ)) (-(1 / (D + 2 : ℝ)))
     _ = x i - (∑ j : Fin n, x j) / (D + 2 : ℝ) := by
-          rw [halpha, hb]
+          field_simp [hdim_ne]
           ring
     _ = clr x i := by
           simp [clr, n]
