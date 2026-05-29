@@ -38,7 +38,7 @@ LABELS = [
     "scalelog1pCP10k",
     "sctransform",
     "log1pPF",
-    "PFlog1pPF (CLR)",
+    "PFlogPF (shift. CLR)",
 ]
 TOP_KEYS = [
     "ncells", "ngenes", "density", "total_counts",

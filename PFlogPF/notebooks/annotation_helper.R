@@ -30,7 +30,7 @@ trans_labels <- c("acosh" = r"($\textrm{acosh}(2\alpha y/s+1)$)", "logp_alpha" =
                   "glmpca" = "GLM PCA", "newwave" = "NewWave",
                   "raw_counts" = "$y$", "scaled_raw_counts" = "$y/s$",
                   "scgpt" = "scGPT",
-                  "clr" = r"(\textbf{PFlog1pPF (CLR)})",
+                  "clr" = r"(\textbf{PFlogPF (shift. CLR)})",
                   "clr_alpha" = r"(CLR$_\alpha$)")
 
 trans_labels_plain <- c("acosh" = "acosh(2αy/s+1)", "logp_alpha" = "log(y/s+1/(4α))", "logp_cpm" = "log(CPM + 1)",
@@ -44,7 +44,7 @@ trans_labels_plain <- c("acosh" = "acosh(2αy/s+1)", "logp_alpha" = "log(y/s+1/(
                   "glmpca" = "GLM PCA", "newwave" = "NewWave",
                   "raw_counts" = "y", "scaled_raw_counts" = "y/s",
                   "scgpt" = "scGPT",
-                  "clr" = "PFlog1pPF (CLR)",
+                  "clr" = "PFlogPF (shift. CLR)",
                   "clr_alpha" = "CLR_alpha")
 
 trans_families$transformation <- factor(trans_families$transformation, levels = trans_families$transformation)
