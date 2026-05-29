@@ -34,7 +34,7 @@ METHODS = [
     "scalelog1pCP10k",
     "sctransform",
     "log1pPF",
-    "PFlog1pPF (CLR)",
+    "PFlogPF (shift. CLR)",
 ]
 
 cividis = matplotlib.colormaps["cividis"]
