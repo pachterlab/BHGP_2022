@@ -65,8 +65,8 @@ def main(metrics_json, out_prefix):
 
     panels = [
         ("pc1",      pc1, "1 - Fraction of max entropy on PC1 loadings"),
-        ("fp",       fp,  "Number of DE genes\n(highest 500 vs lowest 500 raw depth)"),
-        ("spearman", sp,  r"$1-|$mean within-celltype pairwise Spearman $r|$"),
+        ("fp",       fp,  "Number of DE genes"),
+        ("spearman", sp,  r"1 - $|$ mean w/in-celltype pairwise Spearman $r$ $|$"),
     ]
 
     for ax, (key, y, ylabel) in zip(axs, panels):
