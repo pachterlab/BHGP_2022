@@ -146,7 +146,7 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
             )
 
         ax.set_ylabel(ylabel, labelpad=12)
-        ax.yaxis.set_label_coords(-0.13, 0.5)
+        ax.yaxis.set_label_coords(-0.10, 0.5)
         if met == "cov_gene":
             ax.set(yscale="symlog", ylim=(-1, ax.get_ylim()[1] if ax.get_ylim()[1] > 1 else 250))
         elif met == "r2_depth":

@@ -74,7 +74,7 @@ def main(metrics_json, out_prefix):
         ax.bar(x, y, width=0.75, facecolor=face, edgecolor="k")
         ax.set_ylabel(ylabel, labelpad=12)
         # push the ylabel further left of the tick labels
-        ax.yaxis.set_label_coords(-0.13, 0.5)
+        ax.yaxis.set_label_coords(-0.10, 0.5)
         ax.set_xticks(x)
         if ax is axs[-1]:
             ax.set_xticklabels(methods_present, rotation=45, ha="right")
