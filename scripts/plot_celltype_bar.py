@@ -58,9 +58,11 @@ def main(metrics_json, out_prefix):
     x = np.arange(len(methods_present))
 
     fig, axs = plt.subplots(nrows=3, figsize=(7.5, 12))
-    fig.subplots_adjust(hspace=0)
-    title = ct.replace("_", " ")
-    fig.suptitle(f"{ds}: {ct}", y=0.905)
+    # Fixed absolute margins so the final canvas is exactly 7.5x12 in and
+    # matches plot_summary.py's geometry pixel-for-pixel (needed for
+    # side-by-side LaTeX placement).
+    fig.subplots_adjust(left=0.14, right=0.97, top=0.93, bottom=0.18, hspace=0)
+    fig.suptitle(f"{ds}: {ct}", y=0.95)
 
     panels = [
         ("pc1",      pc1, "1 - Fraction of max entropy on PC1 loadings"),
@@ -95,8 +97,10 @@ def main(metrics_json, out_prefix):
     axs[2].set_ylim(0, 1.05)
 
     os.makedirs(os.path.dirname(out_prefix) or ".", exist_ok=True)
-    fig.savefig(f"{out_prefix}.pdf", facecolor="white", bbox_inches="tight", dpi=300)
-    fig.savefig(f"{out_prefix}.png", facecolor="white", bbox_inches="tight", dpi=200)
+    # No bbox_inches="tight" — keep the full 7.5x12 in canvas so the PDF
+    # matches summary_subset_genes.pdf in absolute dimensions.
+    fig.savefig(f"{out_prefix}.pdf", facecolor="white", dpi=300)
+    fig.savefig(f"{out_prefix}.png", facecolor="white", dpi=200)
     print(f"wrote {out_prefix}.pdf + .png")
 
 
