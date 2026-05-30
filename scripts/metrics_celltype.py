@@ -71,56 +71,66 @@ def pc1_entropy_frac(X):
     return float(ent / max_ent) if max_ent > 0 else float("nan")
 
 
-def fp_de_genes(X, raw_depth, n_top=500, fdr=0.01):
-    """# DE genes with BH-corrected p < fdr between top-n_top and bottom-n_top
-    cells by raw depth. Welch's t-test per gene."""
+def fp_de_genes(X_full, X, raw_depth, n_top=500, alpha=0.01, nan_cutoff=0.1):
+    """# DE genes with Bonferroni-corrected p < alpha between top-n_top and
+    bottom-n_top cells by raw depth. Matches Booeshaghi et al. 2021 dexpress:
+    Welch t-test, gene filter requires >nan_cutoff*ncells nonzero entries in
+    the target group, p_raw halved (one-sided convention), Bonferroni-corrected.
+
+    X_full is the *raw* counts matrix (used for the >nan_cutoff expression
+    filter so the gene-passing set is consistent across methods); X is the
+    method's normalized matrix (used for the actual t-test)."""
     order = np.argsort(raw_depth)
     n_top = min(n_top, len(order) // 2)
     bot = order[:n_top]
     top = order[-n_top:]
-    Xb, Xt = X[bot], X[top]
-    # Welch's t-test, per-column (gene), nan_policy='omit' for safety
-    res = stats.ttest_ind(Xt, Xb, axis=0, equal_var=False, nan_policy="omit")
+    # Gene filter on raw counts: keep genes expressed in > nan_cutoff fraction
+    # of the target (top) group.
+    raw_top = X_full[top]
+    keep = ((raw_top > 0).sum(axis=0) > nan_cutoff * raw_top.shape[0])
+    if keep.sum() == 0:
+        return 0
+    Xt, Xb = X[top][:, keep], X[bot][:, keep]
+    res = stats.ttest_ind(Xt, Xb, axis=0, equal_var=False, nan_policy="propagate")
     p = np.asarray(res.pvalue, dtype=float)
-    # Replace NaNs (e.g. all-zero genes) with 1 — not DE
-    p = np.where(np.isnan(p), 1.0, p)
-    # Benjamini-Hochberg
-    n = len(p)
-    order = np.argsort(p)
-    ranks = np.arange(1, n + 1)
-    bh = (p[order] * n) / ranks
-    bh = np.minimum.accumulate(bh[::-1])[::-1]
-    p_adj = np.empty_like(bh)
-    p_adj[order] = bh
-    return int((p_adj < fdr).sum())
+    p = np.where(np.isnan(p), 1.0, p) / 2.0   # one-sided convention
+    # Bonferroni
+    p_adj = np.minimum(1.0, p * keep.sum())
+    return int((p_adj < alpha).sum())
 
 
 def mean_abs_spearman(X, n_sub=500, seed=0):
-    """Mean of |pairwise Spearman r| between cells, with tie-break jitter,
-    sub-sampled to n_sub cells if larger."""
+    """Mean of |pairwise Spearman r| between cells with per-gene tie-break
+    offset, sub-sampled to n_sub cells if larger.
+
+    Matches the original angelidis_mono.ipynb pairwise_spearman: the offset
+    is a single random shift per gene (constant across cells), so ties
+    between cells at the same gene break consistently — the rank-order of
+    'all zeros' positions becomes the same in every cell, contributing
+    correctly to the cross-cell correlation."""
     rng = np.random.default_rng(seed)
     if X.shape[0] > n_sub:
         idx = rng.choice(X.shape[0], n_sub, replace=False)
         X = X[idx]
-    # Find smallest nonzero diff per gene (column), add jitter in [0, min/4)
-    # per-row to break ties.
     X = X.astype(np.float64, copy=True)
-    nz = X[X != 0]
+    # Smallest nonzero difference between sorted unique entries.
+    flat = X.ravel()
+    nz = flat[flat != 0]
     if nz.size > 0:
-        sorted_vals = np.sort(np.unique(nz))
-        diffs = np.diff(sorted_vals)
+        u = np.unique(np.concatenate(([0.0], nz)))
+        diffs = np.diff(u)
         diffs = diffs[diffs > 0]
         min_diff = float(diffs.min()) if diffs.size > 0 else 1.0
     else:
         min_diff = 1.0
-    jitter = rng.uniform(0, min_diff / 4, size=X.shape)
-    X = X + jitter
-    # scipy.stats.spearmanr on X.T returns the (n_cells × n_cells) correlation
-    # matrix between cells (i.e. between columns of X.T == rows of X).
-    rho, _ = stats.spearmanr(X.T)
-    if rho.ndim == 0:
+    # Per-gene constant offset, range [-min_diff/4, min_diff/4].
+    offsets = rng.uniform(-min_diff / 4, min_diff / 4, size=X.shape[1])
+    X = X + offsets  # broadcasts across rows
+    # spearmanr with axis=1 treats each ROW as a variable -> correlation
+    # between cells.
+    rho = stats.spearmanr(X, axis=1).correlation
+    if np.ndim(rho) == 0:
         return float(abs(rho))
-    # Take upper triangle, exclude diagonal
     iu = np.triu_indices_from(rho, k=1)
     return float(np.mean(np.abs(rho[iu])))
 
@@ -174,7 +184,7 @@ def main():
         X_sub = X[idx]
         del X  # free full matrix
         pc1 = pc1_entropy_frac(X_sub)
-        fp = fp_de_genes(X_sub, raw_depth)
+        fp = fp_de_genes(raw_sub, X_sub, raw_depth)
         ms = mean_abs_spearman(X_sub, n_sub=args.n_sub)
         results["methods"][label] = {
             "pc1_entropy_frac": pc1,
