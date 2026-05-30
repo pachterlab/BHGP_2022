@@ -81,10 +81,12 @@ def main(metrics_json, out_prefix):
 
     # Tight y limits per panel
     axs[0].set_ylim(0, max(1.05, np.nanmax(pc1) * 1.10))
+    # Linear scale — symlog squashes the differences between methods that the
+    # bar plot is meant to highlight (e.g. PF/PFlogPF (shift. CLR) being much
+    # lower than the rest).
     if fp.max() > 0:
-        axs[1].set_yscale("symlog")
-        axs[1].set_ylim(0, fp.max() * 1.3)
-    axs[2].set_ylim(0, max(0.05, np.nanmax(sp) * 1.15))
+        axs[1].set_ylim(0, fp.max() * 1.10)
+    axs[2].set_ylim(0, 1.05)
 
     os.makedirs(os.path.dirname(out_prefix) or ".", exist_ok=True)
     fig.savefig(f"{out_prefix}.pdf", facecolor="white", bbox_inches="tight", dpi=300)
