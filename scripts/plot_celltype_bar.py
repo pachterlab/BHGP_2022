@@ -46,9 +46,14 @@ def main(metrics_json, out_prefix):
     n_cells, n_genes = d.get("n_cells", 0), d.get("n_genes", 0)
 
     methods_present = [m for m in METHODS if m in d["methods"]]
-    pc1 = np.array([d["methods"][m]["pc1_entropy_frac"] for m in methods_present])
+    # Panel (a) is plotted as 1 - fraction so depth-confounded (loadings
+    # concentrated in few genes) reads as a tall bar, matching the original
+    # manuscript figure.
+    pc1 = np.array([1 - d["methods"][m]["pc1_entropy_frac"] for m in methods_present])
     fp  = np.array([d["methods"][m]["fp_de_genes"]     for m in methods_present])
-    sp  = np.array([abs(d["methods"][m]["mean_abs_spearman"]) for m in methods_present])
+    # Panel (c) is plotted as 1 - |mean Spearman| (low = cells correlate well,
+    # high = transform crushed cell-to-cell variability).
+    sp  = np.array([1 - abs(d["methods"][m]["mean_abs_spearman"]) for m in methods_present])
 
     x = np.arange(len(methods_present))
 
@@ -59,9 +64,9 @@ def main(metrics_json, out_prefix):
                  y=0.905)
 
     panels = [
-        ("pc1",      pc1, "PC1 entropy / log(n)\n(higher = less depth confounding)"),
-        ("fp",       fp,  "False-positive DE genes\n(highest 500 vs lowest 500 depth, q<0.01)"),
-        ("spearman", sp,  r"$|$mean pairwise Spearman $r|$"),
+        ("pc1",      pc1, "1 - Fraction of max entropy on PC1 loadings"),
+        ("fp",       fp,  "Number of DE genes\n(highest 500 vs lowest 500 raw depth)"),
+        ("spearman", sp,  r"$1-|$mean within-celltype pairwise Spearman $r|$"),
     ]
 
     for ax, (key, y, ylabel) in zip(axs, panels):
