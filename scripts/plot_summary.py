@@ -102,11 +102,7 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
     # Identical absolute margins to plot_celltype_bar.py — both PDFs come
     # out exactly 7.5x12 in (540x864 pt) so they sit cleanly side-by-side
     # in the manuscript LaTeX figure.
-    fig.subplots_adjust(left=0.14, right=0.97, top=0.93, bottom=0.18, hspace=0)
-    fig.suptitle(
-        f"{n_pass:,} of {n_total:,} pass-filter datasets (subset_genes)",
-        y=0.95,
-    )
+    fig.subplots_adjust(left=0.14, right=0.97, top=0.97, bottom=0.18, hspace=0)
 
     panels = [
         ("cov_gene",    "gene", "Coefficient of variation\ngene variance"),
@@ -144,7 +140,7 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
                 ref_y.append(vv[0] if len(vv) else np.nan)
             ref_y = np.array(ref_y)
             ref_dot = ax.scatter(
-                positions, ref_y, facecolor="#DC3220", edgecolor="k", s=unique_size,
+                positions, ref_y, facecolor="#2CA02C", edgecolor="k", s=unique_size,
                 zorder=11, label=reference_ds,
             )
 
