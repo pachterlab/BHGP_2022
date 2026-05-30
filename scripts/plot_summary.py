@@ -99,10 +99,13 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
     df_pass["mono_metric"] = 1 - df_pass["r_mono"].abs()
 
     fig, axs = plt.subplots(figsize=(7.5, 12), nrows=3)
-    fig.subplots_adjust(hspace=0)
+    # Identical absolute margins to plot_celltype_bar.py — both PDFs come
+    # out exactly 7.5x12 in (540x864 pt) so they sit cleanly side-by-side
+    # in the manuscript LaTeX figure.
+    fig.subplots_adjust(left=0.14, right=0.97, top=0.93, bottom=0.18, hspace=0)
     fig.suptitle(
         f"{n_pass:,} of {n_total:,} pass-filter datasets (subset_genes)",
-        y=0.905,
+        y=0.95,
     )
 
     panels = [
@@ -165,8 +168,9 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
 
     out_dir = os.path.dirname(out_prefix) or "."
     os.makedirs(out_dir, exist_ok=True)
-    fig.savefig(f"{out_prefix}.pdf", facecolor="white", bbox_inches="tight", dpi=300)
-    fig.savefig(f"{out_prefix}.png", facecolor="white", bbox_inches="tight", dpi=200)
+    # No bbox_inches="tight" — keep full 7.5x12 in canvas for LaTeX layout.
+    fig.savefig(f"{out_prefix}.pdf", facecolor="white", dpi=300)
+    fig.savefig(f"{out_prefix}.png", facecolor="white", dpi=200)
     print(f"wrote {out_prefix}.pdf + .png")
 
 
