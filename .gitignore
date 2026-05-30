@@ -34,6 +34,11 @@ analysis/figures/*
 !analysis/figures/angelidis_2019_metrics-bar.pdf
 !analysis/figures/angelidis_2019_metrics-bar.png
 !analysis/figures/angelidis_2019_subset_genes_method_comparison.pdf
+!analysis/figures/clr_vs_seurat_clr.pdf
+!analysis/figures/clr_vs_seurat_clr.png
+!analysis/figures/angelidis_celltype_bar.pdf
+!analysis/figures/angelidis_celltype_bar.png
+!analysis/figures/angelidis_celltype_metrics.json
 analysis/synchromesh
 
 # Regen sandbox
