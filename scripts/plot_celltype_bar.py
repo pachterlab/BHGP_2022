@@ -61,8 +61,7 @@ def main(metrics_json, out_prefix):
     # Fixed absolute margins so the final canvas is exactly 7.5x12 in and
     # matches plot_summary.py's geometry pixel-for-pixel (needed for
     # side-by-side LaTeX placement).
-    fig.subplots_adjust(left=0.14, right=0.97, top=0.93, bottom=0.18, hspace=0)
-    fig.suptitle(f"{ds}: {ct}", y=0.95)
+    fig.subplots_adjust(left=0.14, right=0.97, top=0.97, bottom=0.18, hspace=0)
 
     panels = [
         ("pc1",      pc1, "1 - Fraction of max entropy on PC1 loadings"),
