@@ -98,8 +98,8 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
     df_pass = df_pass.copy()
     df_pass["mono_metric"] = 1 - df_pass["r_mono"].abs()
 
-    fig, axs = plt.subplots(figsize=(12, 5 * 3), nrows=3)
-    fig.subplots_adjust(hspace=0.05)
+    fig, axs = plt.subplots(figsize=(7.5, 12), nrows=3)
+    fig.subplots_adjust(hspace=0)
     fig.suptitle(
         f"{n_pass:,} of {n_total:,} pass-filter datasets (subset_genes)",
         y=0.905,
@@ -145,7 +145,8 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
                 zorder=11, label=reference_ds,
             )
 
-        ax.set_ylabel(ylabel)
+        ax.set_ylabel(ylabel, labelpad=12)
+        ax.yaxis.set_label_coords(-0.13, 0.5)
         if met == "cov_gene":
             ax.set(yscale="symlog", ylim=(-1, ax.get_ylim()[1] if ax.get_ylim()[1] > 1 else 250))
         elif met == "r2_depth":
