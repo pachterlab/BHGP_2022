@@ -386,7 +386,7 @@ pca_pl_10X <- pca_dat %>%
 ```
 
 
-```{r}
+```{r, error=TRUE}
 # Panel D (k-NN overlap depends on #PCA-dimensions) is removed to match the
 # requested 3-panel layout. Lowercase panel labels (a/b/c) and reduced height
 # also match AE&H Fig 2 style.
@@ -407,6 +407,38 @@ plot_assemble(annotate_text("a", x = 2,   y = 1, vjust = 1, fontsize = font_size
               list(plot = downsampling_pl, x = 120, y = 22, width = 60, height = 78),
               width = 180, height = 102, units = "mm", show_grid_lines = FALSE,
               filename = "../output/main_benchmark_fig.pdf", latex_support = TRUE)
+```
+
+Stand-alone version of just the siRNA-KD k-NN-vs-PCA-dimensions panel
+(originally the last sub-panel of AE&H Fig 2 panel d). PFlogPF (shift. CLR)
+appears as a red line because the compositional family color flows through
+`pca_dat`. Uses ggsave (no tikz) so it renders independently of the main
+figure's tikz/pdflatex post-processing.
+
+```{r, error=TRUE}
+# Rebuild from pca_dat instead of decorating the small original (which
+# carries breaks = c(0, 5) inherited from the AE&H mini-panel sizing).
+sirna_pca_standalone <- pca_dat %>%
+  filter(dataset == "smartSeq3_siRNA_knockdown") %>%
+  ggplot(aes(x = pca_dim, y = knn_recovery)) +
+  geom_line(aes(group = transformation, color = family, linetype = is_dim_indep),
+            linewidth = 0.6, show.legend = FALSE) +
+  scale_x_log10(breaks = c(5, 10, 50, 100)) +
+  scale_y_continuous(limits = c(0, NA), breaks = scales::breaks_pretty(n = 6)) +
+  scale_color_manual(values = trans_families_colors) +
+  scale_linetype_manual(values = c(`TRUE` = "dashed", `FALSE` = "solid")) +
+  labs(subtitle = "siRNA KD (Downsampling)",
+       x = "Number of PCA dimensions",
+       y = "k-NN overlap") +
+  theme_bw(base_size = 10) +
+  theme(plot.subtitle = element_text(face = "bold"),
+        panel.grid.minor = element_blank(),
+        legend.position = "none")
+
+ggsave("../output/sirna_pca_dependence.pdf", sirna_pca_standalone,
+       width = 100, height = 70, units = "mm", device = cairo_pdf)
+ggsave("../output/sirna_pca_dependence.png", sirna_pca_standalone,
+       width = 100, height = 70, units = "mm", dpi = 300)
 ```
 
 
