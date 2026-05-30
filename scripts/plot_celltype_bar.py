@@ -57,11 +57,10 @@ def main(metrics_json, out_prefix):
 
     x = np.arange(len(methods_present))
 
-    fig, axs = plt.subplots(nrows=3, figsize=(12, 11))
-    fig.subplots_adjust(hspace=0.05)
+    fig, axs = plt.subplots(nrows=3, figsize=(7.5, 12))
+    fig.subplots_adjust(hspace=0)
     title = ct.replace("_", " ")
-    fig.suptitle(f"{title}  ({n_cells:,} cells × {n_genes:,} genes, {ds})",
-                 y=0.905)
+    fig.suptitle(f"{ds}: {ct}", y=0.905)
 
     panels = [
         ("pc1",      pc1, "1 - Fraction of max entropy on PC1 loadings"),
