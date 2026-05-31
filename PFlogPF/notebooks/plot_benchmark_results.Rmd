@@ -427,12 +427,10 @@ sirna_pca_standalone <- pca_dat %>%
   scale_y_continuous(limits = c(0, NA), breaks = scales::breaks_pretty(n = 6)) +
   scale_color_manual(values = trans_families_colors) +
   scale_linetype_manual(values = c(`TRUE` = "dashed", `FALSE` = "solid")) +
-  labs(subtitle = "siRNA KD (Downsampling)",
-       x = "Number of PCA dimensions",
+  labs(x = "Number of PCA dimensions",
        y = "k-NN overlap") +
   theme_bw(base_size = 10) +
-  theme(plot.subtitle = element_text(face = "bold"),
-        panel.grid.minor = element_blank(),
+  theme(panel.grid.minor = element_blank(),
         legend.position = "none")
 
 ggsave("../output/sirna_pca_dependence.pdf", sirna_pca_standalone,
