@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""DE-gene-scramble / monotonicity heatmap (supplement Fig 8).
+
+For one dataset (default angelidis_2019):
+  1. Build a celltype x gene matrix per method by averaging the expression of
+     every cell within a cell type.
+  2. Pick the top-100 genes for each cell type by their average expression in
+     PF (this defines a per-celltype gene set AND order, shared across panels).
+  3. Rank those 100 genes within each cell type from lowest to highest with
+     scipy.stats.rankdata(..., method="ordinal").
+  4. Plot the matrix of ranks as a heatmap (cividis), one panel per method.
+
+A truly monotonic transform preserves the PF gene ordering, so its heatmap is
+a clean left->right gradient; rank-distorting transforms look scrambled. (The
+faint scramble in PFlog1pPF comes from the averaging step, see Methods.)
+
+Usage:
+    python plot_mono_heatmap.py <dataset_dir> <out_prefix> [n_top]
+
+<dataset_dir> must contain metadata_barcodes.txt.gz (last column 'celltype',
+matrix-row order) and subset_genes/{pf,pf_log_pf}.mtx.gz +
+subset_genes/{cp10k_log_scale,sctransform}.csv.gz.
+"""
+import gzip
+import os
+import sys
+
+import matplotlib
+matplotlib.rcParams["mathtext.fontset"] = "cm"
+matplotlib.rcParams["font.family"] = "STIXGeneral"
+matplotlib.rcParams["font.size"] = 15
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy import stats
+from scipy.io import mmread
+
+# Display label -> (file under subset_genes/, is_dense_csv). Order = panel order.
+PANELS = [
+    ("PF",              "pf.mtx.gz",             False),
+    ("PFlog1pPF",       "pf_log_pf.mtx.gz",      False),
+    ("scalelog1pCP10k", "cp10k_log_scale.csv.gz", True),
+    ("sctransform",     "sctransform.csv.gz",    True),
+]
+REF = "PF"   # method whose per-celltype top-N order is used for every panel
+
+
+def load_matrix(path, dense):
+    if dense:
+        with gzip.open(path, "rt") as f:
+            return np.loadtxt(f, delimiter=",", dtype=np.float32)
+    m = mmread(path)
+    return np.asarray(m.todense(), dtype=np.float32)
+
+
+def celltype_means(X, celltypes_sorted, assignments):
+    """Return a (n_celltype x n_gene) matrix of per-celltype mean expression,
+    rows ordered by celltypes_sorted."""
+    df = pd.DataFrame(X, index=assignments)
+    gg = df.groupby(df.index).mean()
+    return gg.reindex(celltypes_sorted).values
+
+
+def main(dataset_dir, out_prefix, n_top=100):
+    meta = pd.read_csv(os.path.join(dataset_dir, "metadata_barcodes.txt.gz"))
+    assignments = meta[meta.columns[-1]].values
+    keep = pd.notna(assignments)            # drop cells with no celltype
+    assignments = assignments[keep]
+    celltypes_sorted = sorted(pd.unique(assignments))
+    print(f"{len(celltypes_sorted)} cell types, {keep.sum()} cells", file=sys.stderr)
+
+    # Per-celltype averaged matrix for every method.
+    gb = {}
+    for label, fname, dense in PANELS:
+        path = os.path.join(dataset_dir, "subset_genes", fname)
+        print(f"loading {label}...", file=sys.stderr)
+        X = load_matrix(path, dense)[keep]
+        gb[label] = celltype_means(X, celltypes_sorted, assignments)
+        del X
+
+    # Top-n_top genes per celltype, defined by the reference method (PF).
+    ridx = np.argsort(gb[REF], axis=1)[:, -n_top:]
+
+    fig, axs = plt.subplots(figsize=(10, 10), ncols=2, nrows=2)
+    im = None
+    for (label, _, _), ax in zip(PANELS, axs.ravel()):
+        mat = np.take_along_axis(gb[label], ridx, axis=1)
+        mat = stats.rankdata(mat, axis=1, method="ordinal")
+        im = ax.imshow(mat, aspect="auto", cmap="cividis")
+        ax.set(ylabel="Celltype", xlabel=f"Top {n_top} genes",
+               xticks=[], yticks=[], title=label)
+
+    fig.colorbar(im, ax=axs.ravel().tolist(), shrink=1, label="Gene rank")
+
+    os.makedirs(os.path.dirname(out_prefix) or ".", exist_ok=True)
+    fig.savefig(f"{out_prefix}.pdf", facecolor="white", dpi=300, bbox_inches="tight")
+    fig.savefig(f"{out_prefix}.png", facecolor="white", dpi=300, bbox_inches="tight")
+    print(f"wrote {out_prefix}.pdf + .png")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print(__doc__, file=sys.stderr)
+        sys.exit(1)
+    n = int(sys.argv[3]) if len(sys.argv) > 3 else 100
+    main(sys.argv[1], sys.argv[2], n)

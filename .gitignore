@@ -44,6 +44,8 @@ analysis/figures/*
 !analysis/figures/angelidis_celltype_metrics.json
 !analysis/figures/matrix_size_vs_ncells.pdf
 !analysis/figures/matrix_size_vs_ncells.png
+!analysis/figures/angelidis_mono_heatmap.pdf
+!analysis/figures/angelidis_mono_heatmap.png
 analysis/synchromesh
 
 # Regen sandbox
