@@ -21,6 +21,9 @@ data/*/
 data/all_genes.tar.gz
 data/subset_genes.tar.gz
 data/size_*.txt
+# size source data for the matrix-size supplement panel IS tracked
+!data/size_raw.txt
+!data/size_sctransform.txt
 
 # Jupyter
 **/.ipynb_checkpoints/
@@ -39,6 +42,8 @@ analysis/figures/*
 !analysis/figures/angelidis_celltype_bar.pdf
 !analysis/figures/angelidis_celltype_bar.png
 !analysis/figures/angelidis_celltype_metrics.json
+!analysis/figures/matrix_size_vs_ncells.pdf
+!analysis/figures/matrix_size_vs_ncells.png
 analysis/synchromesh
 
 # Regen sandbox
