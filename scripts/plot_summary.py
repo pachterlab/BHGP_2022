@@ -138,7 +138,9 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
                 flier.set_markerfacecolor(CLR_COLOR)
 
         means = np.array([np.nanmean(d) for d in data])
-        ax.scatter(positions, means, color="k", s=unique_size * 17, linewidth=3, marker="_", zorder=10)
+        # Mean bar: red for PFlogPF (shift. CLR) so it matches its red box.
+        bar_colors = [CLR_COLOR if m == CLR_METHOD else "k" for m in present_labels]
+        ax.scatter(positions, means, color=bar_colors, s=unique_size * 17, linewidth=3, marker="_", zorder=10)
         mean_dot = ax.scatter(positions, means, facecolor="white", edgecolor="k", s=unique_size, zorder=10, label="mean")
 
         if ref_in_pass:
