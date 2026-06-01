@@ -48,6 +48,8 @@ TOP_KEYS = [
 
 cividis = matplotlib.colormaps["cividis"]
 COLORS = {"cell": cividis(0.01), "gene": cividis(0.5), "mono": cividis(0.99)}
+CLR_METHOD = "PFlogPF (shift. CLR)"
+CLR_COLOR  = "#E41A1C"   # matches angelidis_celltype_bar.pdf
 
 
 def load_metrics(data_root):
@@ -128,6 +130,12 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
             flierprops=dict(markerfacecolor=COLORS[color_key], markeredgecolor="k", markersize=4),
             widths=0.6,
         )
+        # Recolor the PFlogPF (shift. CLR) box red so it matches the
+        # angelidis_celltype_bar figure's compositional family color.
+        for lbl, box, flier in zip(present_labels, bp["boxes"], bp["fliers"]):
+            if lbl == CLR_METHOD:
+                box.set_facecolor(CLR_COLOR)
+                flier.set_markerfacecolor(CLR_COLOR)
 
         means = np.array([np.nanmean(d) for d in data])
         ax.scatter(positions, means, color="k", s=unique_size * 17, linewidth=3, marker="_", zorder=10)
