@@ -30,6 +30,7 @@ METHODS = [
 ]
 CLR_METHOD = "PFlogPF (shift. CLR)"
 CLR_COLOR  = "#E41A1C"   # matches the Comp. family color in main_benchmark_fig
+DISPLAY = {"sctransform": "sctransform v2"}   # shown text only; data key unchanged
 
 cividis = matplotlib.colormaps["cividis"]
 PANEL_COLORS = {
@@ -78,7 +79,8 @@ def main(metrics_json, out_prefix):
         ax.yaxis.set_label_coords(-0.10, 0.5)
         ax.set_xticks(x)
         if ax is axs[-1]:
-            ax.set_xticklabels(methods_present, rotation=45, ha="right")
+            ax.set_xticklabels([DISPLAY.get(m, m) for m in methods_present],
+                               rotation=45, ha="right")
         else:
             ax.set_xticklabels([])
         # Show numerical value on top of each bar (helps when ranges differ).

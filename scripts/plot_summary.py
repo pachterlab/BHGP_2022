@@ -50,6 +50,8 @@ cividis = matplotlib.colormaps["cividis"]
 COLORS = {"cell": cividis(0.01), "gene": cividis(0.5), "mono": cividis(0.99)}
 CLR_METHOD = "PFlogPF (shift. CLR)"
 CLR_COLOR  = "#E41A1C"   # matches angelidis_celltype_bar.pdf
+# Display labels (data keys stay as in LABELS; only the shown text changes).
+DISPLAY = {"sctransform": "sctransform v2"}
 
 
 def load_metrics(data_root):
@@ -168,7 +170,8 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
             ax.set_xticklabels([])
         else:
             ax.set_xticks(positions)
-            ax.set_xticklabels(present_labels, rotation=45, ha="right")
+            ax.set_xticklabels([DISPLAY.get(m, m) for m in present_labels],
+                               rotation=45, ha="right")
 
         ax.legend(loc="best", prop={"size": 12})
 

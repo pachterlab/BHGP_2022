@@ -96,8 +96,9 @@ def main(dataset_dir, out_prefix, n_top=100):
         mat = np.take_along_axis(gb[label], ridx, axis=1)
         mat = stats.rankdata(mat, axis=1, method="ordinal")
         im = ax.imshow(mat, aspect="auto", cmap="cividis")
+        title = "sctransform v2" if label == "sctransform" else label
         ax.set(ylabel="Celltype", xlabel=f"Top {n_top} genes",
-               xticks=[], yticks=[], title=label)
+               xticks=[], yticks=[], title=title)
 
     fig.colorbar(im, ax=axs.ravel().tolist(), shrink=1, label="Gene rank")
 

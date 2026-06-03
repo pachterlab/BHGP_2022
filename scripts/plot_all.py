@@ -300,7 +300,8 @@ def plot_data(axs, data):
                         verticalalignment='center',
                         transform=ax2.transAxes)
 
-        ax2.set_title(title, fontsize=20, weight="bold")
+        disp = "sctransform v2" if title == "sctransform" else title
+        ax2.set_title(disp, fontsize=20, weight="bold")
 
     return
 

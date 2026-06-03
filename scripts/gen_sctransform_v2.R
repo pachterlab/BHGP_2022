@@ -3,13 +3,18 @@
 # count matrix, aligned to the FULL gene x cell frame (0 for genes/cells vst
 # drops), written cells x genes to match the stored pysctransform output.
 #
+# Output format is by extension: .csv.gz -> data.table::fwrite (fast, gzip,
+# cells x genes, no header/rownames; matches stored sctransform.csv.gz);
+# .bin -> float32 binary + .shape sidecar.
+#
 # Usage:
 #   R_LD_LIBRARY_PATH=/usr/lib/R/lib:<buildtools>/lib \
-#     Rscript gen_sctransform_v2.R <raw.mtx.gz> <out.csv.gz>
+#     Rscript gen_sctransform_v2.R <raw.mtx.gz> <out.csv.gz|out.bin> [n_threads]
 suppressMessages({ library(Matrix); library(sctransform); library(glmGamPoi) })
 
 a <- commandArgs(trailingOnly = TRUE)
 raw_fn <- a[[1]]; out_fn <- a[[2]]
+nthreads <- if (length(a) >= 3) as.integer(a[[3]]) else 2L
 
 M <- t(as(readMM(raw_fn), "CsparseMatrix"))          # genes x cells
 rownames(M) <- paste0("g", seq_len(nrow(M)))
@@ -27,12 +32,20 @@ full <- matrix(0.0, nrow = nrow(M), ncol = ncol(M),
 full[rownames(y), colnames(y)] <- y
 message(sprintf("residuals placed; kept %d genes, %d cells", nrow(y), ncol(y)))
 
-# full is genes x cells (column-major). as.vector gives cell-blocks of genes,
-# so np.fromfile(float32).reshape(n_cells, n_genes) yields a cells x genes
-# matrix matching the stored sctransform.csv.gz orientation. Write float32 +
-# a sidecar shape file (n_cells,n_genes). writeBin is ~seconds vs write.table.
-con <- file(out_fn, "wb")
-writeBin(as.vector(full), con, size = 4)
-close(con)
-writeLines(sprintf("%d,%d", ncol(M), nrow(M)), paste0(out_fn, ".shape"))
-message("wrote ", out_fn, " (float32 binary, ", ncol(M), " cells x ", nrow(M), " genes)")
+if (grepl("\\.csv\\.gz$", out_fn)) {
+  # cells x genes, no header / no row names; matches stored sctransform.csv.gz.
+  suppressMessages(library(data.table))
+  data.table::setDTthreads(nthreads)
+  data.table::fwrite(data.table::as.data.table(t(full)), out_fn,
+                     col.names = FALSE, compress = "gzip")
+  message("wrote ", out_fn, " (csv.gz, ", ncol(M), " cells x ", nrow(M), " genes)")
+} else {
+  # full is genes x cells (column-major). as.vector gives cell-blocks of genes,
+  # so np.fromfile(float32).reshape(n_cells, n_genes) yields a cells x genes
+  # matrix matching the sctransform.csv.gz orientation.
+  con <- file(out_fn, "wb")
+  writeBin(as.vector(full), con, size = 4)
+  close(con)
+  writeLines(sprintf("%d,%d", ncol(M), nrow(M)), paste0(out_fn, ".shape"))
+  message("wrote ", out_fn, " (float32 binary, ", ncol(M), " cells x ", nrow(M), " genes)")
+}
