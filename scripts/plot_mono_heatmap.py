@@ -46,6 +46,9 @@ REF = "PF"   # method whose per-celltype top-N order is used for every panel
 
 
 def load_matrix(path, dense):
+    if path.endswith(".bin"):
+        n_cells, n_genes = map(int, open(path + ".shape").read().strip().split(","))
+        return np.fromfile(path, dtype=np.float32).reshape(n_cells, n_genes)
     if dense:
         with gzip.open(path, "rt") as f:
             return np.loadtxt(f, delimiter=",", dtype=np.float32)
@@ -70,10 +73,16 @@ def main(dataset_dir, out_prefix, n_top=100):
     print(f"{len(celltypes_sorted)} cell types, {keep.sum()} cells", file=sys.stderr)
 
     # Per-celltype averaged matrix for every method.
+    # Optional override: point the sctransform panel at a precomputed residual
+    # matrix (e.g. R sctransform v2 float32 .bin) via SCT_OVERRIDE=<path.bin>.
+    sct_override = os.environ.get("SCT_OVERRIDE")
     gb = {}
     for label, fname, dense in PANELS:
-        path = os.path.join(dataset_dir, "subset_genes", fname)
-        print(f"loading {label}...", file=sys.stderr)
+        if label == "sctransform" and sct_override:
+            path = sct_override
+        else:
+            path = os.path.join(dataset_dir, "subset_genes", fname)
+        print(f"loading {label} from {path}...", file=sys.stderr)
         X = load_matrix(path, dense)[keep]
         gb[label] = celltype_means(X, celltypes_sorted, assignments)
         del X

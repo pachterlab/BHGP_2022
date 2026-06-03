@@ -72,7 +72,7 @@ def main(metrics_json, out_prefix):
     for ax, (key, y, ylabel) in zip(axs, panels):
         face = [CLR_COLOR if m == CLR_METHOD else PANEL_COLORS[key]
                 for m in methods_present]
-        ax.bar(x, y, width=0.75, facecolor=face, edgecolor="k")
+        ax.bar(x, y, width=0.75, color=face, edgecolor="k")
         ax.set_ylabel(ylabel, labelpad=12)
         # push the ylabel further left of the tick labels
         ax.yaxis.set_label_coords(-0.10, 0.5)

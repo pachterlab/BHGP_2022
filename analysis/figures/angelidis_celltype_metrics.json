@@ -40,9 +40,9 @@
       "mean_abs_spearman": 0.8099113211349012
     },
     "sctransform": {
-      "pc1_entropy_frac": 0.9569620051929976,
-      "fp_de_genes": 750,
-      "mean_abs_spearman": 0.8231627130713529
+      "pc1_entropy_frac": 0.9119904802437226,
+      "fp_de_genes": 337,
+      "mean_abs_spearman": 0.8130568163096547
     },
     "log1pPF": {
       "pc1_entropy_frac": 0.8478930361596965,
@@ -54,5 +54,6 @@
       "fp_de_genes": 120,
       "mean_abs_spearman": 0.9136838136818328
     }
-  }
+  },
+  "sctransform_impl": "R sctransform v2 (glmGamPoi); other methods unchanged"
 }
