@@ -35,14 +35,15 @@ import pandas as pd
 from scipy import stats
 from scipy.io import mmread
 
-# Display label -> (file under subset_genes/, is_dense_csv). Order = panel order.
+# Display label -> (file under subset_genes/, is_dense_csv). Order = panel order
+# (upper-left, upper-right, lower-left, lower-right).
 PANELS = [
-    ("PF",              "pf.mtx.gz",             False),
-    ("PFlog1pPF",       "pf_log_pf.mtx.gz",      False),
-    ("scalelog1pCP10k", "cp10k_log_scale.csv.gz", True),
-    ("sctransform",     "sctransform.csv.gz",    True),
+    ("raw",         "raw.mtx.gz",         False),
+    ("log1pPF",     "pf_log.mtx.gz",      False),
+    ("PFlog1pPF",   "pf_log_pf.mtx.gz",   False),
+    ("sctransform", "sctransform.csv.gz", True),
 ]
-REF = "PF"   # method whose per-celltype top-N order is used for every panel
+REF = "raw"   # method whose per-celltype top-N order is used for every panel
 
 
 def load_matrix(path, dense):
