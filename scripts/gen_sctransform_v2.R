@@ -12,6 +12,14 @@
 #     Rscript gen_sctransform_v2.R <raw.mtx.gz> <out.csv.gz|out.bin> [n_threads]
 suppressMessages({ library(Matrix); library(sctransform); library(glmGamPoi) })
 
+# sctransform parallelizes parameter estimation via 'future'; we already
+# parallelize across datasets, so force sequential (avoids oversubscription and
+# the default 500 MiB future.globals.maxSize error on larger matrices).
+suppressMessages(if (requireNamespace("future", quietly = TRUE)) {
+  options(future.globals.maxSize = 16 * 1024^3)
+  future::plan("sequential")
+})
+
 a <- commandArgs(trailingOnly = TRUE)
 raw_fn <- a[[1]]; out_fn <- a[[2]]
 nthreads <- if (length(a) >= 3) as.integer(a[[3]]) else 2L
