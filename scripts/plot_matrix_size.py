@@ -44,7 +44,7 @@ def main(data_root, out_prefix):
 
     y_sct = sct["nbytes"] / 1e9
     ax.scatter(sct["ncells"], y_sct, edgecolor="k", facecolor="red",
-               label="sctransform")
+               label="sctransform v2")
 
     ax.set(xlabel="Number of cells", ylabel="Matrix size [GB]", xscale="log")
     ax.legend()
