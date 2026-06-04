@@ -95,8 +95,16 @@ def process(args):
         # 2. metrics on the new residuals
         X = load_csv_gz(sct_fn)
         raw = mmread(raw_fn).tocsr().astype(np.float32)
-        entry = {"cov_gene": cov_gene(X), "cov_cell": None,
-                 "r2_depth": r2_depth(X, raw), "r_mono": r_mono(X, raw)}
+        if not np.isfinite(X).all():
+            # Degenerate sctransform fit (non-finite residuals) -- same family
+            # of pathologically-sparse datasets pysctransform produced all-null
+            # for. Record nulls so the summary's NaN-drop excludes them, as before.
+            entry = {"cov_gene": None, "cov_cell": None, "r2_depth": None, "r_mono": None}
+            status_info = "non-finite residuals -> null metrics"
+        else:
+            entry = {"cov_gene": cov_gene(X), "cov_cell": None,
+                     "r2_depth": r2_depth(X, raw), "r_mono": r_mono(X, raw)}
+            status_info = None
         if jpath:
             dd = json.load(open(jpath))
             if isinstance(dd.get("sctransform"), dict):
@@ -105,6 +113,8 @@ def process(args):
                 dd["sctransform"] = entry
             dd["sctransform_impl"] = IMPL_TAG
             json.dump(dd, open(jpath, "w"))
+        if status_info:
+            return (ds, "OK_NULL", status_info)
         return (ds, "OK", f"cov={entry['cov_gene']:.3f} r2d={entry['r2_depth']:.3f} rmono={entry['r_mono']:.3f}")
     except Exception as e:
         return (ds, "FAIL_PY", repr(e)[:300])
