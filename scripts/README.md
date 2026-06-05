@@ -23,8 +23,14 @@ Steps 1-13 produce, per dataset, `<DS>/subset_genes/<DS>_subset_genes_metrics.js
 those JSONs with the scripts below (DATA = the data root containing the dataset
 dirs, e.g. `synchromesh/data`):
 
-- **Fig 1a** — single-dataset (angelidis_2019) per-method metric bars
-  (cov_gene / r2_depth / 1-|Spearman|):
-  `python scripts/plot_bar.py DATA/angelidis_2019/subset_genes/angelidis_2019_subset_genes_metrics.json analysis/figures/angelidis_2019_metrics-bar`
+- **Fig 1a** — angelidis_2019 within-cell-type per-method bars (PC1-loading
+  entropy / # false-positive DE genes / 1-|within-celltype Spearman|) for the
+  Type_2_pneumocytes cell type. Compute the metrics JSON, then plot:
+  `python scripts/metrics_celltype.py DATA/angelidis_2019 Type_2_pneumocytes analysis/figures/angelidis_celltype_metrics.json`
+  `python scripts/plot_celltype_bar.py analysis/figures/angelidis_celltype_metrics.json analysis/figures/angelidis_celltype_bar`
 - **Fig 1b** — across-dataset summary boxplot over all datasets' metrics JSONs:
   `python scripts/plot_summary.py DATA analysis/figures/summary_subset_genes angelidis_2019`
+
+(`scripts/plot_bar.py` renders an all-cells single-dataset metric bar
+`<DS>_metrics-bar` from a `*_subset_genes_metrics.json` — a per-dataset analog of
+Fig 1b, not a numbered main figure.)
