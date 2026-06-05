@@ -15,3 +15,16 @@ NB: for points 3, 4, and 5 the path in the file will need to be `$1/sparse/` and
 11. `../scripts/metrics_methods_dense.sh` - compute method metrics for sctransform and cp10klogscale
 12. `../scripts/plot_sparse.sh` - produce method comparison plot (on sparse only)
 13. `..scripts/plot_all.sh` - produce method comparison plot (on all)
+
+## Manuscript figures
+
+Steps 1-13 produce, per dataset, `<DS>/subset_genes/<DS>_subset_genes_metrics.json`
+(the per-method metric inputs). The manuscript figures are then rendered from
+those JSONs with the scripts below (DATA = the data root containing the dataset
+dirs, e.g. `synchromesh/data`):
+
+- **Fig 1a** — single-dataset (angelidis_2019) per-method metric bars
+  (cov_gene / r2_depth / 1-|Spearman|):
+  `python scripts/plot_bar.py DATA/angelidis_2019/subset_genes/angelidis_2019_subset_genes_metrics.json analysis/figures/angelidis_2019_metrics-bar`
+- **Fig 1b** — across-dataset summary boxplot over all datasets' metrics JSONs:
+  `python scripts/plot_summary.py DATA analysis/figures/summary_subset_genes angelidis_2019`

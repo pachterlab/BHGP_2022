@@ -39,6 +39,7 @@ METHODS = [
 
 cividis = matplotlib.colormaps["cividis"]
 COLORS = {"gene": cividis(0.5), "cell": cividis(0.01), "mono": cividis(0.99)}
+DISPLAY = {"sctransform": "sctransform v2"}   # shown text only; data key unchanged
 
 
 def main(metrics_json, out_prefix):
@@ -82,7 +83,7 @@ def main(metrics_json, out_prefix):
     ax.bar(x_idx, mono_metric, width=0.75, facecolor=COLORS["mono"], edgecolor="k")
     ax.set(ylabel=r"$1 - |$mean Spearman $r|$", ylim=(-0.05, 1.05))
     ax.set_xticks(x_idx)
-    ax.set_xticklabels(METHODS, rotation=45, ha="right")
+    ax.set_xticklabels([DISPLAY.get(m, m) for m in METHODS], rotation=45, ha="right")
 
     fig.savefig(f"{out_prefix}.pdf", facecolor="white", bbox_inches="tight", dpi=300)
     fig.savefig(f"{out_prefix}.png", facecolor="white", bbox_inches="tight", dpi=200)
