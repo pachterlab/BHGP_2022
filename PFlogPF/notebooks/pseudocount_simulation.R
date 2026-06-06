@@ -49,11 +49,14 @@ for (a in alphas) {
   results[[as.character(a)]] <- M
 }
 
+# Shared y-axis across all panels so the drop in CV with higher overdispersion
+# is directly comparable.
+ylim_all <- c(0, 1.02 * max(vapply(results, max, numeric(1))))
 render <- function(dev_open) {
   dev_open()
   par(mfrow = c(2, 3), mar = c(4, 4, 2.5, 1))
   for (a in alphas)
-    boxplot(results[[as.character(a)]], names = cfs,
+    boxplot(results[[as.character(a)]], names = cfs, ylim = ylim_all,
             main = paste("overdispersion", a),
             xlab = "correction factor", ylab = "CV", outline = FALSE)
   dev.off()
