@@ -204,6 +204,7 @@ def plot_mono(matrix, raw, ax):
     return (ax, xmean)
 
 def read_data(base_data_fn):
+    from norm_sparse import norm_clr
     data = {}
 
     for title in mtx_labels:
@@ -216,12 +217,20 @@ def read_data(base_data_fn):
         in_fn = os.path.join(base_data_fn, f"{title}.csv.gz")
         if os.path.exists(in_fn):
             data[txlabel[title]] = pd.read_csv(in_fn, header=None, compression="gzip").values
+
+    # PFlogPF (shift. CLR) = additive centered log-ratio, computed on the fly from
+    # raw (norm_clr: PF to mean depth -> log1p -> per-cell centering). Computed here
+    # rather than read from pf_log_pf.mtx.gz, which is the multiplicative outer-PF
+    # approximation (not centered, not the CLR proven in the supplementary note).
+    data["PFlogPF (shift. CLR)"] = norm_clr(mmread(os.path.join(base_data_fn, "raw.mtx.gz")).tocsr())
     return data
 
-mtx_labels = ['raw', 'pf', 'log', 'pf_log', 'pf_log_pf', 'cpm_log', 'cp10k_log', "sqrt"]
+# 'pf_log_pf' intentionally NOT in mtx_labels: PFlogPF is computed on the fly as
+# the additive CLR (see read_data), not read from the multiplicative pf_log_pf.mtx.gz.
+mtx_labels = ['raw', 'pf', 'log', 'pf_log', 'cpm_log', 'cp10k_log', "sqrt"]
 
-# pf_log_pf is displayed as "PFlogPF (shift. CLR)" — equivalent to Aitchison's
-# centered log-ratio transform via the supplementary note's proof.
+# "PFlogPF (shift. CLR)" = Aitchison centered log-ratio (additive), computed in
+# read_data via norm_clr.
 labels = [
     'raw',
      'PF',

@@ -42,11 +42,11 @@ METHODS = [
     ("scalelog1pCP10k",      "cp10k_log_scale.csv.gz", True),
     ("sctransform",          "sctransform.csv.gz",    True),
     ("log1pPF",              "pf_log.mtx.gz",         False),
-    # PFlogPF (shift. CLR) is the additive centered-log-ratio (clr.csv.gz from
-    # norm_clr.py), matching the Supplementary Note. NOT pf_log_pf.mtx.gz, which
-    # is a multiplicative outer-PF approximation that is not centered (and not
-    # scale-invariant).
-    ("PFlogPF (shift. CLR)", "clr.csv.gz",            True),
+    # PFlogPF (shift. CLR) is the additive centered-log-ratio, computed on the fly
+    # from raw via norm_clr (PF to mean depth -> log1p -> per-cell centering); the
+    # "__CLR__" sentinel triggers that instead of reading a file. NOT the
+    # multiplicative pf_log_pf.mtx.gz approximation.
+    ("PFlogPF (shift. CLR)", "__CLR__",               True),
 ]
 
 
@@ -179,12 +179,17 @@ def main():
     }
 
     for label, fname, dense in METHODS:
-        path = os.path.join(args.dataset_dir, "subset_genes", fname)
-        if not os.path.exists(path):
-            print(f"  {label}: skip (missing {fname})", file=sys.stderr)
-            continue
-        print(f"  {label}: load+compute...", file=sys.stderr)
-        X = load_matrix(path, dense=dense)
+        if fname == "__CLR__":
+            print(f"  {label}: compute additive CLR (norm_clr, sf=mean)...", file=sys.stderr)
+            from norm_sparse import norm_clr
+            X = np.asarray(norm_clr(sparse.csr_matrix(raw_full)), dtype=np.float32)
+        else:
+            path = os.path.join(args.dataset_dir, "subset_genes", fname)
+            if not os.path.exists(path):
+                print(f"  {label}: skip (missing {fname})", file=sys.stderr)
+                continue
+            print(f"  {label}: load+compute...", file=sys.stderr)
+            X = load_matrix(path, dense=dense)
         X_sub = X[idx]
         del X  # free full matrix
         pc1 = pc1_entropy_frac(X_sub)

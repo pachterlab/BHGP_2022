@@ -40,9 +40,10 @@ from scipy.io import mmread
 PANELS = [
     ("raw",         "raw.mtx.gz",         False),
     ("log1pPF",     "pf_log.mtx.gz",      False),
-    # PFlog1pPF = additive centered-log-ratio (clr.csv.gz from norm_clr.py),
-    # matching the Supplementary Note (not the multiplicative pf_log_pf.mtx.gz).
-    ("PFlog1pPF",   "clr.csv.gz",         True),
+    # PFlog1pPF = additive centered-log-ratio computed on the fly from raw via
+    # norm_clr (PF to mean depth -> log1p -> per-cell centering); "__CLR__"
+    # sentinel triggers that. NOT the multiplicative pf_log_pf.mtx.gz.
+    ("PFlog1pPF",   "__CLR__",            True),
     ("sctransform", "sctransform.csv.gz", True),
 ]
 REF = "raw"   # method whose per-celltype top-N order is used for every panel
@@ -81,12 +82,18 @@ def main(dataset_dir, out_prefix, n_top=100):
     sct_override = os.environ.get("SCT_OVERRIDE")
     gb = {}
     for label, fname, dense in PANELS:
-        if label == "sctransform" and sct_override:
-            path = sct_override
+        if fname == "__CLR__":
+            from norm_sparse import norm_clr
+            raw = mmread(os.path.join(dataset_dir, "subset_genes", "raw.mtx.gz")).tocsr()
+            print(f"computing {label} (additive CLR, sf=mean) on the fly...", file=sys.stderr)
+            X = np.asarray(norm_clr(raw), dtype=np.float32)[keep]
         else:
-            path = os.path.join(dataset_dir, "subset_genes", fname)
-        print(f"loading {label} from {path}...", file=sys.stderr)
-        X = load_matrix(path, dense)[keep]
+            if label == "sctransform" and sct_override:
+                path = sct_override
+            else:
+                path = os.path.join(dataset_dir, "subset_genes", fname)
+            print(f"loading {label} from {path}...", file=sys.stderr)
+            X = load_matrix(path, dense)[keep]
         gb[label] = celltype_means(X, celltypes_sorted, assignments)
         del X
 
