@@ -43,18 +43,24 @@ def norm_sqrt(mtx):
     sqrt = np.sqrt(mtx)
     return sqrt
 
-def norm_clr(mtx, c=1.0):
-    """Shifted CLR: T(x)_i = log(x_i/s + c) - mean_j(log(x_j/s + c)).
+def norm_clr(mtx, c=1.0, sf=None):
+    """PFlogPF (shifted CLR): first PF to depth `sf`, then log(.+c), then additive
+    per-cell centering (the CLR step).
 
-    Output is dense — per-cell mean centering destroys sparsity. With c=1, this
-    is mathematically equivalent to PFlog1pPF where the second PF is additive
-    cell-centering (see docs/current_paper/supplementary-note/supplementary-note.tex
-    for the proof). Inherits Aitchison's scale invariance for free; per-cell sums
-    of the output are exactly 0 for any c > 0.
+    Default sf=None -> mean cell depth, i.e. PF -> log1p -> center. This keeps the
+    log compression (variance stabilization) AND the centering (depth removal +
+    within-cell rank preservation); output is dense (centering fills zeros) with
+    per-cell sums exactly 0. It is a shifted CLR on the composition with effective
+    shift c/mean_depth -- a small, variance-stabilization-motivated shift (cf. the
+    Supplementary Note's shift-selection criterion).
+
+    sf=1.0 (each cell sums to 1) gives an *exactly* scale-invariant CLR, but with
+    c=1 the pseudocount dwarfs the composition (u_i ~ 1e-3 so log(u+1)~u), giving
+    no variance stabilization; sf=mean restores it at the cost of only approximate
+    global-scale invariance (depth removal via centering is still exact).
     """
-    # u = x / s (each row sums to 1.0). Use sf=1.0 explicitly; do_pf's truthy
-    # check (`if not sf`) treats 1.0 as truthy so this branch is preserved.
-    u = do_pf(mtx, sf=1.0)
+    # sf=None -> do_pf uses the mean cell depth.
+    u = do_pf(mtx, sf=sf)
     D = mtx.shape[1]
     log_c = np.log(c)
 
