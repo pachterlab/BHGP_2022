@@ -42,7 +42,11 @@ METHODS = [
     ("scalelog1pCP10k",      "cp10k_log_scale.csv.gz", True),
     ("sctransform",          "sctransform.csv.gz",    True),
     ("log1pPF",              "pf_log.mtx.gz",         False),
-    ("PFlogPF (shift. CLR)", "pf_log_pf.mtx.gz",      False),
+    # PFlogPF (shift. CLR) is the additive centered-log-ratio (clr.csv.gz from
+    # norm_clr.py), matching the Supplementary Note. NOT pf_log_pf.mtx.gz, which
+    # is a multiplicative outer-PF approximation that is not centered (and not
+    # scale-invariant).
+    ("PFlogPF (shift. CLR)", "clr.csv.gz",            True),
 ]
 
 

@@ -40,7 +40,9 @@ from scipy.io import mmread
 PANELS = [
     ("raw",         "raw.mtx.gz",         False),
     ("log1pPF",     "pf_log.mtx.gz",      False),
-    ("PFlog1pPF",   "pf_log_pf.mtx.gz",   False),
+    # PFlog1pPF = additive centered-log-ratio (clr.csv.gz from norm_clr.py),
+    # matching the Supplementary Note (not the multiplicative pf_log_pf.mtx.gz).
+    ("PFlog1pPF",   "clr.csv.gz",         True),
     ("sctransform", "sctransform.csv.gz", True),
 ]
 REF = "raw"   # method whose per-celltype top-N order is used for every panel
@@ -51,8 +53,8 @@ def load_matrix(path, dense):
         n_cells, n_genes = map(int, open(path + ".shape").read().strip().split(","))
         return np.fromfile(path, dtype=np.float32).reshape(n_cells, n_genes)
     if dense:
-        with gzip.open(path, "rt") as f:
-            return np.loadtxt(f, delimiter=",", dtype=np.float32)
+        # pandas C parser is ~10x faster than np.loadtxt for these large csvs.
+        return pd.read_csv(path, header=None, dtype=np.float32).values
     m = mmread(path)
     return np.asarray(m.todense(), dtype=np.float32)
 

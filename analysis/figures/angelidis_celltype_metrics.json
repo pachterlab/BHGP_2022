@@ -50,10 +50,11 @@
       "mean_abs_spearman": 0.9136838136818328
     },
     "PFlogPF (shift. CLR)": {
-      "pc1_entropy_frac": 0.840390958539271,
-      "fp_de_genes": 120,
-      "mean_abs_spearman": 0.9136838136818328
+      "pc1_entropy_frac": 0.5747385040628191,
+      "fp_de_genes": 104,
+      "mean_abs_spearman": 0.9136838163400344
     }
   },
-  "sctransform_impl": "R sctransform v2 (glmGamPoi); other methods unchanged"
+  "sctransform_impl": "R sctransform v2 (glmGamPoi); other methods unchanged",
+  "pflogpf_impl": "additive CLR (norm_clr / clr.csv.gz)"
 }
