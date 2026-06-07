@@ -51,7 +51,7 @@ transform_fns <- list(
   `raw counts`    = function(M) M,
   `Seurat "CLR"`  = function(M) as.matrix(NormalizeData(M, normalization.method = "CLR",
                                                         margin = 2, verbose = FALSE)),
-  `log(y/s+1)`    = function(M) log1p(sweep(M, 2, size_factors(M), "/")),
+  `log1pPF`       = function(M) log1p(sweep(M, 2, size_factors(M), "/")),
   `PFlogPF (shift. CLR)` = function(M) { l <- log1p(sweep(M, 2, size_factors(M), "/"))
                                   sweep(l, 2, colMeans(l), "-") }
 )
@@ -117,7 +117,7 @@ print(aggregate(pc1_depth_R2 ~ method, r2_df, mean), row.names = FALSE)
 # Our method PFlogPF (shift. CLR) is highlighted in red (#E41A1C), matching the
 # manuscript main_benchmark_fig.pdf. (see notebooks/annotation_helper.R)
 fills <- c("raw counts" = "#7d7d7d", `Seurat "CLR"` = "#000000",
-           "log(y/s+1)" = "#66C2A5", "PFlogPF (shift. CLR)" = "#E41A1C")
+           "log1pPF" = "#66C2A5", "PFlogPF (shift. CLR)" = "#E41A1C")
 
 p <- ggplot(df, aes(method, score, fill = method)) +
   geom_hline(yintercept = 0.5, linetype = 2, color = "grey40") +
