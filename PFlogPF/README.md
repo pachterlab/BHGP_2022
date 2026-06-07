@@ -11,5 +11,6 @@ This directory contains the code and manuscript figure outputs for the Ahlmann-E
 - `notebooks/fig2_with_clr/` contains the compact figure-specific reproduction scripts.
 - `notebooks/fig3_panel_sensitivity/` contains the Figure 3 Smart-seq3 feature-panel sensitivity source data and scatter-panel plotting script.
 - `notebooks/supplementary_figure_4/` contains the Supplementary Figure 4 Seurat CLR depth-flaw plotting script and source summaries.
+- `notebooks/supplementary_figure_6/` contains the Supplementary Note Figure 6 siRNA PCA-dimensionality plotting script and source summary.
 - `output/smartseq3_fibroblasts_paired_procrustes_displacement_projection.pdf` and `output/smartseq3_fibroblasts_paired_distance_scatter.pdf` are the Figure 3 panels used in the manuscript.
 - `extras/clr_vs_logpf_pca.py` is a standalone PBMC3k CLR-vs-logPF PCA sanity-check script.

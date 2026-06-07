@@ -20,8 +20,8 @@ trans_families <- list(delta_method = c("logp1", "acosh", "logp_alpha", "logp_cp
 #                            "pearson_clip_zscore"= "Pearson"%->%"Z",
 #                            "sanity_map"="Sanity"~"MAP", "sanity_dists" = "Sanity"~"Distance", "dino" = "Dino", "normalisr_norm" = "Normalisr")
 trans_labels <- c("acosh" = r"($\textrm{acosh}(2\alpha y/s+1)$)", "logp_alpha" = r"($\log(y/s+1/(4\alpha))$)", "logp_cpm" = r"($\log(\textrm{CPM}+1)$)",
-                  "logp1" = r"($\log(y/s+1)$)", "logp1_hvg" = r"($\log(y/s+1)\rightarrow$HVG)", "logp1_hvg_zscore" = r"($\log(y/s+1)\rightarrow$HVG$\rightarrow$Z)", 
-                  "logp1_zscore" = r"($\log(y/s+1)\rightarrow$Z)", "logp1_size_normed" = r"($\log(y/s+1)/u$)",
+                  "logp1" = "log1pPF", "logp1_hvg" = r"(log1pPF$\rightarrow$HVG)", "logp1_hvg_zscore" = r"(log1pPF$\rightarrow$HVG$\rightarrow$Z)", 
+                  "logp1_zscore" = r"(log1pPF$\rightarrow$Z)", "logp1_size_normed" = r"(log1pPF$/u$)",
                   "pearson" = "Pearson (no clip)", "pearson_analytic" = "Analytic Pearson", "pearson_clip" = "Pearson",
                   "rand_quantile" = "Random Quantile", "sctransform" = "sctransform",
                   "pearson_clip_hvg" = r"(Pearson$\rightarrow$HVG)", "pearson_clip_hvg_zscore" = r"(Pearson$\rightarrow$HVG$\rightarrow$Z)", 
@@ -34,8 +34,8 @@ trans_labels <- c("acosh" = r"($\textrm{acosh}(2\alpha y/s+1)$)", "logp_alpha" =
                   "clr_alpha" = r"(CLR$_\alpha$)")
 
 trans_labels_plain <- c("acosh" = "acosh(2αy/s+1)", "logp_alpha" = "log(y/s+1/(4α))", "logp_cpm" = "log(CPM + 1)",
-                  "logp1" = "log(y/s+1)", "logp1_hvg" = "log(y/s+1)->HVG", "logp1_hvg_zscore" = "log(y/s+1)->HVG->Z", 
-                  "logp1_zscore" = "log(y/s+1)->Z", "logp1_size_normed" = "log(y/s+1)/u",
+                  "logp1" = "log1pPF", "logp1_hvg" = "log1pPF->HVG", "logp1_hvg_zscore" = "log1pPF->HVG->Z", 
+                  "logp1_zscore" = "log1pPF->Z", "logp1_size_normed" = "log1pPF/u",
                   "pearson" = "Pearson (no clip)", "pearson_analytic" = "Analytic Pearson", "pearson_clip" = "Pearson",
                   "rand_quantile" = "Random Quantile", "sctransform" = "sctransform",
                   "pearson_clip_hvg" = r"(Pearson->HVG)", "pearson_clip_hvg_zscore" = r"(Pearson->HVG->Z)", 
