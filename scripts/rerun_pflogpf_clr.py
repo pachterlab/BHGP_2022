@@ -16,6 +16,7 @@ from scipy.io import mmread
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import norm_sparse as NS          # norm_clr (additive shifted CLR)
 import compare_sct_impl as C      # cov_gene / r2_depth / r_mono (same defs as metrics_methods)
+from metrics_matrix import compute_overdispersion   # dataset overdispersion alpha
 
 LABEL = "PFlogPF (shift. CLR)"
 
@@ -30,18 +31,25 @@ def process(args):
     raw_fn, jpath = os.path.join(d, "raw.mtx.gz"), find_json(d)
     try:
         raw = mmread(raw_fn).tocsr().astype(np.float64)
-        X = np.asarray(NS.norm_clr(raw, c=1.0))          # additive shifted CLR (dense)
+        # Delta-method first-PF constant K = 4*alpha*s, with the dataset (pooled)
+        # overdispersion alpha and scale s = mean total UMI per cell. This is the
+        # variance-stabilizing pseudocount y0 = 1/(4*alpha); it lowers cov_gene
+        # while leaving r2_depth (~0) and r_mono (=1) unchanged (both K-invariant).
+        alpha = float(compute_overdispersion(raw))
+        scale = float(np.asarray(raw.sum(1)).ravel().mean())
+        X = np.asarray(NS.norm_clr(raw, alpha=alpha, scale=scale))   # additive shifted CLR (dense)
         raw32 = raw.astype(np.float32)
         entry = {"cov_gene": C.cov_gene(X), "cov_cell": None,
-                 "r2_depth": C.r2_depth(X, raw32), "r_mono": C.r_mono(X, raw32)}
+                 "r2_depth": C.r2_depth(X, raw32), "r_mono": C.r_mono(X, raw32),
+                 "clr_alpha": alpha, "clr_scale": scale, "clr_K": 4.0 * alpha * scale}
         dd = json.load(open(jpath))
         if isinstance(dd.get(LABEL), dict):
             dd[LABEL].update(entry)
         else:
             dd[LABEL] = entry
-        dd["pflogpf_impl"] = "additive CLR (norm_clr)"
+        dd["pflogpf_impl"] = "additive CLR (norm_clr), delta-method K=4*alpha*s"
         json.dump(dd, open(jpath, "w"))
-        return (ds, "OK", f"cov={entry['cov_gene']:.2f} r2d={entry['r2_depth']:.3f} rmono={entry['r_mono']:.3f}")
+        return (ds, "OK", f"cov={entry['cov_gene']:.2f} r2d={entry['r2_depth']:.3f} rmono={entry['r_mono']:.3f} K={entry['clr_K']:.0f}")
     except Exception as e:
         return (ds, "FAIL", repr(e)[:200])
 
