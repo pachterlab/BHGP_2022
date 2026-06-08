@@ -1,0 +1,10 @@
+# Generated supplement + LaTeX build artifacts (regenerate with build_supplement.py)
+supplementary_per_dataset_methods.tex
+supplementary_per_dataset_methods.pdf
+*.aux
+*.log
+*.out
+*.toc
+.compile_done
+pass1.log
+pass2.log
