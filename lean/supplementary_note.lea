@@ -1,0 +1,86 @@
+{
+  "schema": "span/1",
+  "generated_by": "span-curated",
+  "summary": {
+    "paper_objects": 3,
+    "lean_nodes": 3,
+    "entries": 3,
+    "coherent": 3,
+    "paper_half": 0,
+    "lean_half": 0,
+    "incoherent": 0,
+    "fully_formalized_matches": 3
+  },
+  "kind_compat": "result kinds theorem/lemma/proposition/corollary/claim are mutually compatible; conjecture may map to a proved result; definition-like kinds include definition/notation/convention; premise kinds include assumption/axiom; constant~definition; remark~{remark,definition,convention,notation}; example may map to an example, definition, or result. Mismatch iff a ref id is missing or no ref is kind-compatible.",
+  "entries": [
+    {
+      "id": "align:clr-uniqueness",
+      "kind": "theorem",
+      "title": "Uniqueness of CLR",
+      "paper_ids": [
+        "thm:clr-uniqueness"
+      ],
+      "lean_ids": [
+        "Invariance.clr_uniqueness_theorem"
+      ],
+      "lean_decls": [
+        "Invariance.clr_uniqueness_theorem"
+      ],
+      "paper_location": {
+        "section": "The CLR transform",
+        "line": 112,
+        "env": "theorem"
+      },
+      "status": "proved",
+      "fully_formalized": true,
+      "span_status": "coherent"
+    },
+    {
+      "id": "align:axiom-necessity",
+      "kind": "proposition",
+      "title": "Necessity of the axioms",
+      "paper_ids": [
+        "prop:axiom-necessity"
+      ],
+      "lean_ids": [
+        "Invariance.axiom_necessity_tether"
+      ],
+      "lean_decls": [
+        "Invariance.axiom_necessity_tether"
+      ],
+      "paper_location": {
+        "section": "The CLR transform",
+        "line": 202,
+        "env": "proposition"
+      },
+      "status": "proved",
+      "fully_formalized": true,
+      "span_status": "coherent",
+      "note": "Packages five dimension-3 independence witnesses; the rank-monotonicity witness constructs a non-order-preserving additive real map from a Q-basis extension of {1, sqrt 2}."
+    },
+    {
+      "id": "align:shifted-pflogpf-scale",
+      "kind": "proposition",
+      "title": "Shifted PFlogPF and variance-stabilizing scale",
+      "paper_ids": [
+        "prop:shifted-pflogpf-scale"
+      ],
+      "lean_ids": [
+        "Invariance.shifted_pflogpf_variance_scale"
+      ],
+      "lean_decls": [
+        "Invariance.shifted_pflogpf_variance_scale"
+      ],
+      "paper_location": {
+        "section": "The CLR transform",
+        "line": 290,
+        "env": "proposition"
+      },
+      "status": "proved",
+      "fully_formalized": true,
+      "span_status": "coherent"
+    }
+  ],
+  "paper": "manuscript/supplementary_note.tex",
+  "lean": "manuscript/lean"
+}
