@@ -5,56 +5,57 @@
   "n_genes": 16541,
   "methods": {
     "raw": {
-      "pc1_entropy_frac": 0.6153158666158922,
-      "fp_de_genes": 2385,
+      "pc1_entropy_frac": 0.6153157193469235,
+      "fp_de_genes": 366,
       "mean_abs_spearman": 0.9136838136818328
     },
     "PF": {
-      "pc1_entropy_frac": 0.5525241092077029,
-      "fp_de_genes": 103,
+      "pc1_entropy_frac": 0.5525240110283904,
+      "fp_de_genes": 0,
       "mean_abs_spearman": 0.9136838136818328
     },
     "sqrt": {
       "pc1_entropy_frac": 0.8607297848996247,
-      "fp_de_genes": 2398,
+      "fp_de_genes": 351,
       "mean_abs_spearman": 0.9136838136818328
     },
     "log1p": {
-      "pc1_entropy_frac": 0.8676286488245587,
-      "fp_de_genes": 2398,
+      "pc1_entropy_frac": 0.8676287470038712,
+      "fp_de_genes": 358,
       "mean_abs_spearman": 0.9136838136818328
     },
     "log1pCP10k": {
       "pc1_entropy_frac": 0.8836870535221459,
-      "fp_de_genes": 1516,
+      "fp_de_genes": 31,
       "mean_abs_spearman": 0.9136838136818328
     },
     "log1pCPM": {
       "pc1_entropy_frac": 0.8939852779602141,
-      "fp_de_genes": 2214,
+      "fp_de_genes": 133,
       "mean_abs_spearman": 0.9136838136818328
     },
     "scalelog1pCP10k": {
-      "pc1_entropy_frac": 0.9439213380211788,
-      "fp_de_genes": 1516,
-      "mean_abs_spearman": 0.8099113211349012
+      "pc1_entropy_frac": 0.9439212398418664,
+      "fp_de_genes": 31,
+      "mean_abs_spearman": 0.8099113211349013
     },
     "sctransform": {
-      "pc1_entropy_frac": 0.9119904802437226,
-      "fp_de_genes": 337,
-      "mean_abs_spearman": 0.8130568163096547
+      "pc1_entropy_frac": 0.9126902042033203,
+      "fp_de_genes": 4,
+      "mean_abs_spearman": 0.813231752409753
     },
     "log1pPF": {
-      "pc1_entropy_frac": 0.8478930361596965,
-      "fp_de_genes": 303,
+      "pc1_entropy_frac": 0.8478929379803841,
+      "fp_de_genes": 4,
       "mean_abs_spearman": 0.9136838136818328
     },
     "PFlogPF (shift. CLR)": {
-      "pc1_entropy_frac": 0.8541279133947528,
-      "fp_de_genes": 242,
-      "mean_abs_spearman": 0.913683816351027
+      "pc1_entropy_frac": 0.9063150287308197,
+      "fp_de_genes": 6,
+      "mean_abs_spearman": 0.9136838163806312
     }
   },
-  "sctransform_impl": "R sctransform v2 (glmGamPoi); other methods unchanged",
-  "pflogpf_impl": "additive CLR, first PF to mean depth (norm_clr sf=mean)"
+  "clr_alpha": 0.6213054533995451,
+  "clr_scale": 885.408935546875,
+  "clr_K": 2200.437600575839
 }

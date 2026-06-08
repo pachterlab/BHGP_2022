@@ -4,9 +4,10 @@ specified cell type within a dataset.
 
 Metrics (per method):
   (a) pc1_entropy_frac : entropy of |l1-normalized PC1 loadings| / log(n_genes)
-  (b) fp_de_genes      : # false-positive DE genes between top-500 and bottom-500
-                         cells by raw depth (Welch t-test on per-gene values,
-                         BH-corrected p<0.01)
+  (b) fp_de_genes      : # false-positive DE genes between the top-500 and the
+                         next-500 cells by raw depth (two adjacent well-sampled
+                         depth strata; Welch t-test, Bonferroni p<0.01, genes
+                         filtered to those detected in both strata)
   (c) mean_abs_spearman: mean of |pairwise Spearman r| between cells (with
                          tie-breaking jitter; sub-sampled to N cells for speed)
 
@@ -75,27 +76,52 @@ def pc1_entropy_frac(X):
     return float(ent / max_ent) if max_ent > 0 else float("nan")
 
 
-def fp_de_genes(X_full, X, raw_depth, n_top=500, alpha=0.01, nan_cutoff=0.1):
-    """# DE genes with Bonferroni-corrected p < alpha between top-n_top and
-    bottom-n_top cells by raw depth. Matches Booeshaghi et al. 2021 dexpress:
-    Welch t-test, gene filter requires >nan_cutoff*ncells nonzero entries in
-    the target group, p_raw halved (one-sided convention), Bonferroni-corrected.
+def fp_de_genes(X_full, X, raw_depth, n_top=500, alpha=0.01, nan_cutoff=0.25,
+                test="ttest"):
+    """# DE genes with Bonferroni-corrected p < alpha between the top-n_top cells
+    by raw depth and the NEXT-n_top cells just beneath them. Welch t-test by
+    default (p_raw halved, one-sided convention, Bonferroni-corrected).
 
-    X_full is the *raw* counts matrix (used for the >nan_cutoff expression
-    filter so the gene-passing set is consistent across methods); X is the
-    method's normalized matrix (used for the actual t-test)."""
+    This panel's goal is to show that per-cell depth inflation -- deeper cells
+    having larger per-gene values -> spurious DE -- is removed by normalization.
+    The t-test compares MEANS, so it measures exactly that: depth-removing
+    methods (PF, log1pPF, PFlogPF) give ~0 false DE while non-removers (raw,
+    log1p) stay high.
+
+    test="mannwhitney" runs a rank-sum test instead. NOTE: a rank test on the
+    *centered* PFlogPF values surfaces a different effect -- CLR centering
+    subtracts each cell's log-geometric-mean, which is depth-correlated (~0.7),
+    injecting a small shared per-cell offset into every gene that the rank test
+    flags. That is not the mean-inflation confound this panel targets, and
+    standard rank-DE (e.g. Seurat FindMarkers) runs on the *uncentered*
+    log-normalized values (log1pPF-equivalent), which is clean. Hence t-test default.
+
+    Comparing the two highest-depth strata (top-500 vs next-500), rather than
+    densest-vs-sparsest, is the defensible depth-leakage probe: both groups are
+    well sampled, so neither arm is dominated by dropout.
+
+    Gene filter (on raw counts, so the gene-passing set is identical across
+    methods): keep genes detected in > nan_cutoff fraction of cells in BOTH
+    groups, so the test only sees genes with genuine counts in each subpopulation.
+
+    X_full is the *raw* counts matrix (used for the filter); X is the method's
+    normalized matrix (used for the actual test)."""
     order = np.argsort(raw_depth)
     n_top = min(n_top, len(order) // 2)
-    bot = order[:n_top]
-    top = order[-n_top:]
-    # Gene filter on raw counts: keep genes expressed in > nan_cutoff fraction
-    # of the target (top) group.
-    raw_top = X_full[top]
-    keep = ((raw_top > 0).sum(axis=0) > nan_cutoff * raw_top.shape[0])
+    top = order[-n_top:]            # highest-depth n_top cells
+    bot = order[-2 * n_top:-n_top]  # next n_top cells just beneath the top
+    # Keep genes detected in > nan_cutoff fraction of BOTH depth strata.
+    raw_top, raw_bot = X_full[top], X_full[bot]
+    keep_top = (raw_top > 0).sum(axis=0) > nan_cutoff * raw_top.shape[0]
+    keep_bot = (raw_bot > 0).sum(axis=0) > nan_cutoff * raw_bot.shape[0]
+    keep = keep_top & keep_bot
     if keep.sum() == 0:
         return 0
     Xt, Xb = X[top][:, keep], X[bot][:, keep]
-    res = stats.ttest_ind(Xt, Xb, axis=0, equal_var=False, nan_policy="propagate")
+    if test == "mannwhitney":
+        res = stats.mannwhitneyu(Xt, Xb, axis=0, alternative="two-sided")
+    else:
+        res = stats.ttest_ind(Xt, Xb, axis=0, equal_var=False, nan_policy="propagate")
     p = np.asarray(res.pvalue, dtype=float)
     p = np.where(np.isnan(p), 1.0, p) / 2.0   # one-sided convention
     # Bonferroni
@@ -146,6 +172,19 @@ def main():
     ap.add_argument("out_json")
     ap.add_argument("--n_sub", type=int, default=500,
                     help="cells to subsample for pairwise Spearman (default 500)")
+    ap.add_argument("--clr_alpha", type=float, default=None,
+                    help="overdispersion alpha; sets the PFlogPF first-PF constant "
+                         "K = 4*alpha*scale (delta-method pseudocount). If omitted "
+                         "(and --clr_calibrate off), PFlogPF uses sf=mean depth.")
+    ap.add_argument("--clr_scale", type=float, default=None,
+                    help="scale factor s (mean total UMI per cell) used in "
+                         "K = 4*alpha*scale; defaults to the matrix mean cell depth.")
+    ap.add_argument("--clr_calibrate", action="store_true",
+                    help="calibrate the PFlogPF pseudocount to the delta-method "
+                         "K = 4*alpha*s with alpha and s estimated WITHIN this cell "
+                         "type (the right scale for a cell-type-specific metric; the "
+                         "whole-dataset alpha is inflated by between-celltype "
+                         "heterogeneity). Overridden by explicit --clr_alpha/--clr_scale.")
     args = ap.parse_args()
 
     # Load metadata, find cell-type indices in matrix-column order.
@@ -180,9 +219,28 @@ def main():
 
     for label, fname, dense in METHODS:
         if fname == "__CLR__":
-            print(f"  {label}: compute additive CLR (norm_clr, sf=mean)...", file=sys.stderr)
             from norm_sparse import norm_clr
-            X = np.asarray(norm_clr(sparse.csr_matrix(raw_full)), dtype=np.float32)
+            alpha, scale = args.clr_alpha, args.clr_scale
+            if args.clr_calibrate and alpha is None:
+                # delta-method calibration with WITHIN-celltype overdispersion (the
+                # whole-dataset alpha is inflated by between-celltype heterogeneity).
+                from metrics_matrix import compute_overdispersion
+                alpha = float(compute_overdispersion(sparse.csr_matrix(raw_sub)))
+                if scale is None:
+                    scale = float(raw_sub.sum(1).mean())
+            if alpha is not None:
+                if scale is None:
+                    scale = float(raw_full.sum(1).mean())
+                K = 4.0 * alpha * scale
+                results["clr_alpha"], results["clr_scale"], results["clr_K"] = alpha, scale, K
+                print(f"  {label}: additive CLR, delta-method K=4*alpha*s={K:.4g} "
+                      f"(alpha={alpha:.4g}, s={scale:.4g}, y0=1/(4a)={1/(4*alpha):.4g})...",
+                      file=sys.stderr)
+                X = np.asarray(norm_clr(sparse.csr_matrix(raw_full),
+                                        alpha=alpha, scale=scale), dtype=np.float32)
+            else:
+                print(f"  {label}: compute additive CLR (norm_clr, sf=mean)...", file=sys.stderr)
+                X = np.asarray(norm_clr(sparse.csr_matrix(raw_full)), dtype=np.float32)
         else:
             path = os.path.join(args.dataset_dir, "subset_genes", fname)
             if not os.path.exists(path):

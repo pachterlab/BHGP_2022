@@ -43,7 +43,7 @@ def norm_sqrt(mtx):
     sqrt = np.sqrt(mtx)
     return sqrt
 
-def norm_clr(mtx, c=1.0, sf=None):
+def norm_clr(mtx, c=1.0, sf=None, alpha=None, scale=None):
     """PFlogPF (shifted CLR): first PF to depth `sf`, then log(.+c), then additive
     per-cell centering (the CLR step).
 
@@ -54,11 +54,24 @@ def norm_clr(mtx, c=1.0, sf=None):
     shift c/mean_depth -- a small, variance-stabilization-motivated shift (cf. the
     Supplementary Note's shift-selection criterion).
 
+    If `alpha` (the dataset overdispersion) is given, the first-PF target K is set
+    by the delta-method rule K = 4*alpha*scale, where `scale` is the dataset scale
+    factor (mean total UMI per cell; defaults to the mean cell depth of `mtx`).
+    This calibrates the count-scale pseudocount to y0 = 1/(4*alpha) -- the
+    variance-stabilizing pseudocount of the Supplementary Note -- and OVERRIDES sf.
+    Because K only rescales the argument of the log (a per-cell monotone map) and
+    the additive centering is unchanged, this moves only the variance-stabilization
+    behavior; depth removal and within-cell ranks are unaffected.
+
     sf=1.0 (each cell sums to 1) gives an *exactly* scale-invariant CLR, but with
     c=1 the pseudocount dwarfs the composition (u_i ~ 1e-3 so log(u+1)~u), giving
     no variance stabilization; sf=mean restores it at the cost of only approximate
     global-scale invariance (depth removal via centering is still exact).
     """
+    if alpha is not None:
+        if scale is None:
+            scale = np.asarray(mtx.sum(axis=1)).ravel().mean()
+        sf = 4.0 * alpha * scale       # K = 4*alpha*s  (delta-method PF constant)
     # sf=None -> do_pf uses the mean cell depth.
     u = do_pf(mtx, sf=sf)
     D = mtx.shape[1]
