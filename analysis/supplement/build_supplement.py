@@ -6,10 +6,13 @@ figure (Supplementary Figure 1.X): the dataset's all-genes JSON metrics as a tab
 the subset-genes method-comparison figure embedded via \\includegraphics, and a
 caption carrying the accession.
 
+Figures are embedded as 150-DPI PNGs (rasterized from the per-dataset PDFs) to
+keep the compiled supplement small enough to upload to bioRxiv.
+
 Inputs:
   - data/datasets.txt                              (dataset order)
   - analysis/supplement/metrics/<DS>_all_genes_metrics_flat.json   (dataset metrics)
-  - <DATA>/<DS>/subset_genes/<DS>_subset_genes_method_comparison.pdf  (figure)
+  - analysis/supplement/figs_png/<DS>_subset_genes_method_comparison.png  (figure)
 
 Usage: python build_supplement.py            (writes supplementary_per_dataset_methods.tex)
 """
@@ -94,7 +97,7 @@ def main(limit=None):
     blocks, missing_fig, missing_metrics = [], [], []
     idx = 0
     for ds in datasets:
-        pdf = os.path.join(DATA, ds, "subset_genes", f"{ds}_subset_genes_method_comparison.pdf")
+        pdf = os.path.join(HERE, "figs_png", f"{ds}_subset_genes_method_comparison.png")
         mfn = os.path.join(HERE, "metrics", f"{ds}_all_genes_metrics_flat.json")
         if not os.path.exists(pdf):
             missing_fig.append(ds); continue

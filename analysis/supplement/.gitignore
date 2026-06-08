@@ -1,6 +1,7 @@
 # Generated supplement + LaTeX build artifacts (regenerate with build_supplement.py)
 supplementary_per_dataset_methods.tex
 supplementary_per_dataset_methods.pdf
+figs_png/
 *.aux
 *.log
 *.out
