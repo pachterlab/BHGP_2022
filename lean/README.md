@@ -3,6 +3,10 @@
 This Lean project formalizes the CLR invariance characterization from the
 first section of the supplement.
 
+The file [`supplementary_note.lea`](supplementary_note.lea) is a
+[span](https://github.com/pachterlab/span) ledger tethering the LaTeX statements
+in the Supplementary Note to the corresponding Lean declarations.
+
 The main tether declarations are:
 
 ```lean
