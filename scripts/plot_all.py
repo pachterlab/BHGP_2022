@@ -205,6 +205,7 @@ def plot_mono(matrix, raw, ax):
 
 def read_data(base_data_fn):
     from norm_sparse import norm_clr
+    from metrics_matrix import compute_overdispersion
     data = {}
 
     for title in mtx_labels:
@@ -219,10 +220,14 @@ def read_data(base_data_fn):
             data[txlabel[title]] = pd.read_csv(in_fn, header=None, compression="gzip").values
 
     # PFlogPF (shift. CLR) = additive centered log-ratio, computed on the fly from
-    # raw (norm_clr: PF to mean depth -> log1p -> per-cell centering). Computed here
-    # rather than read from pf_log_pf.mtx.gz, which is the multiplicative outer-PF
-    # approximation (not centered, not the CLR proven in the supplementary note).
-    data["PFlogPF (shift. CLR)"] = norm_clr(mmread(os.path.join(base_data_fn, "raw.mtx.gz")).tocsr())
+    # raw. norm_clr uses the delta-method first-PF constant K = 4*alpha*s (dataset
+    # overdispersion alpha, scale s = mean total UMI per cell), i.e. the variance-
+    # stabilizing pseudocount y0 = 1/(4*alpha) -- matching Fig 1a/1b and the
+    # summary metrics. Read from raw, not the multiplicative pf_log_pf.mtx.gz.
+    raw = mmread(os.path.join(base_data_fn, "raw.mtx.gz")).tocsr()
+    alpha = float(compute_overdispersion(raw))
+    scale = float(np.asarray(raw.sum(1)).ravel().mean())
+    data["PFlogPF (shift. CLR)"] = norm_clr(raw, alpha=alpha, scale=scale)
     return data
 
 # 'pf_log_pf' intentionally NOT in mtx_labels: PFlogPF is computed on the fly as
