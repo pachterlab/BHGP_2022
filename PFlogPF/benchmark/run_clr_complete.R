@@ -27,9 +27,25 @@ RESULTS_DIR <- "output/benchmark_results"
 DATA_DIR    <- "output/clr_local/data"
 
 # ── Shared helpers ─────────────────────────────────────────────────────────────
-clr_transform <- function(UMI, sf) {
+# Method-of-moments overdispersion alpha: fit var_g = mu_g + alpha*mu_g^2 across
+# genes (rows). Closed-form least squares for alpha, matching the Python
+# compute_overdispersion / curve_fit definition used in Fig 1.
+estimate_alpha <- function(UMI) {
+  mu <- as.numeric(Matrix::rowMeans(UMI))
+  m2 <- as.numeric(Matrix::rowMeans(UMI * UMI))
+  v  <- m2 - mu^2
+  a  <- sum((v - mu) * mu^2) / sum(mu^4)
+  if (!is.finite(a) || a <= 0) 0.05 else a
+}
+
+# CLR with the delta-method pseudocount. alpha = NULL keeps the plain log1p shift
+# (used for the noiseless simulation ground truth, which has no overdispersion);
+# alpha given uses the variance-stabilizing pseudocount y0 = 1/(4*alpha), i.e.
+# PFlogPF with K = 4*alpha*s -- identical to the cluster clr_fnc and Fig 1a/1b.
+clr_transform <- function(UMI, sf, alpha = NULL) {
   if (inherits(UMI, "sparseMatrix")) UMI <- as.matrix(UMI)
-  logpf <- log1p(sweep(UMI, 2L, sf, "/"))
+  pc <- if (is.null(alpha)) 1 else 1 / (4 * alpha)
+  logpf <- log(sweep(UMI, 2L, sf, "/") + pc)
   sweep(logpf, 2L, colMeans(logpf), "-")
 }
 
@@ -52,7 +68,10 @@ size_factors <- function(UMI) { cs <- Matrix::colSums(UMI); cs / mean(cs) }
 
 filter_mat <- function(UMI) UMI[Matrix::rowSums(UMI) > 0, Matrix::colSums(UMI) > 0, drop = FALSE]
 
-clr_knn <- function(UMI, sf, pca_dim, knn) make_knn(run_pca(clr_transform(UMI, sf), pca_dim), knn)
+clr_knn <- function(UMI, sf, pca_dim, knn) {
+  alpha <- estimate_alpha(UMI)   # delta-method pseudocount from this dataset's overdispersion
+  make_knn(run_pca(clr_transform(UMI, sf, alpha), pca_dim), knn)
+}
 
 KNN_VALS <- c(10, 50, 100)
 PCA_VALS <- c(5, 10, 50)
@@ -110,7 +129,7 @@ run_consistency_one <- function(ds) {
           mean_overlap      = ov,
           transformation_id = paste0("clr_", ds, "_s", seed, "_p", pca_dim, "_k", knn),
           dataset           = ds, seed = seed, pca_dim = pca_dim, knn = knn,
-          transformation    = "clr", alpha = "FALSE",
+          transformation    = "clr", alpha = "TRUE",
           cputime_sec = elapsed, elapsed_sec = elapsed
         )
         message(sprintf("    %s seed=%d pca=%d knn=%d  overlap=%.3f", ds, seed, pca_dim, knn, ov))
@@ -265,7 +284,7 @@ run_sim_clr <- function(simulator, seed, sim_data) {
         ground_truth_id   = paste0("gt_", simulator, "_s", seed),
         transformation_id = paste0("clr_", simulator, "_s", seed, "_p", pca_dim, "_k", knn),
         simulator = simulator, seed = seed, pca_dim = pca_dim, knn = knn,
-        transformation = "clr", alpha = "FALSE",
+        transformation = "clr", alpha = "TRUE",
         cputime_sec = elapsed, elapsed_sec = elapsed
       )
       message(sprintf("    %s seed=%d pca=%d knn=%d  overlap=%.3f", simulator, seed, pca_dim, knn, ov))
