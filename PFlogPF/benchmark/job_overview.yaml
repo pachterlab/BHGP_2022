@@ -30,7 +30,7 @@ simulation:
       - {name: newwave, alpha: ["TRUE"]}
       - {name: raw_counts, alpha: ["FALSE"]}
       - {name: scaled_raw_counts, alpha: ["FALSE"]}
-      - {name: clr, alpha: ["FALSE"]}
+      - {name: clr, alpha: ["TRUE"]}
       
 simulation_for_stratification:
   input_data:
@@ -64,7 +64,7 @@ simulation_for_stratification:
       - {name: newwave, alpha: ["TRUE"]}
       - {name: raw_counts, alpha: ["FALSE"]}
       - {name: scaled_raw_counts, alpha: ["FALSE"]}
-      - {name: clr, alpha: ["FALSE"]}
+      - {name: clr, alpha: ["TRUE"]}
   
   
 consistency:
@@ -99,7 +99,7 @@ consistency:
       - {name: newwave, alpha: ["TRUE"]}
       - {name: raw_counts, alpha: ["FALSE"]}
       - {name: scaled_raw_counts, alpha: ["FALSE"]}
-      - {name: clr, alpha: ["FALSE"]}
+      - {name: clr, alpha: ["TRUE"]}
   
 consistency_for_stratification:
   input_data:
@@ -133,7 +133,7 @@ consistency_for_stratification:
       - {name: newwave, alpha: ["TRUE"]}
       - {name: raw_counts, alpha: ["FALSE"]}
       - {name: scaled_raw_counts, alpha: ["FALSE"]}
-      - {name: clr, alpha: ["FALSE"]}
+      - {name: clr, alpha: ["TRUE"]}
   
   
 downsampling:
@@ -164,7 +164,7 @@ downsampling:
       - {name: newwave, alpha: ["TRUE"]}
       - {name: raw_counts, alpha: ["FALSE"]}
       - {name: scaled_raw_counts, alpha: ["FALSE"]}
-      - {name: clr, alpha: ["FALSE"]}
+      - {name: clr, alpha: ["TRUE"]}
 
 downsampling_for_stratification:
   input_data:
@@ -198,7 +198,7 @@ downsampling_for_stratification:
       - {name: newwave, alpha: ["TRUE"]}
       - {name: raw_counts, alpha: ["FALSE"]}
       - {name: scaled_raw_counts, alpha: ["FALSE"]}
-      - {name: clr, alpha: ["FALSE"]}
+      - {name: clr, alpha: ["TRUE"]}
 
 sirna_quantitative_recovery:
   input_data:
@@ -233,7 +233,7 @@ sirna_quantitative_recovery:
       - {name: raw_counts, alpha: ["FALSE"]}
       - {name: scaled_raw_counts, alpha: ["FALSE"]}
       - {name: scgpt, alpha: ["FALSE"]}
-      - {name: clr, alpha: ["FALSE"]}
+      - {name: clr, alpha: ["TRUE"]}
   
       
 downsampling_best_of:
