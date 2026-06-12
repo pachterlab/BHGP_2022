@@ -84,9 +84,13 @@ def main(dataset_dir, out_prefix, n_top=100):
     for label, fname, dense in PANELS:
         if fname == "__CLR__":
             from norm_sparse import norm_clr
+            from metrics_matrix import compute_overdispersion
             raw = mmread(os.path.join(dataset_dir, "subset_genes", "raw.mtx.gz")).tocsr()
-            print(f"computing {label} (additive CLR, sf=mean) on the fly...", file=sys.stderr)
-            X = np.asarray(norm_clr(raw), dtype=np.float32)[keep]
+            alpha = float(compute_overdispersion(raw))
+            scale = float(np.asarray(raw.sum(1)).ravel().mean())
+            print(f"computing {label} (additive CLR, delta-method K=4*alpha*s, "
+                  f"alpha={alpha:.3g})...", file=sys.stderr)
+            X = np.asarray(norm_clr(raw, alpha=alpha, scale=scale), dtype=np.float32)[keep]
         else:
             if label == "sctransform" and sct_override:
                 path = sct_override
