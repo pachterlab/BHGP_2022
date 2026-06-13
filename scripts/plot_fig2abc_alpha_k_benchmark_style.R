@@ -288,8 +288,8 @@ consistency_pl <- res_main %>%
 simulation_pl <- res_main %>%
   filter(benchmark == "simulation") %>%
   make_main_plot_panel(add_group_label = FALSE) +
-  coord_cartesian(xlim = c(0.2, 5)) +
-  scale_x_continuous(breaks = c(0.5, 1, 2, 5)) +
+  coord_cartesian(xlim = c(0.2, 8)) +
+  scale_x_continuous(breaks = c(0.45, 1, 2, 5, 8), labels = c("0.5", "1", "2", "5", "8")) +
   labs(
     x = "Relative $k$-NN overlap",
     subtitle = "Ground truth versus simulated counts"
@@ -299,7 +299,7 @@ downsampling_pl <- res_main %>%
   filter(benchmark == "downsampling") %>%
   make_main_plot_panel(add_group_label = FALSE) +
   coord_cartesian(xlim = c(0.2, 10)) +
-  scale_x_continuous(breaks = c(0.5, 1, 2, 5, 10)) +
+  scale_x_continuous(breaks = c(0.45, 1, 2, 5, 10), labels = c("0.5", "1", "2", "5", "10")) +
   labs(
     x = "Relative $k$-NN overlap",
     subtitle = "Original versus downsampled deep-seq data"
