@@ -11,6 +11,7 @@ parameter choices and renders the paper-style figure.
 from __future__ import annotations
 
 import gzip
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -290,16 +291,17 @@ def run_simulation() -> pd.DataFrame:
     rows = []
     for simulator, pca_dim in params:
         for seed in range(1, 6):
-            counts_path, truth_path = generate_simulation_mtx(simulator, seed)
-            counts = filter_gene_cell(read_mtx(counts_path))
-            truth = read_mtx(truth_path)
-            n_genes = min(counts.shape[0], truth.shape[0])
-            n_cells = min(counts.shape[1], truth.shape[1])
-            counts = counts[:n_genes, :n_cells].tocsr()
-            truth = truth[:n_genes, :n_cells].tocsr()
+            counts_path, truth_knn_path = generate_simulation_mtx(simulator, seed)
+            counts_raw = read_mtx(counts_path).tocsr()
+            gene_keep = np.asarray(counts_raw.sum(axis=1)).ravel() > 0
+            cell_keep = np.asarray(counts_raw.sum(axis=0)).ravel() > 0
+            counts = counts_raw[gene_keep][:, cell_keep].tocsr()
             emb, alpha, k_auto = scclr_pca_cells_genes(counts.T.tocsr(), pca_dim, seed)
-            truth_emb = dense_pca_scores(truth, pca_dim)
-            ov = mean_overlap(knn(emb, 50), knn(truth_emb, 50))
+            # The original benchmark constructs the ground-truth kNN directly in
+            # simulator truth space with BiocNeighbors::findAnnoy(..., k=50).
+            truth_knn = np.loadtxt(truth_knn_path, delimiter="\t", dtype=np.int64) - 1
+            truth_knn = np.atleast_2d(truth_knn)[cell_keep]
+            ov = mean_overlap(knn(emb, 50), truth_knn)
             rows.append({
                 "ARI": np.nan,
                 "AMI": np.nan,
@@ -325,36 +327,89 @@ def run_simulation() -> pd.DataFrame:
 
 
 def generate_simulation_mtx(simulator: str, seed: int) -> tuple[Path, Path]:
-    """Generate benchmark-like simulation matrices when cached outputs are absent.
+    """Generate simulation matrices with all original benchmark simulator families.
 
-    The original simulator count matrices are not checked into the repository.
-    This fallback preserves the Figure 2 parameter grid and uses muscat for the
-    muscat rows, splatter-backed matrices for the remaining non-muscat rows, and
-    scclr only for the CLR transformation/PCA step.
+    The Baron-reference linear/random-walk simulators are capped locally at the
+    same 1000-gene/5000-cell scale used by muscat and dyngen; otherwise their
+    dense truth space makes local regeneration impractically slow.
     """
-    counts = CACHE / f"simulation_{simulator}_seed{seed}_counts.mtx"
-    truth = CACHE / f"simulation_{simulator}_seed{seed}_truth.mtx"
-    if counts.exists() and truth.exists():
-        return counts, truth
+    legacy_counts = CACHE / f"simulation_{simulator}_seed{seed}_counts.mtx"
+    legacy_truth = CACHE / f"simulation_{simulator}_seed{seed}_truth.mtx"
+    truth_knn = CACHE / f"simulation_{simulator}_seed{seed}_truth_knn.tsv"
+    if legacy_counts.exists() and legacy_truth.exists():
+        if not truth_knn.exists():
+            r_convert = f"""
+        suppressPackageStartupMessages({{
+          library(BiocNeighbors)
+          library(Matrix)
+        }})
+        truth <- Matrix::readMM("{legacy_truth}")
+        truth_knn <- BiocNeighbors::findKNN(
+          as.matrix(t(truth)),
+          k = 50L,
+          BNPARAM = BiocNeighbors::AnnoyParam(),
+          get.distance = FALSE
+        )$index
+        write.table(truth_knn, file = "{truth_knn}", sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+        """
+            r_convert_script = CACHE / f"convert_cached_{simulator}_seed{seed}_truth_knn.R"
+            r_convert_script.write_text(r_convert)
+            subprocess.run(["Rscript", "--vanilla", str(r_convert_script)], check=True)
+        return legacy_counts, truth_knn
 
+    counts = CACHE / f"simulation_allv2_{simulator}_seed{seed}_counts.mtx"
+    if counts.exists() and truth_knn.exists():
+        return counts, truth_knn
+
+    legacy_truth = CACHE / f"simulation_allv2_{simulator}_seed{seed}_truth.mtx"
+    if counts.exists() and legacy_truth.exists() and not truth_knn.exists():
+        r_convert = f"""
+        suppressPackageStartupMessages({{
+          library(BiocNeighbors)
+          library(Matrix)
+        }})
+        truth <- Matrix::readMM("{legacy_truth}")
+        truth_knn <- BiocNeighbors::findKNN(
+          as.matrix(t(truth)),
+          k = 50L,
+          BNPARAM = BiocNeighbors::AnnoyParam(),
+          get.distance = FALSE
+        )$index
+        write.table(truth_knn, file = "{truth_knn}", sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+        """
+        r_convert_script = CACHE / f"convert_exact_{simulator}_seed{seed}_truth_knn.R"
+        r_convert_script.write_text(r_convert)
+        subprocess.run(["Rscript", "--vanilla", str(r_convert_script)], check=True)
+        return counts, truth_knn
+
+    benchmark_data = DATA
+    gse130931_dirs = [
+        benchmark_data / "consistency" / "GSM4041124",
+        benchmark_data / "consistency" / "GSM4041125",
+    ]
     r = f"""
     suppressPackageStartupMessages({{
+      library(BiocNeighbors)
       library(Matrix)
+      library(MatrixGenerics)
+      library(SingleCellExperiment)
       library(SummarizedExperiment)
     }})
     simulator <- "{simulator}"
     seed <- {seed}
     set.seed(seed)
-    run_splatter <- function(seed) {{
-      suppressPackageStartupMessages(library(splatter))
-      params <- splatter::newSplatParams(nGenes = 1000L, batchCells = 500L,
-                                         group.prob = c(0.25,0.25,0.25,0.25),
-                                         de.prob = 0.3, seed = seed)
-      sim <- splatter::splatSimulate(params, method = "groups", verbose = FALSE)
-      list(UMI = SummarizedExperiment::assay(sim, "counts"),
-           ground_truth = log10(SummarizedExperiment::assay(sim, "TrueCounts") + 1e-4))
+
+    require_pkg <- function(pkg) {{
+      if (!requireNamespace(pkg, quietly = TRUE)) {{
+        stop("Required R package not installed for exact simulator rerun: ", pkg, call. = FALSE)
+      }}
     }}
+
     run_muscat <- function(seed) {{
+      require_pkg("muscat")
+      require_pkg("tibble")
+      require_pkg("dplyr")
+      require_pkg("tidyr")
       suppressPackageStartupMessages(library(muscat))
       suppressPackageStartupMessages(library(tibble))
       suppressPackageStartupMessages(library(dplyr))
@@ -362,7 +417,7 @@ def generate_simulation_mtx(simulator: str, seed: int) -> tuple[Path, Path]:
       data(example_sce, package = "muscat")
       sce_preped <- muscat::prepSim(example_sce, verbose = FALSE)
       sim <- muscat::simData(sce_preped, rel_lfc = c(1, 0.5, 0.1, 0.05),
-                             nc = 500L, nk = 4L,
+                             nc = 5000L, nk = 4L,
                              p_dd = c(0.7, 0, 0.3, 0, 0, 0), lfc = 2,
                              ng = 1000L, force = TRUE)
       gene_info <- as.data.frame(S4Vectors::metadata(sim)$gene_info)
@@ -382,29 +437,186 @@ def generate_simulation_mtx(simulator: str, seed: int) -> tuple[Path, Path]:
       list(UMI = SummarizedExperiment::assay(sim, "counts"),
            ground_truth = log10(gt + 1e-4))
     }}
+
     run_dyngen <- function(seed) {{
+      require_pkg("dyngen")
       suppressPackageStartupMessages(library(dyngen))
-      backbone <- dyngen::backbone_bifurcating()
-      model <- dyngen::initialise_model(
-        backbone = backbone, num_cells = 500L, num_tfs = 50L,
-        num_targets = 100L, num_hks = 50L, verbose = FALSE
+      options(Ncpus = 1L)
+      options(dyngen_download_cache_dir = "{CACHE / 'dyngen_download_cache'}")
+      dir.create(getOption("dyngen_download_cache_dir"), recursive = TRUE, showWarnings = FALSE)
+      num_cells <- 5000L
+      num_features <- 1000L
+      backbone <- dyngen::backbone_consecutive_bifurcating()
+      num_tfs <- nrow(backbone$module_info)
+      num_targets <- round((num_features - num_tfs) / 2)
+      num_hks <- num_features - num_targets - num_tfs
+      config <- dyngen::initialise_model(
+        backbone = backbone,
+        num_tfs = num_tfs,
+        num_targets = num_targets,
+        num_hks = num_hks,
+        num_cells = num_cells
       )
-      model <- dyngen::generate_cells(model)
-      list(UMI = t(round(model$counts)), ground_truth = t(model$expression))
+      res <- dyngen::generate_dataset(config, format = "sce")
+      sim <- res$dataset
+      UMI <- SummarizedExperiment::assay(sim, "counts")
+      expressed_cells <- MatrixGenerics::colSums2(UMI) > 10
+      expressed_genes <- MatrixGenerics::rowSums2(UMI) > 0
+      sim <- sim[expressed_genes, expressed_cells]
+      list(UMI = SummarizedExperiment::assay(sim, "counts"),
+           ground_truth = t(SingleCellExperiment::reducedDim(sim, "MDS")))
     }}
+
+    load_baron_counts <- function() {{
+      require_pkg("scRNAseq")
+      require_pkg("scuttle")
+      require_pkg("scran")
+      sce <- scRNAseq::BaronPancreasData("human")
+      sce <- scuttle::logNormCounts(sce)
+      SummarizedExperiment::colData(sce)$cluster_id <- scran::quickCluster(sce)
+      reference_data_counts <- SummarizedExperiment::assay(sce)
+      reference_data_counts <- reference_data_counts[, MatrixGenerics::colSums2(reference_data_counts) > 0]
+      reference_data_counts <- reference_data_counts[MatrixGenerics::rowSums2(reference_data_counts) > 0, ]
+      reference_data_counts <- reference_data_counts[
+        seq_len(min(1000L, nrow(reference_data_counts))),
+        seq_len(min(5000L, ncol(reference_data_counts)))
+      ]
+      reference_data_counts
+    }}
+
+    sanity_counts_from_delta <- function(reference_data_counts, delta_true) {{
+      n_genes <- nrow(reference_data_counts)
+      n_cells <- ncol(reference_data_counts)
+      N_c <- MatrixGenerics::colSums2(reference_data_counts)
+      mu_tilde_g <- log(MatrixGenerics::rowSums2(reference_data_counts) / sum(reference_data_counts))
+      sig2_g <- rexp(n_genes, rate = 1 / 2)
+      lambda <- sqrt(sig2_g / matrixStats::rowVars(delta_true))
+      delta_true <- (delta_true - MatrixGenerics::rowMeans2(delta_true)) * lambda
+      mu_g <- mu_tilde_g - sig2_g / 2
+      UMI <- matrix(
+        rnbinom(n_genes * n_cells, mu = t(t(exp(mu_g + delta_true)) * N_c), size = 1 / 0.01),
+        n_genes,
+        n_cells
+      )
+      list(UMI = UMI, ground_truth = delta_true)
+    }}
+
+    run_linear_walk <- function(seed) {{
+      reference_data_counts <- load_baron_counts()
+      n_genes <- nrow(reference_data_counts)
+      n_cells <- ncol(reference_data_counts)
+      delta_true <- matrix(NA_real_, n_genes, n_cells)
+      parents <- rep(NA_integer_, n_cells)
+      branch_length <- 1200L
+      branch_idx <- 0L
+      start_point <- NULL
+      end_point <- NULL
+      for (idx in seq_len(n_cells) - 1L) {{
+        if (idx == 0L) {{
+          parents[idx + 1L] <- -1L
+          start_point <- rnorm(n_genes, mean = 0, sd = 1)
+          end_point <- rnorm(n_genes, mean = 0, sd = 1)
+        }} else if (idx %% branch_length == 0L) {{
+          start_id <- sample.int(idx, size = 1L)
+          parents[idx + 1L] <- start_id - 1L
+          branch_idx <- 0L
+          start_point <- rnorm(n_genes, mean = delta_true[, parents[idx + 1L]], sd = 0.1)
+          end_point <- rnorm(n_genes, mean = 0, sd = 5)
+        }} else {{
+          branch_idx <- branch_idx + 1L
+          parents[idx + 1L] <- idx - 1L
+        }}
+        delta_true[, idx + 1L] <- rnorm(
+          n_genes,
+          mean = start_point + (end_point - start_point) * branch_idx / branch_length,
+          sd = 0.1
+        )
+      }}
+      sanity_counts_from_delta(reference_data_counts, delta_true)
+    }}
+
+    run_random_walk <- function(seed) {{
+      reference_data_counts <- load_baron_counts()
+      n_genes <- nrow(reference_data_counts)
+      n_cells <- ncol(reference_data_counts)
+      delta_true <- matrix(NA_real_, n_genes, n_cells)
+      parents <- rep(NA_integer_, n_cells)
+      branch_length <- 13L
+      for (idx in seq_len(n_cells)) {{
+        if (idx == 1L) {{
+          delta <- rnorm(n_genes, mean = 0, sd = 1)
+          parents[idx] <- 0L
+        }} else if (idx %% branch_length == 0L) {{
+          parents[idx] <- sample.int(idx - 1L, size = 1L)
+          delta <- rnorm(n_genes, mean = delta_true[, parents[idx]], sd = 1)
+        }} else {{
+          parents[idx] <- idx - 1L
+          delta <- rnorm(n_genes, mean = delta_true[, parents[idx]], sd = 1)
+        }}
+        delta_true[, idx] <- delta
+      }}
+      sanity_counts_from_delta(reference_data_counts, delta_true)
+    }}
+
+    run_scdesign2 <- function(seed) {{
+      require_pkg("DropletUtils")
+      require_pkg("scran")
+      require_pkg("scDesign2")
+      dirs <- c("{gse130931_dirs[0]}", "{gse130931_dirs[1]}")
+      sce <- DropletUtils::read10xCounts(dirs)
+      SummarizedExperiment::colData(sce)$cluster_id <- scran::quickCluster(sce, min.size = 20)
+      sce <- sce[, MatrixGenerics::colSums2(SummarizedExperiment::assay(sce)) > 0]
+      sce <- sce[MatrixGenerics::rowSums2(SummarizedExperiment::assay(sce)) > 0, ]
+      sce <- scuttle::logNormCounts(sce)
+      mat <- SummarizedExperiment::assay(sce, "counts")
+      colnames(mat) <- as.character(SummarizedExperiment::colData(sce)$cluster_id)
+      cluster_names <- unique(as.character(SummarizedExperiment::colData(sce)$cluster_id))
+      fit <- scDesign2::fit_model_scDesign2(
+        mat,
+        cell_type_sel = cluster_names,
+        sim_method = "copula",
+        marginal = "nb"
+      )
+      UMI <- scDesign2::simulate_count_scDesign2(
+        fit,
+        n_cell_new = ncol(mat),
+        cell_type_prop = table(colnames(mat))[cluster_names] / ncol(mat),
+        sim_method = "copula"
+      )
+      ground_truth <- do.call(cbind, lapply(fit[cluster_names], function(fi) {{
+        gt <- matrix(NA_real_, nrow = nrow(mat), ncol = fi$n_cell)
+        gt[fi$gene_sel1, ] <- fi$marginal_param1[, 3]
+        gt[fi$gene_sel2, ] <- fi$marginal_param2[, 3]
+        gt[fi$gene_sel3, ] <- 1e-8
+        gt
+      }}))
+      list(UMI = UMI, ground_truth = log10(ground_truth))
+    }}
+
     obj <- switch(simulator,
       muscat = run_muscat(seed),
-      linear_walk = run_splatter(seed),
-      random_walk = run_splatter(seed),
-      scDesign2 = run_splatter(seed),
-      dyngen = run_splatter(seed),
+      dyngen = run_dyngen(seed),
+      linear_walk = run_linear_walk(seed),
+      random_walk = run_random_walk(seed),
+      scDesign2 = run_scdesign2(seed),
       stop("unknown simulator")
     )
     Matrix::writeMM(Matrix::Matrix(obj$UMI, sparse=TRUE), "{counts}")
-    Matrix::writeMM(Matrix::Matrix(obj$ground_truth, sparse=TRUE), "{truth}")
+    truth_knn <- BiocNeighbors::findKNN(
+      t(obj$ground_truth),
+      k = 50L,
+      BNPARAM = BiocNeighbors::AnnoyParam(),
+      get.distance = FALSE
+    )$index
+    write.table(truth_knn, file = "{truth_knn}", sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
     """
-    subprocess.run(["Rscript", "-e", r], check=True)
-    return counts, truth
+    env = os.environ.copy()
+    env.setdefault("XDG_CACHE_HOME", str(CACHE / "xdg_cache"))
+    env.setdefault("R_USER_CACHE_DIR", str(CACHE / "r_cache"))
+    r_script = CACHE / f"generate_exact_{simulator}_seed{seed}.R"
+    r_script.write_text(r)
+    subprocess.run(["Rscript", "--vanilla", str(r_script)], check=True, env=env)
+    return counts, truth_knn
 
 
 def main() -> None:
