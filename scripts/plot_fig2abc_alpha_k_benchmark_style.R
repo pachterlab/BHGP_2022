@@ -298,8 +298,8 @@ simulation_pl <- res_main %>%
 downsampling_pl <- res_main %>%
   filter(benchmark == "downsampling") %>%
   make_main_plot_panel(add_group_label = FALSE) +
-  coord_cartesian(xlim = c(0.2, 10)) +
-  scale_x_continuous(breaks = c(0.45, 1, 2, 5, 10), labels = c("0.5", "1", "2", "5", "10")) +
+  coord_cartesian(xlim = c(0.2, 6.2)) +
+  scale_x_continuous(breaks = c(0.45, 1, 2, 4, 6), labels = c("0.5", "1", "2", "4", "6")) +
   labs(
     x = "Relative $k$-NN overlap",
     subtitle = "Original versus downsampled deep-seq data"
