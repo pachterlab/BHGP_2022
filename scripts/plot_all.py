@@ -112,7 +112,7 @@ def get_min_diff(matrix):
         b = a
     return mn
 
-def plot_meanvar(mtx, raw_mean, minlim = 1e-4, maxlim = 1e5, ax=None):
+def plot_meanvar(mtx, raw_mean, minlim = 1e-4, maxlim = 1e5, ax=None, gvar=None):
     p = {
         "xlabel": "Gene mean",
         "ylabel": "Gene variance",
@@ -120,9 +120,11 @@ def plot_meanvar(mtx, raw_mean, minlim = 1e-4, maxlim = 1e5, ax=None):
         "yscale": "log",
         "xlim": (minlim, maxlim),
     }
-    
-    sparse = issparse(mtx)
-    gvar = myvar(mtx, sparse=sparse, axis=0)
+
+    # gvar may be precomputed (e.g. PFlogPF from the sparse-plus-rank-one form) to
+    # avoid densifying the transformed matrix.
+    if gvar is None:
+        gvar = myvar(mtx, sparse=issparse(mtx), axis=0)
     gcov = np.sqrt(np.var(gvar))/np.mean(gvar)
 
     y = gvar
@@ -134,21 +136,24 @@ def plot_meanvar(mtx, raw_mean, minlim = 1e-4, maxlim = 1e5, ax=None):
     yex(ax)
     return (ax, gcov)
 
-def plot_depth(mtx, raw_cell_counts, ax):
+def plot_depth(mtx, raw_cell_counts, ax, cell_sums=None):
     x = raw_cell_counts
-    sparse = issparse(mtx)
-    y = mysum(mtx, sparse=sparse, axis=1)
-    
+    # cell_sums may be precomputed (PFlogPF is centered, so per-cell sums are 0).
+    y = mysum(mtx, sparse=issparse(mtx), axis=1) if cell_sums is None else cell_sums
+
     minx, maxx = min(x), max(x)
     miny, maxy = min(y), max(y)
     maxy = maxy - miny
 
     xx = (x - minx)/maxx
-    yy = (y - miny)/maxy
-    
+
+    # Degenerate case (PF / PFlogPF): all transformed cell sums equal -> no depth.
+    # Handle before the y-rescale to avoid a 0/0 divide.
     close = np.all(np.allclose(y, y[0]))
     if close:
-        yy = [1]*len(y)
+        yy = np.ones(len(y))
+    else:
+        yy = (y - miny)/maxy
     ax.scatter(xx,yy, edgecolor="k", facecolor=colors["cell"], alpha=alpha)
         
     reg = LinearRegression().fit(xx.reshape(-1,1), yy)
@@ -173,21 +178,29 @@ def plot_depth(mtx, raw_cell_counts, ax):
     ax.legend(prop={"size": 12})
     return (ax, r2)
 
-def mono(matrix, raw):
+def mono(matrix, raw, sample=5000, seed=0):
     sparse = issparse(matrix)
-    rv = np.ones(matrix.shape[0])
+    n = matrix.shape[0]
     if sparse:
         # sparse-preserving transforms are monotonic by construction; per-cell
         # Spearman vs raw is always 1.0 in that case.
-        return rv
-    for i in range(matrix.shape[0]):
+        return np.ones(n)
+    # Dense transforms need the per-cell Spearman loop, which is the figure's
+    # bottleneck on large datasets. A representative cell subsample gives the same
+    # monotonicity histogram/mean.
+    cells = (np.sort(np.random.default_rng(seed).choice(n, sample, replace=False))
+             if n > sample else np.arange(n))
+    rv = np.ones(len(cells))
+    for k, i in enumerate(cells):
         r, _ = stats.spearmanr(mygetidx(matrix, i, sparse=sparse, axis=0),
                                mygetidx(raw, i, axis=0))
-        rv[i] = r
+        rv[k] = r
     return rv
 
-def plot_mono(matrix, raw, ax):
-    x = mono(matrix, raw)
+def plot_mono(matrix, raw, ax, mono_vals=None):
+    # mono_vals may be precomputed (PFlogPF is rank-monotone by construction, so
+    # every per-cell Spearman is 1.0 -- no densify / Spearman loop needed).
+    x = mono(matrix, raw) if mono_vals is None else mono_vals
     p = {"xlabel": "Spearman r", "ylabel": "Frequency", "xlim": (-1.2, 1.2)}
     close = np.all(np.allclose(x, x[0]))
     if close:
@@ -203,14 +216,26 @@ def plot_mono(matrix, raw, ax):
     ax.legend(prop={"size": 12})
     return (ax, xmean)
 
-def read_data(base_data_fn):
-    from norm_sparse import norm_clr
+def clr_gene_var(sclr):
+    # Per-gene variance of the dense shifted-CLR  Z = L - m.1^T  computed from the
+    # sparse log1p(PF) matrix L and the per-cell center vector m WITHOUT densifying:
+    #   Var_g(Z) = Var_g(L) + Var(m) - 2 Cov_g(L, m).
+    L = sclr.sparse
+    m = np.asarray(sclr.row_center, dtype=float).ravel()
+    n = L.shape[0]
+    EL = np.asarray(L.sum(0)).ravel() / n
+    VarL = np.asarray(L.multiply(L).sum(0)).ravel() / n - EL**2
+    Cov = np.asarray(L.T.dot(m)).ravel() / n - EL * m.mean()
+    return VarL + m.var() - 2 * Cov
+
+def read_data(base_data_fn, max_cells=25000, seed=0):
     from metrics_matrix import compute_overdispersion
+    import scclr
     data = {}
 
     for title in mtx_labels:
         in_fn = os.path.join(base_data_fn, f"{title}.mtx.gz")
-        data[txlabel[title]] = mmread(in_fn)
+        data[txlabel[title]] = mmread(in_fn).tocsr()
 
     # Dense methods loaded from csv.gz. Missing files are silently skipped so
     # plots still produce on datasets that haven't computed all methods yet.
@@ -219,15 +244,26 @@ def read_data(base_data_fn):
         if os.path.exists(in_fn):
             data[txlabel[title]] = pd.read_csv(in_fn, header=None, compression="gzip").values
 
-    # PFlogPF (shift. CLR) = additive centered log-ratio, computed on the fly from
-    # raw. norm_clr uses the delta-method first-PF constant K = 4*alpha*s (dataset
-    # overdispersion alpha, scale s = mean total UMI per cell), i.e. the variance-
-    # stabilizing pseudocount y0 = 1/(4*alpha) -- matching Fig 1a/1b and the
-    # summary metrics. Read from raw, not the multiplicative pf_log_pf.mtx.gz.
-    raw = mmread(os.path.join(base_data_fn, "raw.mtx.gz")).tocsr()
+    # Cap cells (the SAME subset across every method) on very large datasets. PFlogPF
+    # is now sparse (scclr, below), but sctransform and scalelog1pCP10k are inherently
+    # dense (loaded from multi-GB csv.gz), so the cap still bounds their memory under
+    # parallel batch rendering. A seeded subsample is statistically indistinguishable
+    # for these per-gene / per-cell summaries.
+    raw = data[txlabel["raw"]]
+    if raw.shape[0] > max_cells:
+        idx = np.sort(np.random.default_rng(seed).choice(raw.shape[0], max_cells, replace=False))
+        for k, v in list(data.items()):
+            data[k] = v[idx]
+        raw = data[txlabel["raw"]]
+
+    # PFlogPF (shift. CLR) = additive centered log-ratio. Computed via scclr's sparse
+    # shifted-CLR (sparse log1p(PF) + per-cell center vector); it is never densified,
+    # so the panel is memory-safe even on the largest matrices. Passing the dataset
+    # overdispersion alpha sets the delta-method scale K = 4*alpha*s (variance-
+    # stabilizing pseudocount y0 = 1/(4*alpha)), matching Fig 1a/1b and the summary
+    # metrics. plot_data derives the panel stats from the sparse-plus-rank-one form.
     alpha = float(compute_overdispersion(raw))
-    scale = float(np.asarray(raw.sum(1)).ravel().mean())
-    data["PFlogPF (shift. CLR)"] = norm_clr(raw, alpha=alpha, scale=scale)
+    data["PFlogPF (shift. CLR)"] = scclr.normalize(raw, alpha=alpha)
     return data
 
 # 'pf_log_pf' intentionally NOT in mtx_labels: PFlogPF is computed on the fly as
@@ -281,7 +317,7 @@ def setup_plot(ds, shape):
             axs.append((ax1, ax2, ax3))
     return (fig, axs)
 
-def plot_data(axs, data):
+def plot_data(axs, data, ds=""):
     raw = data["raw"]
     raw_genevar = myvar(raw, axis=0)
     raw_genemean = mymean(raw, axis=0)
@@ -302,10 +338,26 @@ def plot_data(axs, data):
                     transform=ax2.transAxes)
         else:
             try:
-                (_, cov_gene) = plot_meanvar(m, raw_genemean, minlim = minlim, maxlim = maxlim, ax=ax1)
-                (_, r2_depth) = plot_depth(m, raw_cellsum, ax2)
-                (_, r_mono) = plot_mono(m, raw, ax3)
-            except:
+                if title == "PFlogPF (shift. CLR)":
+                    # scclr sparse shifted-CLR (ShiftedCLR object): derive panel stats
+                    # from the sparse log1p(PF) + per-cell center -- never densified.
+                    # Centered => per-cell sums are 0 (depth removed); rank-monotone by
+                    # construction => every per-cell Spearman is 1.
+                    n = m.shape[0]
+                    (_, cov_gene) = plot_meanvar(None, raw_genemean, minlim=minlim, maxlim=maxlim,
+                                                 ax=ax1, gvar=clr_gene_var(m))
+                    (_, r2_depth) = plot_depth(None, raw_cellsum, ax2, cell_sums=np.zeros(n))
+                    (_, r_mono)   = plot_mono(None, raw, ax3, mono_vals=np.ones(n))
+                else:
+                    (_, cov_gene) = plot_meanvar(m, raw_genemean, minlim = minlim, maxlim = maxlim, ax=ax1)
+                    (_, r2_depth) = plot_depth(m, raw_cellsum, ax2)
+                    (_, r_mono) = plot_mono(m, raw, ax3)
+            except (MemoryError, KeyboardInterrupt):
+                # never silently publish a blank panel on a resource failure
+                raise
+            except Exception as e:
+                print(f"[plot_all] {ds}: '{title}' panel failed: {type(e).__name__}: {e}",
+                      file=sys.stderr)
                 ax1.set_visible(False)
                 ax2.axis("off")
                 ax3.set_visible(False)
@@ -332,7 +384,7 @@ def main(ds, base_data_fn, base_out_fn):
 
     shape = data["raw"].shape
     fig, axs = setup_plot(ds, shape)
-    plot_data(axs, data)
+    plot_data(axs, data, ds=ds)
 
     fig.savefig(os.path.join(base_out_fn, f"{ds}_method_comparison.pdf"), facecolor='white', transparent=False, dpi=300, bbox_inches="tight")
     return

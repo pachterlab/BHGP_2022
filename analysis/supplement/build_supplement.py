@@ -84,11 +84,16 @@ FIG = r"""\bookmark[level=1,page=\thepage]{{Fig 1.{idx}  {acc_bm}}}
 \bottomrule
 \end{{tabular}}}}\par\vspace{{0.7em}}
 \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{{{pdf}}}
-\caption{{\textbf{{{acc}}}. Per-method comparison of variance stabilization (left), depth normalization (middle), and monotonicity (right) for each normalization on dataset {acc}.}}
+\caption{{\textbf{{{acc}}}. Per-method comparison of variance stabilization (left), depth normalization (middle), and monotonicity (right) for each normalization on dataset {acc}.{note}}}
 \label{{suppfig:{idx}}}
 \end{{figure}}
 \clearpage
 """
+
+# Figures rendered on a random cell subsample (memory bound for very large
+# datasets); ds -> number of cells used in the figure. The metrics table still
+# reflects the full dataset.
+SUBSAMPLED = {"CRX102286": 25000}
 
 def main(limit=None):
     datasets = [l.strip() for l in open(DATASETS) if l.strip()]
@@ -106,8 +111,13 @@ def main(limit=None):
         rows = "\n".join(
             rf"{lbl} & {fmt(m[k])} \\" for k, lbl, fmt in ROWS if k in m
         ) or r"\multicolumn{2}{@{}l}{(metrics unavailable)} \\"
+        note = ""
+        if ds in SUBSAMPLED and "ncells" in m:
+            note = (rf" Figure panels were computed on a random subsample of {SUBSAMPLED[ds]:,} "
+                    rf"of {int(m['ncells']):,} cells to bound memory; the metrics table above "
+                    rf"reflects the full dataset.")
         idx += 1
-        blocks.append(FIG.format(acc=esc(ds), acc_bm=ds.replace("_", "-"), rows=rows, pdf=pdf, idx=idx))
+        blocks.append(FIG.format(acc=esc(ds), acc_bm=ds.replace("_", "-"), rows=rows, pdf=pdf, idx=idx, note=note))
     with open(OUT, "w") as f:
         f.write(PREAMBLE)
         f.write("\n".join(blocks))

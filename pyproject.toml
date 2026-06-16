@@ -1,5 +1,5 @@
 [project]
-name = "synchromesh"
+name = "bhgp2022"
 version = "0.2.0.dev0"
 description = "Depth normalization for single-cell genomics count data — manuscript and analysis pipeline (Booeshaghi, Hallgrímsdóttir, Gálvez-Merchán, Pachter)."
 readme = "README.md"
@@ -24,6 +24,11 @@ dependencies = [
     "jupyter>=1.0",
     "nbconvert>=7.0",
     "ipykernel>=6.0",
+    # Sparse shifted-CLR (PFlog1pPF) normalization + sparse PCA. Used by
+    # scripts/plot_all.py (Fig 1 panels) and scripts/recompute_fig2abc_scclr.py.
+    # Not on PyPI; built from git via maturin (a Rust toolchain is required to
+    # build it). Source pinned in [tool.uv.sources] below.
+    "scclr",
 ]
 
 [project.optional-dependencies]
@@ -37,9 +42,18 @@ dev = [
 #     uv pip install "pysctransform @ git+https://github.com/saketkc/pySCTransform"
 # It requires R and R's sctransform package on the system.
 
+# edgePython (edgeR-style differential expression) is used only by the Fig 3
+# pseudobulk script (PFlogPF/notebooks/fig3_angelidis_pseudobulk/
+# plot_angelidis_pseudobulk_figure.py), which can also load it via --edgepython-path
+# / EDGEPYTHON_PATH. Not on PyPI; install manually after `uv sync` (which prunes
+# packages not in the lock):
+#     uv pip install "edgepython @ git+https://github.com/pachterlab/edgePython"
+
 [tool.uv]
 # Pin a single Python interpreter for reproducibility.
 python-preference = "managed"
 
 [tool.uv.sources]
-# Add per-package source overrides here if needed (e.g., git URLs).
+# scclr is git-only (Rust/maturin extension). Pinned to a specific commit for
+# reproducibility; bump the rev to upgrade.
+scclr = { git = "https://github.com/cleartools/scclr", rev = "93650e06d55524e193a8c945b76d2a17dffcd0df" }
