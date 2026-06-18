@@ -112,7 +112,7 @@ def get_min_diff(matrix):
         b = a
     return mn
 
-def plot_meanvar(mtx, raw_mean, minlim = 1e-4, maxlim = 1e5, ax=None, gvar=None):
+def plot_meanvar(mtx, raw_mean, minlim = 1e-4, maxlim = 1e5, ax=None, gvar=None, cq=None):
     p = {
         "xlabel": "Gene mean",
         "ylabel": "Gene variance",
@@ -126,15 +126,19 @@ def plot_meanvar(mtx, raw_mean, minlim = 1e-4, maxlim = 1e5, ax=None, gvar=None)
     if gvar is None:
         gvar = myvar(mtx, sparse=issparse(mtx), axis=0)
     gcov = np.sqrt(np.var(gvar))/np.mean(gvar)
+    # The mean-variance scatter still shows the empirical gene variances, but the
+    # reported number is CV(q) (the delta-method metric, when available); the label
+    # prefix stays "CoV:" for continuity with the rest of the supplement.
+    val = gcov if cq is None else cq
 
     y = gvar
     yy = (y-y.mean())/np.sqrt(np.var(y))
 
-    ax.scatter(raw_mean, y, facecolor=colors["gene"], alpha=alpha, edgecolor="k", label=f"CoV: {gcov:,.1f}")
+    ax.scatter(raw_mean, y, facecolor=colors["gene"], alpha=alpha, edgecolor="k", label=f"CoV: {val:,.2f}")
     ax.legend(prop={"size": 12})
     ax.set(**p)
     yex(ax)
-    return (ax, gcov)
+    return (ax, val)
 
 def plot_depth(mtx, raw_cell_counts, ax, cell_sums=None):
     x = raw_cell_counts
@@ -317,7 +321,40 @@ def setup_plot(ds, shape):
             axs.append((ax1, ax2, ax3))
     return (fig, axs)
 
+_CVQ_CACHE = None
+def _cvq_lookup():
+    """Per-dataset, per-method CV(q) from the committed Fig 1b CSVs, used for the
+    variance-stabilization panel annotation (functional transforms = model-based
+    delta-method q; sctransform = empirical CV of full-vst residual gene variances)."""
+    global _CVQ_CACHE
+    if _CVQ_CACHE is not None:
+        return _CVQ_CACHE
+    import pandas as pd
+    figdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "analysis", "figures")
+    look = {}
+    try:
+        f = pd.read_csv(os.path.join(figdir, "cvq_per_method_subset_filtered.csv"))
+        cols = ["raw","PF","sqrt","log1p","log1pCP10k","log1pCPM","scalelog1pCP10k","log1pPF","PFlogPF"]
+        for _, r in f.iterrows():
+            d = {c: float(r[c]) for c in cols if c in r and r[c] == r[c]}
+            if "PFlogPF" in d:
+                d["PFlogPF (shift. CLR)"] = d.pop("PFlogPF")
+            look[r["ds"]] = d
+    except Exception as e:
+        print(f"[plot_all] CV(q) functional CSV not loaded: {e}", file=sys.stderr)
+    try:
+        s = pd.read_csv(os.path.join(figdir, "sct_cvq_filtered.csv"))
+        for _, r in s.iterrows():
+            if r["cv_filt"] == r["cv_filt"]:
+                look.setdefault(r["ds"], {})["sctransform"] = float(r["cv_filt"])
+    except Exception as e:
+        print(f"[plot_all] CV(q) sctransform CSV not loaded: {e}", file=sys.stderr)
+    _CVQ_CACHE = look
+    return look
+
 def plot_data(axs, data, ds=""):
+    realds = ds[:-len("_subset_genes")] if ds.endswith("_subset_genes") else ds
+    cvq = _cvq_lookup().get(realds, {})
     raw = data["raw"]
     raw_genevar = myvar(raw, axis=0)
     raw_genemean = mymean(raw, axis=0)
@@ -338,6 +375,7 @@ def plot_data(axs, data, ds=""):
                     transform=ax2.transAxes)
         else:
             try:
+                cq = cvq.get(title)   # CV(q) for this method (None -> falls back to cov_gene)
                 if title == "PFlogPF (shift. CLR)":
                     # scclr sparse shifted-CLR (ShiftedCLR object): derive panel stats
                     # from the sparse log1p(PF) + per-cell center -- never densified.
@@ -345,11 +383,11 @@ def plot_data(axs, data, ds=""):
                     # construction => every per-cell Spearman is 1.
                     n = m.shape[0]
                     (_, cov_gene) = plot_meanvar(None, raw_genemean, minlim=minlim, maxlim=maxlim,
-                                                 ax=ax1, gvar=clr_gene_var(m))
+                                                 ax=ax1, gvar=clr_gene_var(m), cq=cq)
                     (_, r2_depth) = plot_depth(None, raw_cellsum, ax2, cell_sums=np.zeros(n))
                     (_, r_mono)   = plot_mono(None, raw, ax3, mono_vals=np.ones(n))
                 else:
-                    (_, cov_gene) = plot_meanvar(m, raw_genemean, minlim = minlim, maxlim = maxlim, ax=ax1)
+                    (_, cov_gene) = plot_meanvar(m, raw_genemean, minlim = minlim, maxlim = maxlim, ax=ax1, cq=cq)
                     (_, r2_depth) = plot_depth(m, raw_cellsum, ax2)
                     (_, r_mono) = plot_mono(m, raw, ax3)
             except (MemoryError, KeyboardInterrupt):
