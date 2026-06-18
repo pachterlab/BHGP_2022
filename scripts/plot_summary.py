@@ -51,7 +51,8 @@ COLORS = {"cell": cividis(0.01), "gene": cividis(0.5), "mono": cividis(0.99)}
 CLR_METHOD = "PFlogPF (shift. CLR)"
 CLR_COLOR  = "#E41A1C"   # matches angelidis_celltype_bar.pdf
 # Display labels (data keys stay as in LABELS; only the shown text changes).
-DISPLAY = {"sctransform": "sctransform v2"}
+# sctransform gets an asterisk: panel A shows its EMPIRICAL CoV (no functional q).
+DISPLAY = {"sctransform": "sctransform v2*"}
 
 
 def load_metrics(data_root):
@@ -80,6 +81,22 @@ def load_metrics(data_root):
 
 def main(data_root, out_prefix, reference_ds="angelidis_2019"):
     df = load_metrics(data_root)
+    # Panel A (variance stabilization): use CV(q) from the delta-method analysis in
+    # place of the empirical cov_gene. Functional transforms = model-based q; sctransform
+    # = empirical CV of full-vst residual gene variances (flagged with the x-label *).
+    figdir = os.path.dirname(out_prefix) or "."
+    _cvq = pd.read_csv(os.path.join(figdir, "cvq_per_method_subset_filtered.csv")).melt(
+        id_vars="ds",
+        value_vars=["raw", "PF", "sqrt", "log1p", "log1pCP10k", "log1pCPM",
+                    "scalelog1pCP10k", "log1pPF", "PFlogPF"],
+        var_name="method", value_name="cvq")
+    _cvq["method"] = _cvq["method"].replace({"PFlogPF": "PFlogPF (shift. CLR)"})
+    _sct = pd.read_csv(os.path.join(figdir, "sct_cvq_filtered.csv"))[["ds", "cv_filt"]] \
+        .rename(columns={"cv_filt": "cvq"})
+    _sct["method"] = "sctransform"
+    _cvq = pd.concat([_cvq, _sct], ignore_index=True)
+    df = df.merge(_cvq, on=["ds", "method"], how="left")
+    df["cov_gene"] = df["cvq"].where(df["cvq"].notna(), df["cov_gene"])
     # Drop datasets that have any NaN metric in any of the LABELS we will plot.
     bad = df.groupby("ds")[["cov_gene", "r2_depth", "r_mono"]].apply(lambda x: x.isna().any().any())
     keep_ds_all = bad[~bad].index
@@ -109,7 +126,7 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
     fig.subplots_adjust(left=0.14, right=0.97, top=0.97, bottom=0.18, hspace=0)
 
     panels = [
-        ("cov_gene",    "gene", "Coefficient of variation\ngene variance"),
+        ("cov_gene",    "gene", "Coefficient of Variation of Variance"),
         ("r2_depth",    "cell", "Pearson $r^2$ cell depth"),
         ("mono_metric", "mono", r"$1 - |$mean Spearman $r|$"),
     ]
@@ -159,7 +176,7 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
         ax.set_ylabel(ylabel, labelpad=12)
         ax.yaxis.set_label_coords(-0.10, 0.5)
         if met == "cov_gene":
-            ax.set(yscale="symlog", ylim=(-1, ax.get_ylim()[1] if ax.get_ylim()[1] > 1 else 250))
+            ax.set_yscale("log"); ax.set_ylim(0.02, 200)
         elif met == "r2_depth":
             ax.set_ylim(-0.05, 1.05)
         else:
