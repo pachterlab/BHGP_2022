@@ -46,6 +46,11 @@ analysis/figures/*
 !analysis/figures/matrix_size_vs_ncells.png
 !analysis/figures/angelidis_mono_heatmap.pdf
 !analysis/figures/angelidis_mono_heatmap.png
+# Fig 1b panel 1 (variance stabilization, CV(q)) + its source data
+!analysis/figures/fig1b_panel1_cvq.pdf
+!analysis/figures/fig1b_panel1_cvq.png
+!analysis/figures/cvq_per_method_subset_filtered.csv
+!analysis/figures/sct_cvq_filtered.csv
 analysis/synchromesh
 
 # Regen sandbox
