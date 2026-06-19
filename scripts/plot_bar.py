@@ -40,8 +40,6 @@ METHODS = [
 cividis = matplotlib.colormaps["cividis"]
 COLORS = {"gene": cividis(0.5), "cell": cividis(0.01), "mono": cividis(0.99)}
 DISPLAY = {"sctransform": "sctransform v2"}   # shown text only; data key unchanged
-OLD_PFLOG_NAME = "PFlog" + "PF"
-METHOD_ALIASES = {"PFlog (shift. CLR)": f"{OLD_PFLOG_NAME} (shift. CLR)"}
 
 
 def main(metrics_json, out_prefix):
@@ -54,8 +52,6 @@ def main(metrics_json, out_prefix):
 
     def get(method, key):
         mm = metrics.get(method)
-        if not isinstance(mm, dict) and method in METHOD_ALIASES:
-            mm = metrics.get(METHOD_ALIASES[method])
         v = (mm or {}).get(key)
         return float("nan") if v is None else float(v)
 

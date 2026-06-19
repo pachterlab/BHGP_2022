@@ -49,7 +49,7 @@
       "fp_de_genes": 4,
       "mean_abs_spearman": 0.9136838136818328
     },
-    "PFlogPF (shift. CLR)": {
+    "PFlog (shift. CLR)": {
       "pc1_entropy_frac": 0.9063150287308197,
       "fp_de_genes": 6,
       "mean_abs_spearman": 0.9136838163806312

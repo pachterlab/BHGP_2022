@@ -334,11 +334,11 @@ def _cvq_lookup():
     look = {}
     try:
         f = pd.read_csv(os.path.join(figdir, "cvq_per_method_subset_filtered.csv"))
-        cols = ["raw","PF","sqrt","log1p","log1pCP10k","log1pCPM","scalelog1pCP10k","log1pPF","PFlogPF"]
+        cols = ["raw","PF","sqrt","log1p","log1pCP10k","log1pCPM","scalelog1pCP10k","log1pPF","PFlog"]
         for _, r in f.iterrows():
             d = {c: float(r[c]) for c in cols if c in r and r[c] == r[c]}
-            if "PFlogPF" in d:
-                d["PFlog (shift. CLR)"] = d.pop("PFlogPF")
+            if "PFlog" in d:
+                d["PFlog (shift. CLR)"] = d.pop("PFlog")
             look[r["ds"]] = d
     except Exception as e:
         print(f"[plot_all] CV(q) functional CSV not loaded: {e}", file=sys.stderr)

@@ -29,9 +29,6 @@ NAN = ['ERS4228665','GSM3576415','GSM3576416','GSM3576418','CRX102286','CRX10229
        'ERX2756731','GSM3576398','GSM4037323','GSM3576410']
 
 df = pd.read_csv(CSV)
-OLD_PFLOG_NAME = "PFlog" + "PF"
-if "PFlog" not in df.columns and OLD_PFLOG_NAME in df.columns:
-    df = df.rename(columns={OLD_PFLOG_NAME: "PFlog"})
 # Attach sctransform empirical cv_q_emp (filtered) if computed
 have_sct = os.path.exists(SCT)
 if have_sct:

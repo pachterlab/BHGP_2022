@@ -50,8 +50,6 @@ cividis = matplotlib.colormaps["cividis"]
 COLORS = {"cell": cividis(0.01), "gene": cividis(0.5), "mono": cividis(0.99)}
 CLR_METHOD = "PFlog (shift. CLR)"
 CLR_COLOR  = "#E41A1C"   # matches angelidis_celltype_bar.pdf
-OLD_PFLOG_NAME = "PFlog" + "PF"
-METHOD_ALIASES = {"PFlog (shift. CLR)": f"{OLD_PFLOG_NAME} (shift. CLR)"}
 # Display labels (data keys stay as in LABELS; only the shown text changes).
 # sctransform gets an asterisk: panel A shows its EMPIRICAL CoV (no functional q).
 DISPLAY = {"sctransform": "sctransform v2*"}
@@ -67,8 +65,6 @@ def load_metrics(data_root):
         top = {k: m.get(k) for k in TOP_KEYS}
         for method in LABELS:
             mm = m.get(method)
-            if not isinstance(mm, dict) and method in METHOD_ALIASES:
-                mm = m.get(METHOD_ALIASES[method])
             if not isinstance(mm, dict):
                 continue
             rows.append({
@@ -90,8 +86,6 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
     # = empirical CV of full-vst residual gene variances (flagged with the x-label *).
     figdir = os.path.dirname(out_prefix) or "."
     _cvq_wide = pd.read_csv(os.path.join(figdir, "cvq_per_method_subset_filtered.csv"))
-    if "PFlog" not in _cvq_wide.columns and OLD_PFLOG_NAME in _cvq_wide.columns:
-        _cvq_wide = _cvq_wide.rename(columns={OLD_PFLOG_NAME: "PFlog"})
     _cvq = _cvq_wide.melt(
         id_vars="ds",
         value_vars=["raw", "PF", "sqrt", "log1p", "log1pCP10k", "log1pCPM",

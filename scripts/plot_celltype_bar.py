@@ -31,8 +31,6 @@ METHODS = [
 CLR_METHOD = "PFlog (shift. CLR)"
 CLR_COLOR  = "#E41A1C"   # matches the Comp. family color in main_benchmark_fig
 DISPLAY = {"sctransform": "sctransform v2"}   # shown text only; data key unchanged
-OLD_PFLOG_NAME = "PFlog" + "PF"
-METHOD_ALIASES = {"PFlog (shift. CLR)": f"{OLD_PFLOG_NAME} (shift. CLR)"}
 
 cividis = matplotlib.colormaps["cividis"]
 PANEL_COLORS = {
@@ -47,9 +45,6 @@ def main(metrics_json, out_prefix):
         d = json.load(f)
     ds, ct = d.get("dataset", "?"), d.get("celltype", "?")
     n_cells, n_genes = d.get("n_cells", 0), d.get("n_genes", 0)
-    for new_key, old_key in METHOD_ALIASES.items():
-        if new_key not in d["methods"] and old_key in d["methods"]:
-            d["methods"][new_key] = d["methods"][old_key]
 
     methods_present = [m for m in METHODS if m in d["methods"]]
     # Panel (a) is plotted as 1 - fraction so depth-confounded (loadings
