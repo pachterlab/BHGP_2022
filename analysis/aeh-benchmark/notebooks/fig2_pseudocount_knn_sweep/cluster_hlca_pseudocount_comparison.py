@@ -20,9 +20,9 @@ import scclr
 
 
 HERE = Path(__file__).resolve().parent
-PFLOGPF_DIR = HERE.parents[1]
-OUT_DIR = PFLOGPF_DIR / "output"
-DATA = PFLOGPF_DIR / "notebooks" / "fig4_lung_depth_geometry" / "data" / "hlca_lung_seqwell_10xv3_balanced_raw.h5ad"
+AEH_BENCHMARK_DIR = HERE.parents[1]
+OUT_DIR = AEH_BENCHMARK_DIR / "output"
+DATA = AEH_BENCHMARK_DIR / "notebooks" / "fig4_lung_depth_geometry" / "data" / "hlca_lung_seqwell_10xv3_balanced_raw.h5ad"
 OUT = OUT_DIR / "hlca_lung_balanced_pflog_cp10k_leiden_similarity.tsv"
 LABELS = OUT_DIR / "hlca_lung_balanced_pflog_cp10k_leiden_labels.tsv"
 PCA_DIM = 50

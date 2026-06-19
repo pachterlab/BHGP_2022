@@ -21,7 +21,7 @@ script_path <- function() {
 
 script_file <- script_path()
 repo_dir <- normalizePath(file.path(dirname(script_file), ".."))
-pf_dir <- file.path(repo_dir, "PFlogPF")
+pf_dir <- file.path(repo_dir, "analysis", "aeh-benchmark")
 notebook_dir <- file.path(pf_dir, "notebooks")
 benchmark_dir <- file.path(pf_dir, "benchmark", "output", "benchmark_results")
 figure_dir <- normalizePath(file.path(repo_dir, "..", "figures"), mustWork = FALSE)

@@ -18,13 +18,13 @@ and the muscat 12x downsampling kNN result quoted in Section 2.5.
 Run from the repository root:
 
 ```bash
-python PFlogPF/notebooks/fig4_lung_depth_geometry/plot_hlca_lung_pc1_loading_stability.py
+python analysis/aeh-benchmark/notebooks/fig4_lung_depth_geometry/plot_hlca_lung_pc1_loading_stability.py
 ```
 
 If `scclr` is not installed, pass a local checkout:
 
 ```bash
-python PFlogPF/notebooks/fig4_lung_depth_geometry/plot_hlca_lung_pc1_loading_stability.py \
+python analysis/aeh-benchmark/notebooks/fig4_lung_depth_geometry/plot_hlca_lung_pc1_loading_stability.py \
   --scclr-path /path/to/scclr/python
 ```
 
@@ -45,7 +45,7 @@ Run from the repository root in an environment with `scvi-tools`, `torch`,
 `anndata`, `sklearn`, and `scclr`:
 
 ```bash
-python PFlogPF/notebooks/fig4_lung_depth_geometry/run_muscat_downsample_k10_recovery.py
+python analysis/aeh-benchmark/notebooks/fig4_lung_depth_geometry/run_muscat_downsample_k10_recovery.py
 ```
 
 If `scclr` is not installed, pass a local checkout as above. The output table is:

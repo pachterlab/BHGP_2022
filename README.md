@@ -66,9 +66,9 @@ the pooled-dataset `α` is inflated by between-cell-type heterogeneity.
 - **`scripts/`** — Python/bash pipeline for the 526-dataset analysis (Fig. 1):
   normalization (`norm_*`), per-method and cell-type metrics (`metrics_*`), and
   plotting (`plot_*`). Pipeline order documented in [`scripts/README.md`](scripts/README.md).
-- **`PFlogPF/`** — R reproduction of the Ahlmann-Eltze & Huber k-NN benchmark
+- **`analysis/aeh-benchmark/`** — R reproduction of the Ahlmann-Eltze & Huber k-NN benchmark
   (Fig. 2) and the downstream/supplementary figures (downsampling, feature-panel
-  stability, Seurat-`"CLR"`, pseudocount simulation). `PFlogPF/benchmark/` holds the
+  stability, Seurat-`"CLR"`, pseudocount simulation). `analysis/aeh-benchmark/benchmark/` holds the
   benchmark framework with committed result tables and a pinned `renv.lock`.
 - **`analysis/`** — notebooks and the rendered manuscript figures in `analysis/figures/`.
 - **`data/`** — `datasets.txt` (526 GEO/SRA accessions), `release_date.txt`, and
@@ -89,7 +89,7 @@ uv sync                 # Python 3.11 env into .venv (see pyproject.toml / uv.lo
 
 - **Fig. 1 (526-dataset benchmark):** run the `scripts/` pipeline per
   `scripts/README.md` (normalize → metrics → `plot_summary.py` / `plot_bar.py`).
-- **Fig. 2 (k-NN benchmark) + supplement:** R, under `PFlogPF/` (restore `renv`,
+- **Fig. 2 (k-NN benchmark) + supplement:** R, under `analysis/aeh-benchmark/` (restore `renv`,
   run `benchmark/`, render `notebooks/plot_benchmark_results.Rmd`).
 
 ## License

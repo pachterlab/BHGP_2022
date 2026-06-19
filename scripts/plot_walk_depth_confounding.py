@@ -26,7 +26,7 @@ from scipy.stats import spearmanr
 ROOT = Path(__file__).resolve().parents[1]
 FIGURE_DIR = (ROOT.parent / "figures").resolve()
 CACHE = FIGURE_DIR / "scclr_cache"
-REPO_OUTPUT = ROOT / "PFlogPF" / "output"
+REPO_OUTPUT = ROOT / "analysis" / "aeh-benchmark" / "output"
 OUT_PNG = REPO_OUTPUT / "walk_depth_confounding.png"
 OUT_PDF = REPO_OUTPUT / "walk_depth_confounding.pdf"
 OUT_TSV = REPO_OUTPUT / "walk_depth_confounding_summary.tsv"

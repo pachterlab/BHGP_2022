@@ -22,8 +22,8 @@ import matplotlib.pyplot as plt
 
 
 HERE = Path(__file__).resolve().parent
-PFLOGPF_DIR = HERE.parents[1]
-OUT_DIR = PFLOGPF_DIR / "output"
+AEH_BENCHMARK_DIR = HERE.parents[1]
+OUT_DIR = AEH_BENCHMARK_DIR / "output"
 DEFAULT_INPUT = HERE / "angelidis_lung_pseudobulk.h5ad"
 DEFAULT_DE = HERE / "pc1_loadings_with_edgepython_de.csv"
 DEFAULT_OUT = OUT_DIR / "angelidis_pseudobulk_pseudocount_r2_sweep.pdf"

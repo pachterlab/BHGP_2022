@@ -43,7 +43,7 @@ dev = [
 # It requires R and R's sctransform package on the system.
 
 # edgePython (edgeR-style differential expression) is used only by the Fig 3
-# pseudobulk script (PFlogPF/notebooks/fig3_angelidis_pseudobulk/
+# pseudobulk script (analysis/aeh-benchmark/notebooks/fig3_angelidis_pseudobulk/
 # plot_angelidis_pseudobulk_figure.py), which can also load it via --edgepython-path
 # / EDGEPYTHON_PATH. Not on PyPI; install manually after `uv sync` (which prunes
 # packages not in the lock):

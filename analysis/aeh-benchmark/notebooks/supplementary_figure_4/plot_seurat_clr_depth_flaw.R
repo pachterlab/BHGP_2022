@@ -29,9 +29,9 @@ SCRIPT_DIR <- if (length(file_arg)) {
 } else {
   getwd()
 }
-PFLOGPF_ROOT <- normalizePath(file.path(SCRIPT_DIR, "..", ".."))
-DATA_DIR <- file.path(PFLOGPF_ROOT, "benchmark/output/clr_local/data/downsampling")
-OUT_DIR <- file.path(PFLOGPF_ROOT, "output")
+AEH_BENCHMARK_ROOT <- normalizePath(file.path(SCRIPT_DIR, "..", ".."))
+DATA_DIR <- file.path(AEH_BENCHMARK_ROOT, "benchmark/output/clr_local/data/downsampling")
+OUT_DIR <- file.path(AEH_BENCHMARK_ROOT, "output")
 DATASET  <- "smartSeq3_fibroblasts"
 FRACTION <- 0.10
 N_PC     <- 10
@@ -53,7 +53,7 @@ if (nzchar(scclr_python)) {
 }
 scclr_path <- Sys.getenv("SC_CLR_PATH", unset = "")
 if (!nzchar(scclr_path)) {
-  sibling_scclr <- file.path(PFLOGPF_ROOT, "..", "..", "scclr", "python")
+  sibling_scclr <- file.path(AEH_BENCHMARK_ROOT, "..", "..", "..", "scclr", "python")
   if (dir.exists(sibling_scclr)) {
     scclr_path <- normalizePath(sibling_scclr, mustWork = TRUE)
   }

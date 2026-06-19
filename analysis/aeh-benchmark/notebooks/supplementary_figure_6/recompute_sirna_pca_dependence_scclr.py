@@ -17,7 +17,7 @@ import pandas as pd
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_DIR = SCRIPT_DIR.parents[2]
+REPO_DIR = SCRIPT_DIR.parents[3]
 FIGURE_DIR = REPO_DIR.parent / "figures"
 OUT = SCRIPT_DIR / "sirna_pca_dependence_clr_alpha_k.tsv"
 

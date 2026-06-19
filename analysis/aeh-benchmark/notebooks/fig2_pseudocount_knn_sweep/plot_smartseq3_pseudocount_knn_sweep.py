@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sweep PFlog pseudocounts on one HLCA lung subset and compare kNN graphs."""
+"""Sweep PFlog pseudocounts and compare kNN graphs to PFlog on a Fig. 2c dataset."""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ import os
 import tempfile
 from pathlib import Path
 
-import anndata as ad
 import matplotlib
 import numpy as np
 import pandas as pd
@@ -24,31 +23,27 @@ import matplotlib.pyplot as plt
 
 
 HERE = Path(__file__).resolve().parent
-PFLOGPF_DIR = HERE.parents[1]
-OUT_DIR = PFLOGPF_DIR / "output"
-DATA = PFLOGPF_DIR / "notebooks" / "fig4_lung_depth_geometry" / "data" / "hlca_lung_seqwell_10xv3_balanced_raw.h5ad"
-OUT = OUT_DIR / "hlca_lung_balanced_pflog_pseudocount_knn_overlap.pdf"
-DATASET = "HLCA lung balanced subset"
+AEH_BENCHMARK_DIR = HERE.parents[1]
+REPO = AEH_BENCHMARK_DIR.parent
+DATA = AEH_BENCHMARK_DIR / "benchmark" / "output" / "clr_local" / "data" / "downsampling"
+OUT_DIR = AEH_BENCHMARK_DIR / "output"
+OUT = OUT_DIR / "smartseq3_fibroblasts_pflog_pseudocount_knn_overlap.pdf"
+DATASET = "smartSeq3_fibroblasts"
 PCA_DIM = 10
 KNN = 50
 SEED = 1
-N_GENES = 3000
-MIN_DETECTION = 0.01
 
 
-def as_csr(X) -> sp.csr_matrix:
-    return X.tocsr() if sp.issparse(X) else sp.csr_matrix(X)
+def read_table_counts(path: Path) -> sp.csr_matrix:
+    df = pd.read_csv(path, sep="\t", index_col=0)
+    return sp.csr_matrix(df.to_numpy(dtype=np.float64))
 
 
-def filter_cells_genes(X: sp.csr_matrix) -> sp.csr_matrix:
-    cell_keep = np.asarray(X.sum(axis=1)).ravel() > 0
-    X = X[cell_keep].tocsr()
-    detected = np.asarray((X > 0).mean(axis=0)).ravel()
-    gene_keep = detected > MIN_DETECTION
-    X = X[:, gene_keep].tocsr()
-    score = np.asarray(X.mean(axis=0)).ravel()
-    idx = np.argsort(score)[-min(N_GENES, X.shape[1]) :]
-    return X[:, np.sort(idx)].tocsr()
+def filter_gene_cell(M_gene_cell: sp.spmatrix) -> sp.csr_matrix:
+    M = M_gene_cell.tocsr()
+    gene_keep = np.asarray(M.sum(axis=1)).ravel() > 0
+    cell_keep = np.asarray(M.sum(axis=0)).ravel() > 0
+    return M[gene_keep][:, cell_keep].tocsr()
 
 
 def knn(emb: np.ndarray, k: int) -> np.ndarray:
@@ -76,11 +71,8 @@ def main() -> None:
     os.environ.setdefault("MPLCONFIGDIR", str(cache_dir / "matplotlib"))
     os.environ.setdefault("XDG_CACHE_HOME", str(cache_dir))
 
-    adata = ad.read_h5ad(DATA)
-    obs = adata.obs.copy()
-    assay_counts = obs["assay"].astype(str).value_counts().to_dict() if "assay" in obs else {}
-    cell_type_counts = obs["cell_type"].astype(str).value_counts().to_dict() if "cell_type" in obs else {}
-    counts = filter_cells_genes(as_csr(adata.X).astype(np.float64))
+    counts_gene_cell = filter_gene_cell(read_table_counts(DATA / "Smartseq3.Fibroblasts.NovaSeq.UMIcounts.txt"))
+    counts = counts_gene_cell.T.tocsr().astype(np.float64)
     depths = np.asarray(counts.sum(axis=1)).ravel()
     sbar = float(depths.mean())
 
@@ -147,10 +139,10 @@ def main() -> None:
         "CP10k": dict(color="#756bb1", linestyle="--", lw=0.9),
     }
     label_y = {
-        "CPM": 14.0,
-        "log1pPF": 20.0,
-        "PFlog optimum": 26.0,
-        "CP10k": 16.0,
+        "CPM": 15.0,
+        "log1pPF": 19.0,
+        "PFlog optimum": 23.0,
+        "CP10k": 17.0,
     }
     for name, value in reference.items():
         style = marker_styles[name]
@@ -180,16 +172,13 @@ def main() -> None:
     fig.savefig(OUT.with_suffix(".png"), dpi=300, bbox_inches="tight")
     summary = {
         "dataset": DATASET,
-        "input": str(DATA),
         "n_cells": int(counts.shape[0]),
         "n_genes": int(counts.shape[1]),
         "pca_dim": PCA_DIM,
         "k": KNN,
         "alpha": alpha,
         "scclr_K": k_auto,
-        "mean_depth_after_gene_filter": sbar,
-        "assay_counts": assay_counts,
-        "cell_type_counts": cell_type_counts,
+        "mean_depth": sbar,
         "reference_pseudocounts": reference,
         "outputs": {
             "pdf": str(OUT),

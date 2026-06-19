@@ -32,8 +32,8 @@ import matplotlib.pyplot as plt
 
 
 HERE = Path(__file__).resolve().parent
-PFLOGPF_DIR = HERE.parents[1]
-FIGURE_OUT = PFLOGPF_DIR / "output"
+AEH_BENCHMARK_DIR = HERE.parents[1]
+FIGURE_OUT = AEH_BENCHMARK_DIR / "output"
 
 DEFAULT_INPUT = HERE / "angelidis_lung_pseudobulk.h5ad"
 DEFAULT_FIGURE = FIGURE_OUT / "angelidis_pca_and_pc1_loadings_four_panel.pdf"

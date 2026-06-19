@@ -1,0 +1,13 @@
+{
+  "alpha": 0.12352566274430782,
+  "mean_depth": 808829.5333333333,
+  "reference_pseudocounts": {
+    "PFlog optimum": 2.023870946699456,
+    "CPM": 0.8088295333333333,
+    "log1pPF": 1.0,
+    "CP10k": 80.88295333333333
+  },
+  "output_pdf": "/Users/lpachter/Dropbox/claude/projects/depth/fresh4/BHGP_2022/analysis/aeh-benchmark/output/angelidis_pseudobulk_pseudocount_r2_sweep.pdf",
+  "output_png": "/Users/lpachter/Dropbox/claude/projects/depth/fresh4/BHGP_2022/analysis/aeh-benchmark/output/angelidis_pseudobulk_pseudocount_r2_sweep.png",
+  "output_table": "/Users/lpachter/Dropbox/claude/projects/depth/fresh4/BHGP_2022/analysis/aeh-benchmark/output/angelidis_pseudobulk_pseudocount_r2_sweep.tsv"
+}

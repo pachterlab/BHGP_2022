@@ -27,7 +27,7 @@ import scclr
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "PFlogPF" / "benchmark" / "output" / "clr_local" / "data"
+DATA = ROOT / "analysis" / "aeh-benchmark" / "benchmark" / "output" / "clr_local" / "data"
 OUTDIR = ROOT.parent / "figures"
 CACHE = OUTDIR / "scclr_cache"
 
