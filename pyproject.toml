@@ -24,7 +24,7 @@ dependencies = [
     "jupyter>=1.0",
     "nbconvert>=7.0",
     "ipykernel>=6.0",
-    # Sparse shifted-CLR (PFlog1pPF) normalization + sparse PCA. Used by
+    # Sparse shifted-CLR (PFlog) normalization + sparse PCA. Used by
     # scripts/plot_all.py (Fig 1 panels) and scripts/recompute_fig2abc_scclr.py.
     # Not on PyPI; built from git via maturin (a Rust toolchain is required to
     # build it). Source pinned in [tool.uv.sources] below.

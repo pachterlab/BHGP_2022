@@ -562,12 +562,12 @@ theorem scale_factor_from_alpha
   nlinarith
 
 /--
-Graph label: LaTeX tether for shifted PFlogPF scale.
+Graph label: LaTeX tether for shifted PFlog scale.
 
-Named tether for Supplementary Note Proposition `prop:shifted-pflogpf-scale`.
+Named tether for Supplementary Note Proposition `prop:shifted-pflog-scale`.
 It packages the two exact algebraic facts used in the proposition.
 -/
-theorem shifted_pflogpf_variance_scale
+theorem shifted_pflog_variance_scale
     {K s alpha x : ℝ} (hK : K ≠ 0) (hs : s ≠ 0) (halpha : alpha ≠ 0)
     (h : s / K = 1 / (4 * alpha)) :
     log1pPFScale K s x = shiftedLogCountScale K s x ∧

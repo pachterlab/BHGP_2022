@@ -4,7 +4,7 @@
 Writes a single dense CSV.gz output: <out_prefix>/clr.csv.gz
 
 Mathematically: T(x)_i = log(x_i/s + c) - mean_j(log(x_j/s + c)) with c=1 by default,
-where s = sum_j x_j is the per-cell depth. Equivalent to PFlog1pPF where the second
+where s = sum_j x_j is the per-cell depth. Equivalent to PFlog where the second
 PF step is replaced by additive cell-centering (see docs/current_paper/supplementary-note).
 
 Output is dense because per-cell mean subtraction destroys sparsity.

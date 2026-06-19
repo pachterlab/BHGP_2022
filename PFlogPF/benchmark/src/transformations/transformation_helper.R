@@ -1,7 +1,7 @@
 library(Matrix)
 
 
-.SANITY_FOLDER <- Sys.getenv("SANITY_FOLDER", unset = "/home/ahlmanne/prog/Sanity/")
+.SANITY_FOLDER <- Sys.getenv("SANITY_FOLDER", unset = "Sanity")
 
 
 mply_dbl <- function(x, FUN, ncol=1, ...){
@@ -408,7 +408,7 @@ scgpt_fnc <- function(UMI, sf, alpha, n_bins = 51L){
 # CLR (Centered Log-Ratio): delta-method shifted log, then subtract per-cell mean
 # across genes. The shift is the variance-stabilizing pseudocount y0 = 1/(4*alpha)
 # (passed via overdispersion = alpha, which sets shifted_log_transform's default
-# pseudo_count = 1/(4*overdispersion)) -- i.e. PFlogPF with the delta-method K =
+# pseudo_count = 1/(4*overdispersion)) -- i.e. PFlog with the delta-method K =
 # 4*alpha*s, identical to logp_alpha_fnc plus the CLR centering. Removes the
 # per-cell mean (depth) component before PCA, unlike logp1 which only removes the
 # per-gene mean during PCA centering.

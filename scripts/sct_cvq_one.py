@@ -10,7 +10,7 @@ Usage: sct_cvq_one.py <dataset> <outdir>
 Writes one CSV line to <outdir>/<dataset>.csv (skips if it already exists)."""
 import sys, os, json, numpy as np, pandas as pd, scipy.io as sio, warnings
 warnings.filterwarnings("ignore")
-D = "/home/sina/projects/synchromesh/data"
+D = os.environ.get("BHGP_DATA_ROOT", "data")
 ds, outdir = sys.argv[1], sys.argv[2]
 out = os.path.join(outdir, ds + ".csv")
 if os.path.exists(out):

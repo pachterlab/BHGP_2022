@@ -12,7 +12,7 @@ The main tether declarations are:
 ```lean
 Invariance.clr_uniqueness_theorem
 Invariance.axiom_necessity_tether
-Invariance.shifted_pflogpf_variance_scale
+Invariance.shifted_pflog_variance_scale
 ```
 
 The first states that, in dimension `D + 2` (Lean's constructive form of

@@ -1,11 +1,13 @@
 library(tidyverse)
 library(SingleCellExperiment)
 library(MatrixGenerics)
-setwd("/Users/lpachter/Dropbox/claude/projects/edgetemp/transformGamPoi-Paper/notebooks")
-source("annotation_helper.R")
+args <- commandArgs(trailingOnly = FALSE)
+file_arg <- grep("^--file=", args, value = TRUE)
+script_dir <- if (length(file_arg)) dirname(normalizePath(sub("^--file=", "", file_arg))) else getwd()
+source(file.path(script_dir, "annotation_helper.R"))
 
 # ── 1. Download Svensson 2017 data (pure technical noise, empty droplets) ─────
-h5ad_path <- "../extra_data/svensson_2017_1.h5ad"
+h5ad_path <- file.path(script_dir, "..", "extra_data", "svensson_2017_1.h5ad")
 if (!file.exists(h5ad_path)) {
   cat("Downloading Svensson 2017 dataset...\n")
   download.file(

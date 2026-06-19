@@ -149,11 +149,7 @@ def run_edgepython_de(adata: ad.AnnData, edgepython_path: Path | None) -> pd.Dat
         cached = HERE / "pc1_loadings_with_edgepython_de.csv"
         if cached.exists():
             cached_de = pd.read_csv(cached)
-            loading_cols = {
-                "pflog_pc1_loading",
-                "pflogpf_pc1_loading",
-                "logcp10k_pc1_loading",
-            }
+            loading_cols = {"pflog_pc1_loading", "logcp10k_pc1_loading"}
             de_cols = [col for col in cached_de.columns if col not in loading_cols]
             print(f"edgePython unavailable ({exc}); reusing DE columns from {cached}", file=sys.stderr)
             return cached_de[de_cols].copy()

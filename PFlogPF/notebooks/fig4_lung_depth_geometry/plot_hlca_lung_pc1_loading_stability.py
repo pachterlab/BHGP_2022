@@ -72,7 +72,7 @@ def pca_pc1_loadings_dense(Y: np.ndarray) -> np.ndarray:
     return model.components_[0].copy()
 
 
-def pca_pc1_loadings_pflogpf(scclr, X: sp.csr_matrix) -> tuple[np.ndarray, dict[str, float]]:
+def pca_pc1_loadings_pflog(scclr, X: sp.csr_matrix) -> tuple[np.ndarray, dict[str, float]]:
     res = scclr.normalize_pca(X, n_components=1, target="auto", seed=1)
     return np.asarray(res.components)[0].copy(), {"alpha": float(res.alpha), "k": float(res.k)}
 
@@ -129,8 +129,8 @@ def main() -> None:
         min_detection=args.min_detection,
     )
 
-    low_pf, low_norm = pca_pc1_loadings_pflogpf(scclr, X_low)
-    high_pf, high_norm = pca_pc1_loadings_pflogpf(scclr, X_high)
+    low_pf, low_norm = pca_pc1_loadings_pflog(scclr, X_low)
+    high_pf, high_norm = pca_pc1_loadings_pflog(scclr, X_high)
     comparisons = {
         "logCP10K": (pca_pc1_loadings_dense(log_cp10k(X_low)), pca_pc1_loadings_dense(log_cp10k(X_high)), {}, {}),
         "logPF, estimated K": (

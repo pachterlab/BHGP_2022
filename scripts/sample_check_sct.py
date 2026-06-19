@@ -23,8 +23,9 @@ from scipy import stats
 from sklearn.linear_model import LinearRegression
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-BUILDTOOLS = "/home/sina/bin/miniconda3/envs/buildtools"
-R_ENV = dict(os.environ, R_LD_LIBRARY_PATH=f"/usr/lib/R/lib:{BUILDTOOLS}/lib")
+R_ENV = os.environ.copy()
+if os.environ.get("SCTRANSFORM_R_LD_LIBRARY_PATH"):
+    R_ENV["R_LD_LIBRARY_PATH"] = os.environ["SCTRANSFORM_R_LD_LIBRARY_PATH"]
 
 
 def load_bin(path):

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Compare the two 'PFlogPF (shift. CLR)' implementations on one dataset:
+"""Compare the two 'PFlog (shift. CLR)' implementations on one dataset:
    multiplicative  pf_log_pf.mtx.gz  (do_pf->log1p->do_pf, used in the figures)
    additive        clr.csv.gz        (norm_clr = shifted CLR, matches the supplement)
 
 Reports the summary-boxplot metrics (cov_gene, r2_depth, r_mono) and the
 celltype-bar metrics (pc1_entropy_frac, fp_de_genes, mean_abs_spearman).
 
-Usage: python compare_pflogpf_clr.py <dataset_dir> <celltype>
+Usage: python compare_pflog_clr.py <dataset_dir> <celltype>
 """
 import gzip, sys
 import numpy as np, pandas as pd

@@ -41,7 +41,7 @@ estimate_alpha <- function(UMI) {
 # CLR with the delta-method pseudocount. alpha = NULL keeps the plain log1p shift
 # (used for the noiseless simulation ground truth, which has no overdispersion);
 # alpha given uses the variance-stabilizing pseudocount y0 = 1/(4*alpha), i.e.
-# PFlogPF with K = 4*alpha*s -- identical to the cluster clr_fnc and Fig 1a/1b.
+# PFlog with K = 4*alpha*s -- identical to the cluster clr_fnc and Fig 1a/1b.
 clr_transform <- function(UMI, sf, alpha = NULL) {
   if (inherits(UMI, "sparseMatrix")) UMI <- as.matrix(UMI)
   pc <- if (is.null(alpha)) 1 else 1 / (4 * alpha)

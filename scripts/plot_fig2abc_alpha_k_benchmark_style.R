@@ -27,7 +27,7 @@ benchmark_dir <- file.path(pf_dir, "benchmark", "output", "benchmark_results")
 figure_dir <- normalizePath(file.path(repo_dir, "..", "figures"), mustWork = FALSE)
 dir.create(figure_dir, showWarnings = FALSE, recursive = TRUE)
 
-# Compatibility shim used by PFlogPF/notebooks/plot_benchmark_results.Rmd.
+# Compatibility shim used by the benchmark plotting notebook.
 # gggroupedscale is not available for current ggplot2, so use ggh4x nested axes.
 scale_y_grouped_discrete <- function(..., grouping = NULL, gap_size = 1, limits = NULL,
                                      add_group_label = FALSE, guide = NULL,

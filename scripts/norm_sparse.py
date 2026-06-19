@@ -44,7 +44,7 @@ def norm_sqrt(mtx):
     return sqrt
 
 def norm_clr(mtx, c=1.0, sf=None, alpha=None, scale=None):
-    """PFlogPF (shifted CLR): first PF to depth `sf`, then log(.+c), then additive
+    """PFlog (shifted CLR): first PF to depth `sf`, then log(.+c), then additive
     per-cell centering (the CLR step).
 
     Default sf=None -> mean cell depth, i.e. PF -> log1p -> center. This keeps the

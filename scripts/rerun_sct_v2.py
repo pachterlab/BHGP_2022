@@ -33,13 +33,14 @@ from scipy import stats
 from sklearn.linear_model import LinearRegression
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-BUILDTOOLS = "/home/sina/bin/miniconda3/envs/buildtools"
 GEN_R = os.path.join(HERE, "gen_sctransform_v2.R")
 IMPL_TAG = "R sctransform v2 (glmGamPoi)"
 
 
 def _env(r_threads):
-    e = dict(os.environ, R_LD_LIBRARY_PATH=f"/usr/lib/R/lib:{BUILDTOOLS}/lib")
+    e = os.environ.copy()
+    if os.environ.get("SCTRANSFORM_R_LD_LIBRARY_PATH"):
+        e["R_LD_LIBRARY_PATH"] = os.environ["SCTRANSFORM_R_LD_LIBRARY_PATH"]
     e["OMP_NUM_THREADS"] = str(r_threads)
     return e
 

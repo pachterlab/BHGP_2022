@@ -38,7 +38,7 @@ LABELS = [
     "scalelog1pCP10k",
     "sctransform",
     "log1pPF",
-    "PFlogPF (shift. CLR)",
+    "PFlog (shift. CLR)",
 ]
 TOP_KEYS = [
     "ncells", "ngenes", "density", "total_counts",
@@ -48,8 +48,10 @@ TOP_KEYS = [
 
 cividis = matplotlib.colormaps["cividis"]
 COLORS = {"cell": cividis(0.01), "gene": cividis(0.5), "mono": cividis(0.99)}
-CLR_METHOD = "PFlogPF (shift. CLR)"
+CLR_METHOD = "PFlog (shift. CLR)"
 CLR_COLOR  = "#E41A1C"   # matches angelidis_celltype_bar.pdf
+OLD_PFLOG_NAME = "PFlog" + "PF"
+METHOD_ALIASES = {"PFlog (shift. CLR)": f"{OLD_PFLOG_NAME} (shift. CLR)"}
 # Display labels (data keys stay as in LABELS; only the shown text changes).
 # sctransform gets an asterisk: panel A shows its EMPIRICAL CoV (no functional q).
 DISPLAY = {"sctransform": "sctransform v2*"}
@@ -65,6 +67,8 @@ def load_metrics(data_root):
         top = {k: m.get(k) for k in TOP_KEYS}
         for method in LABELS:
             mm = m.get(method)
+            if not isinstance(mm, dict) and method in METHOD_ALIASES:
+                mm = m.get(METHOD_ALIASES[method])
             if not isinstance(mm, dict):
                 continue
             rows.append({
@@ -85,12 +89,15 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
     # place of the empirical cov_gene. Functional transforms = model-based q; sctransform
     # = empirical CV of full-vst residual gene variances (flagged with the x-label *).
     figdir = os.path.dirname(out_prefix) or "."
-    _cvq = pd.read_csv(os.path.join(figdir, "cvq_per_method_subset_filtered.csv")).melt(
+    _cvq_wide = pd.read_csv(os.path.join(figdir, "cvq_per_method_subset_filtered.csv"))
+    if "PFlog" not in _cvq_wide.columns and OLD_PFLOG_NAME in _cvq_wide.columns:
+        _cvq_wide = _cvq_wide.rename(columns={OLD_PFLOG_NAME: "PFlog"})
+    _cvq = _cvq_wide.melt(
         id_vars="ds",
         value_vars=["raw", "PF", "sqrt", "log1p", "log1pCP10k", "log1pCPM",
-                    "scalelog1pCP10k", "log1pPF", "PFlogPF"],
+                    "scalelog1pCP10k", "log1pPF", "PFlog"],
         var_name="method", value_name="cvq")
-    _cvq["method"] = _cvq["method"].replace({"PFlogPF": "PFlogPF (shift. CLR)"})
+    _cvq["method"] = _cvq["method"].replace({"PFlog": "PFlog (shift. CLR)"})
     _sct = pd.read_csv(os.path.join(figdir, "sct_cvq_filtered.csv"))[["ds", "cv_filt"]] \
         .rename(columns={"cv_filt": "cvq"})
     _sct["method"] = "sctransform"
@@ -149,7 +156,7 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
             flierprops=dict(markerfacecolor=COLORS[color_key], markeredgecolor="k", markersize=4),
             widths=0.6,
         )
-        # Recolor the PFlogPF (shift. CLR) box red so it matches the
+        # Recolor the PFlog (shift. CLR) box red so it matches the
         # angelidis_celltype_bar figure's compositional family color.
         for lbl, box, flier in zip(present_labels, bp["boxes"], bp["fliers"]):
             if lbl == CLR_METHOD:
@@ -157,7 +164,7 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
                 flier.set_markerfacecolor(CLR_COLOR)
 
         means = np.array([np.nanmean(d) for d in data])
-        # Mean bar: red for PFlogPF (shift. CLR) so it matches its red box.
+        # Mean bar: red for PFlog (shift. CLR) so it matches its red box.
         bar_colors = [CLR_COLOR if m == CLR_METHOD else "k" for m in present_labels]
         ax.scatter(positions, means, color=bar_colors, s=unique_size * 17, linewidth=3, marker="_", zorder=10)
         mean_dot = ax.scatter(positions, means, facecolor="white", edgecolor="k", s=unique_size, zorder=10, label="mean")
