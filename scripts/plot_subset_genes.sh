@@ -29,6 +29,9 @@ find "$data_root" -mindepth 2 -maxdepth 2 -type d -name subset_genes -print0 \
       ds_dir="$1"
       script="$2"
       ds=$(basename "$(dirname "$ds_dir")")
+      pdf="$ds_dir/${ds}_subset_genes_method_comparison.pdf"
+      # Resumable: skip datasets whose figure is already newer than the (edited) script.
+      if [ -f "$pdf" ] && [ "$pdf" -nt "$script" ]; then echo "[skip:$ds] up-to-date"; exit 0; fi
       "'"$PY"'" "$script" "${ds}_subset_genes" "$ds_dir" "$ds_dir" 2>&1 \
           | sed "s|^|[plot:$ds] |" | tail -3
     ' _ {} "$SCRIPT_DIR/plot_all.py"
