@@ -13,12 +13,15 @@ its CV(q) is 0 (plotted as a reference line, not a functional transform).
 
 Output: a tidy wide CSV with one row per dataset, one CV(q) column per method.
 """
-import json, os, glob, gc, sys, numpy as np, scipy.io as sio, scipy.sparse as sp, warnings
+import json, os, glob, gc, numpy as np, scipy.io as sio, scipy.sparse as sp, warnings
 warnings.filterwarnings("ignore")
 
-DATA = "/home/sina/projects/synchromesh/data"
-OUT  = "/home/sina/projects/BHGP_2022/analysis/figures/cvq_per_method_subset_filtered.csv"
-METHODS = ["raw","PF","sqrt","log1p","log1pCP10k","log1pCPM","scalelog1pCP10k","log1pPF","PFlogPF"]
+DATA = os.environ.get("BHGP_DATA_ROOT", "data")
+OUT = os.environ.get(
+    "BHGP_CVQ_OUT",
+    os.path.join("analysis", "figures", "cvq_per_method_subset_filtered.csv"),
+)
+METHODS = ["raw","PF","sqrt","log1p","log1pCP10k","log1pCPM","scalelog1pCP10k","log1pPF","PFlog"]
 
 def CVq(a):
     a = a[np.isfinite(a) & (a > 0)]
@@ -48,7 +51,7 @@ def cvq_row(X, a):
     hc = g10 / (1 + g10 * muf)
     H = {"raw": np.ones_like(muf), "PF": np.ones_like(muf), "sqrt": 0.5/np.sqrt(muf),
          "log1p": 1/(1+muf), "log1pCP10k": hc, "log1pCPM": gM/(1+gM*muf),
-         "log1pPF": 1/(1+muf), "PFlogPF": (4*a)/(1+4*a*muf)}
+         "log1pPF": 1/(1+muf), "PFlog": (4*a)/(1+4*a*muf)}
     row = {k: CVq(H[k]**2 * V) for k in H}
     row["scalelog1pCP10k"] = CVq((hc**2 * V) / var_emp)
     return row, int(mask.sum()), sbar
@@ -58,6 +61,7 @@ datasets = sorted(os.path.basename(p).replace("_subset_genes_metrics.json","")
 datasets = [d for d in datasets if os.path.exists(f"{DATA}/{d}/subset_genes/raw.mtx.gz")]
 print(f"{len(datasets)} datasets with subset_genes/raw.mtx.gz", flush=True)
 
+os.makedirs(os.path.dirname(OUT) or ".", exist_ok=True)
 out = open(OUT, "w")
 out.write("ds,alpha,ncells,ngenes,ngenes_filt,sbar," + ",".join(METHODS) + "\n")
 ok = fail = 0

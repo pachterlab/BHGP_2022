@@ -29,6 +29,9 @@ NAN = ['ERS4228665','GSM3576415','GSM3576416','GSM3576418','CRX102286','CRX10229
        'ERX2756731','GSM3576398','GSM4037323','GSM3576410']
 
 df = pd.read_csv(CSV)
+OLD_PFLOG_NAME = "PFlog" + "PF"
+if "PFlog" not in df.columns and OLD_PFLOG_NAME in df.columns:
+    df = df.rename(columns={OLD_PFLOG_NAME: "PFlog"})
 # Attach sctransform empirical cv_q_emp (filtered) if computed
 have_sct = os.path.exists(SCT)
 if have_sct:
@@ -39,8 +42,8 @@ if have_sct:
 # sctransform gets an xlabel asterisk so the caption can flag it as an EMPIRICAL CoV
 # (CV of full-vst residual gene variances) rather than the model-based delta-method q.
 ORDER = ["raw","PF","sqrt","log1p","log1pCP10k","log1pCPM","scalelog1pCP10k"] \
-        + (["sctransform"] if have_sct else []) + ["log1pPF","PFlogPF"]
-DISP  = {"PFlogPF":"PFlogPF\n(shift. CLR)", "sctransform":"sctransform*"}
+        + (["sctransform"] if have_sct else []) + ["log1pPF","PFlog"]
+DISP  = {"PFlog":"PFlog\n(shift. CLR)", "sctransform":"sctransform*"}
 
 _amj = os.path.join(HERE, "..", "analysis", "supplement", "metrics", "angelidis_2019_all_genes_metrics_flat.json")
 amin = float(json.load(open(_amj))["avg_per_cell"])

@@ -2,7 +2,7 @@
 """Generate manuscript Figure 3 from Angelidis lung pseudobulk counts.
 
 The input AnnData contains raw UMI counts summed by mouse sample. The script
-compares standard log1p(CP10K) normalization with PFlogPF normalization, then
+compares standard log1p(CP10K) normalization with PFlog normalization, then
 compares PC1 gene loadings with edgePython old-vs-young differential expression.
 """
 
@@ -48,6 +48,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", type=Path, default=DEFAULT_FIGURE)
     parser.add_argument("--n-comps", type=int, default=5)
     parser.add_argument(
+        "--comparison",
+        choices=("cp10k", "same-k"),
+        default="cp10k",
+        help="Comparison transform for panels a/c. 'same-k' uses log(1 + K x/s) with the PFlog-estimated K.",
+    )
+    parser.add_argument(
         "--edgepython-path",
         type=Path,
         default=os.environ.get("EDGEPYTHON_PATH"),
@@ -71,9 +77,9 @@ def orient_old_positive(scores: np.ndarray, loadings: np.ndarray, obs: pd.DataFr
     return scores, loadings
 
 
-def run_pflogpf_pca(adata: ad.AnnData, n_comps: int) -> ad.AnnData:
+def run_pflog_pca(adata: ad.AnnData, n_comps: int) -> ad.AnnData:
     work = adata.copy()
-    scclr.pp.pflog1ppf(work, target="auto")
+    scclr.pp.pflog(work, target="auto")
     scclr.tl.pca(work, n_comps=n_comps, ncv=min(12, work.n_obs - 1), seed=0)
     scores, loadings = orient_old_positive(work.obsm["X_pca"], work.varm["PCs"], work.obs)
     work.obsm["X_pca"] = scores
@@ -102,6 +108,34 @@ def run_logcp10k_pca(adata: ad.AnnData, n_comps: int) -> ad.AnnData:
         "variance": pca.explained_variance_,
         "variance_ratio": pca.explained_variance_ratio_,
     }
+    work.uns["method_label"] = "log1p(CP10K)"
+    work.uns["loading_label"] = "log1p(CP10K) PC1 loading"
+    return work
+
+
+def run_log_same_k_pca(adata: ad.AnnData, n_comps: int, k_scale: float) -> ad.AnnData:
+    work = adata.copy()
+    counts = as_csr(work.X)
+    depths = np.asarray(counts.sum(axis=1)).ravel()
+    if np.any(depths <= 0):
+        raise ValueError("all samples must have positive total counts")
+
+    normalized = sp.diags(float(k_scale) / depths) @ counts
+    normalized.data = np.log1p(normalized.data)
+    work.layers["log_same_k"] = normalized.tocsr()
+
+    pca = PCA(n_components=n_comps, svd_solver="full")
+    scores = pca.fit_transform(normalized.toarray())
+    loadings = pca.components_.T
+    scores, loadings = orient_old_positive(scores, loadings, work.obs)
+    work.obsm["X_pca"] = np.ascontiguousarray(scores)
+    work.varm["PCs"] = np.ascontiguousarray(loadings)
+    work.uns["pca"] = {
+        "variance": pca.explained_variance_,
+        "variance_ratio": pca.explained_variance_ratio_,
+    }
+    work.uns["method_label"] = f"log(1 + K x/s), K={k_scale:.3g}"
+    work.uns["loading_label"] = "logPF same-K PC1 loading"
     return work
 
 
@@ -109,7 +143,17 @@ def run_edgepython_de(adata: ad.AnnData, edgepython_path: Path | None) -> pd.Dat
     if edgepython_path is not None:
         sys.path.insert(0, str(edgepython_path))
 
-    import edgepython as ep
+    try:
+        import edgepython as ep
+    except Exception as exc:
+        cached = HERE / "pc1_loadings_with_edgepython_de.csv"
+        if cached.exists():
+            cached_de = pd.read_csv(cached)
+            loading_cols = {"pflog_pc1_loading", "logcp10k_pc1_loading"}
+            de_cols = [col for col in cached_de.columns if col not in loading_cols]
+            print(f"edgePython unavailable ({exc}); reusing DE columns from {cached}", file=sys.stderr)
+            return cached_de[de_cols].copy()
+        raise
 
     counts = as_csr(adata.X).toarray().T.astype(np.float64, copy=False)
     genes = adata.var_names.astype(str).to_numpy()
@@ -135,7 +179,7 @@ def run_edgepython_de(adata: ad.AnnData, edgepython_path: Path | None) -> pd.Dat
 
 def write_pca_coordinates(adata_log: ad.AnnData, adata_pf: ad.AnnData) -> pd.DataFrame:
     rows = []
-    for method, work in [("log1p(CP10K)", adata_log), ("PFlogPF", adata_pf)]:
+    for method, work in [(adata_log.uns.get("method_label", "log1p(CP10K)"), adata_log), ("PFlog", adata_pf)]:
         for i, sample in enumerate(work.obs_names):
             rows.append(
                 {
@@ -158,7 +202,7 @@ def merge_loadings_with_de(adata: ad.AnnData, adata_log: ad.AnnData, adata_pf: a
     loadings = pd.DataFrame(
         {
             "gene": adata.var_names.astype(str),
-            "pflogpf_pc1_loading": adata_pf.varm["PCs"][:, 0],
+            "pflog_pc1_loading": adata_pf.varm["PCs"][:, 0],
             "logcp10k_pc1_loading": adata_log.varm["PCs"][:, 0],
         }
     )
@@ -229,7 +273,7 @@ def plot_pca_panel(
 
 
 def plot_figure(adata_log: ad.AnnData, adata_pf: ad.AnnData, merged: pd.DataFrame, output: Path) -> dict:
-    cache_dir = Path(tempfile.gettempdir()) / "pflogpf_matplotlib_cache"
+    cache_dir = Path(tempfile.gettempdir()) / "pflog_matplotlib_cache"
     cache_dir.mkdir(parents=True, exist_ok=True)
     os.environ.setdefault("MPLCONFIGDIR", str(cache_dir / "matplotlib"))
     os.environ.setdefault("XDG_CACHE_HOME", str(cache_dir))
@@ -254,8 +298,11 @@ def plot_figure(adata_log: ad.AnnData, adata_pf: ad.AnnData, merged: pd.DataFram
     fig, axes = plt.subplots(2, 2, figsize=(6.9, 5.6), constrained_layout=True)
     fig.set_constrained_layout_pads(w_pad=0.03, h_pad=0.03, wspace=0.08, hspace=0.08)
 
-    plot_pca_panel(axes[0, 0], adata_log, "a", "log1p(CP10K) PCA", legend_loc="upper right", borderaxespad=0.18)
-    plot_pca_panel(axes[0, 1], adata_pf, "b", "PFlogPF PCA", legend_loc="lower right", legend_bbox=(0.83, 0.03))
+    comparison_label = adata_log.uns.get("method_label", "log1p(CP10K)")
+    comparison_loading_label = adata_log.uns.get("loading_label", "log1p(CP10K) PC1 loading")
+
+    plot_pca_panel(axes[0, 0], adata_log, "a", f"{comparison_label} PCA", legend_loc="upper right", borderaxespad=0.18)
+    plot_pca_panel(axes[0, 1], adata_pf, "b", "PFlog PCA", legend_loc="lower right", legend_bbox=(0.83, 0.03))
 
     scatter_handles = [
         plt.Line2D(
@@ -286,8 +333,8 @@ def plot_figure(adata_log: ad.AnnData, adata_pf: ad.AnnData, merged: pd.DataFram
     for ax, (panel, col, xlabel) in zip(
         axes[1],
         [
-            ("c", "logcp10k_pc1_loading", "log1p(CP10K) PC1 loading"),
-            ("d", "pflogpf_pc1_loading", "PFlogPF PC1 loading"),
+            ("c", "logcp10k_pc1_loading", comparison_loading_label),
+            ("d", "pflog_pc1_loading", "PFlog PC1 loading"),
         ],
     ):
         r = pearsonr(tested[col], tested["logFC"]).statistic
@@ -327,12 +374,12 @@ def plot_figure(adata_log: ad.AnnData, adata_pf: ad.AnnData, merged: pd.DataFram
     return {
         "n_genes_tested": int(len(tested)),
         "n_fdr_0_05": int(sig.sum()),
-        "pflogpf_k": float(adata_pf.uns["log1ppf"]["k"]),
-        "pflogpf_pc1_variance_ratio": float(adata_pf.uns["pca"]["variance_ratio"][0]),
-        "pflogpf_pc2_variance_ratio": float(adata_pf.uns["pca"]["variance_ratio"][1]),
+        "pflog_k": float(adata_pf.uns["pflog"]["k"]),
+        "pflog_pc1_variance_ratio": float(adata_pf.uns["pca"]["variance_ratio"][0]),
+        "pflog_pc2_variance_ratio": float(adata_pf.uns["pca"]["variance_ratio"][1]),
         "logcp10k_pc1_variance_ratio": float(adata_log.uns["pca"]["variance_ratio"][0]),
         "logcp10k_pc2_variance_ratio": float(adata_log.uns["pca"]["variance_ratio"][1]),
-        "pearson_pflogpf_loading_vs_logFC": correlations["pflogpf_pc1_loading"],
+        "pearson_pflog_loading_vs_logFC": correlations["pflog_pc1_loading"],
         "pearson_logcp10k_loading_vs_logFC": correlations["logcp10k_pc1_loading"],
     }
 
@@ -340,8 +387,11 @@ def plot_figure(adata_log: ad.AnnData, adata_pf: ad.AnnData, merged: pd.DataFram
 def main() -> None:
     args = parse_args()
     adata = ad.read_h5ad(args.input)
-    adata_log = run_logcp10k_pca(adata, args.n_comps)
-    adata_pf = run_pflogpf_pca(adata, args.n_comps)
+    adata_pf = run_pflog_pca(adata, args.n_comps)
+    if args.comparison == "same-k":
+        adata_log = run_log_same_k_pca(adata, args.n_comps, float(adata_pf.uns["pflog"]["k"]))
+    else:
+        adata_log = run_logcp10k_pca(adata, args.n_comps)
     write_pca_coordinates(adata_log, adata_pf)
     de = run_edgepython_de(adata, args.edgepython_path)
     merged = merge_loadings_with_de(adata, adata_log, adata_pf, de)

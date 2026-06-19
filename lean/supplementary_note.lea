@@ -59,17 +59,17 @@
       "note": "Packages five dimension-3 independence witnesses; the rank-monotonicity witness constructs a non-order-preserving additive real map from a Q-basis extension of {1, sqrt 2}."
     },
     {
-      "id": "align:shifted-pflogpf-scale",
+      "id": "align:shifted-pflog-scale",
       "kind": "proposition",
-      "title": "Shifted PFlogPF and variance-stabilizing scale",
+      "title": "Shifted PFlog and variance-stabilizing scale",
       "paper_ids": [
-        "prop:shifted-pflogpf-scale"
+        "prop:shifted-pflog-scale"
       ],
       "lean_ids": [
-        "Invariance.shifted_pflogpf_variance_scale"
+        "Invariance.shifted_pflog_variance_scale"
       ],
       "lean_decls": [
-        "Invariance.shifted_pflogpf_variance_scale"
+        "Invariance.shifted_pflog_variance_scale"
       ],
       "paper_location": {
         "section": "The CLR transform",

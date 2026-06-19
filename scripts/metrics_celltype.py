@@ -43,11 +43,11 @@ METHODS = [
     ("scalelog1pCP10k",      "cp10k_log_scale.csv.gz", True),
     ("sctransform",          "sctransform.csv.gz",    True),
     ("log1pPF",              "pf_log.mtx.gz",         False),
-    # PFlogPF (shift. CLR) is the additive centered-log-ratio, computed on the fly
+    # PFlog (shift. CLR) is the additive centered-log-ratio, computed on the fly
     # from raw via norm_clr (PF to mean depth -> log1p -> per-cell centering); the
     # "__CLR__" sentinel triggers that instead of reading a file. NOT the
     # multiplicative pf_log_pf.mtx.gz approximation.
-    ("PFlogPF (shift. CLR)", "__CLR__",               True),
+    ("PFlog (shift. CLR)", "__CLR__",               True),
 ]
 
 
@@ -85,11 +85,11 @@ def fp_de_genes(X_full, X, raw_depth, n_top=500, alpha=0.01, nan_cutoff=0.25,
     This panel's goal is to show that per-cell depth inflation -- deeper cells
     having larger per-gene values -> spurious DE -- is removed by normalization.
     The t-test compares MEANS, so it measures exactly that: depth-removing
-    methods (PF, log1pPF, PFlogPF) give ~0 false DE while non-removers (raw,
+    methods (PF, log1pPF, PFlog) give ~0 false DE while non-removers (raw,
     log1p) stay high.
 
     test="mannwhitney" runs a rank-sum test instead. NOTE: a rank test on the
-    *centered* PFlogPF values surfaces a different effect -- CLR centering
+    *centered* PFlog values surfaces a different effect -- CLR centering
     subtracts each cell's log-geometric-mean, which is depth-correlated (~0.7),
     injecting a small shared per-cell offset into every gene that the rank test
     flags. That is not the mean-inflation confound this panel targets, and
@@ -173,14 +173,14 @@ def main():
     ap.add_argument("--n_sub", type=int, default=500,
                     help="cells to subsample for pairwise Spearman (default 500)")
     ap.add_argument("--clr_alpha", type=float, default=None,
-                    help="overdispersion alpha; sets the PFlogPF first-PF constant "
+                    help="overdispersion alpha; sets the PFlog first-PF constant "
                          "K = 4*alpha*scale (delta-method pseudocount). If omitted "
-                         "(and --clr_calibrate off), PFlogPF uses sf=mean depth.")
+                         "(and --clr_calibrate off), PFlog uses sf=mean depth.")
     ap.add_argument("--clr_scale", type=float, default=None,
                     help="scale factor s (mean total UMI per cell) used in "
                          "K = 4*alpha*scale; defaults to the matrix mean cell depth.")
     ap.add_argument("--clr_calibrate", action="store_true",
-                    help="calibrate the PFlogPF pseudocount to the delta-method "
+                    help="calibrate the PFlog pseudocount to the delta-method "
                          "K = 4*alpha*s with alpha and s estimated WITHIN this cell "
                          "type (the right scale for a cell-type-specific metric; the "
                          "whole-dataset alpha is inflated by between-celltype "

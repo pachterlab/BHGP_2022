@@ -121,7 +121,7 @@ def plot_meanvar(mtx, raw_mean, minlim = 1e-4, maxlim = 1e5, ax=None, gvar=None,
         "xlim": (minlim, maxlim),
     }
 
-    # gvar may be precomputed (e.g. PFlogPF from the sparse-plus-rank-one form) to
+    # gvar may be precomputed (e.g. PFlog from the sparse-plus-rank-one form) to
     # avoid densifying the transformed matrix.
     if gvar is None:
         gvar = myvar(mtx, sparse=issparse(mtx), axis=0)
@@ -142,7 +142,7 @@ def plot_meanvar(mtx, raw_mean, minlim = 1e-4, maxlim = 1e5, ax=None, gvar=None,
 
 def plot_depth(mtx, raw_cell_counts, ax, cell_sums=None):
     x = raw_cell_counts
-    # cell_sums may be precomputed (PFlogPF is centered, so per-cell sums are 0).
+    # cell_sums may be precomputed (PFlog is centered, so per-cell sums are 0).
     y = mysum(mtx, sparse=issparse(mtx), axis=1) if cell_sums is None else cell_sums
 
     minx, maxx = min(x), max(x)
@@ -151,7 +151,7 @@ def plot_depth(mtx, raw_cell_counts, ax, cell_sums=None):
 
     xx = (x - minx)/maxx
 
-    # Degenerate case (PF / PFlogPF): all transformed cell sums equal -> no depth.
+    # Degenerate case (PF / PFlog): all transformed cell sums equal -> no depth.
     # Handle before the y-rescale to avoid a 0/0 divide.
     close = np.all(np.allclose(y, y[0]))
     if close:
@@ -202,7 +202,7 @@ def mono(matrix, raw, sample=5000, seed=0):
     return rv
 
 def plot_mono(matrix, raw, ax, mono_vals=None):
-    # mono_vals may be precomputed (PFlogPF is rank-monotone by construction, so
+    # mono_vals may be precomputed (PFlog is rank-monotone by construction, so
     # every per-cell Spearman is 1.0 -- no densify / Spearman loop needed).
     x = mono(matrix, raw) if mono_vals is None else mono_vals
     p = {"xlabel": "Spearman r", "ylabel": "Frequency", "xlim": (-1.2, 1.2)}
@@ -248,7 +248,7 @@ def read_data(base_data_fn, max_cells=25000, seed=0):
         if os.path.exists(in_fn):
             data[txlabel[title]] = pd.read_csv(in_fn, header=None, compression="gzip").values
 
-    # Cap cells (the SAME subset across every method) on very large datasets. PFlogPF
+    # Cap cells (the SAME subset across every method) on very large datasets. PFlog
     # is now sparse (scclr, below), but sctransform and scalelog1pCP10k are inherently
     # dense (loaded from multi-GB csv.gz), so the cap still bounds their memory under
     # parallel batch rendering. A seeded subsample is statistically indistinguishable
@@ -260,21 +260,21 @@ def read_data(base_data_fn, max_cells=25000, seed=0):
             data[k] = v[idx]
         raw = data[txlabel["raw"]]
 
-    # PFlogPF (shift. CLR) = additive centered log-ratio. Computed via scclr's sparse
+    # PFlog (shift. CLR) = additive centered log-ratio. Computed via scclr's sparse
     # shifted-CLR (sparse log1p(PF) + per-cell center vector); it is never densified,
     # so the panel is memory-safe even on the largest matrices. Passing the dataset
     # overdispersion alpha sets the delta-method scale K = 4*alpha*s (variance-
     # stabilizing pseudocount y0 = 1/(4*alpha)), matching Fig 1a/1b and the summary
     # metrics. plot_data derives the panel stats from the sparse-plus-rank-one form.
     alpha = float(compute_overdispersion(raw))
-    data["PFlogPF (shift. CLR)"] = scclr.normalize(raw, alpha=alpha)
+    data["PFlog (shift. CLR)"] = scclr.normalize(raw, alpha=alpha)
     return data
 
-# 'pf_log_pf' intentionally NOT in mtx_labels: PFlogPF is computed on the fly as
+# 'pf_log_pf' intentionally NOT in mtx_labels: PFlog is computed on the fly as
 # the additive CLR (see read_data), not read from the multiplicative pf_log_pf.mtx.gz.
 mtx_labels = ['raw', 'pf', 'log', 'pf_log', 'cpm_log', 'cp10k_log', "sqrt"]
 
-# "PFlogPF (shift. CLR)" = Aitchison centered log-ratio (additive), computed in
+# "PFlog (shift. CLR)" = Aitchison centered log-ratio (additive), computed in
 # read_data via norm_clr.
 labels = [
     'raw',
@@ -286,7 +286,7 @@ labels = [
      'scalelog1pCP10k',
      'sctransform',
      'log1pPF',
-     'PFlogPF (shift. CLR)',
+     'PFlog (shift. CLR)',
 ]
 
 txlabel = {
@@ -299,7 +299,7 @@ txlabel = {
   'cp10k_log_scale': 'scalelog1pCP10k',
   'sctransform': 'sctransform',
   'pf_log': 'log1pPF',
-  'pf_log_pf': 'PFlogPF (shift. CLR)',
+  'pf_log_pf': 'PFlog (shift. CLR)',
 }
 
 def setup_plot(ds, shape):
@@ -338,7 +338,7 @@ def _cvq_lookup():
         for _, r in f.iterrows():
             d = {c: float(r[c]) for c in cols if c in r and r[c] == r[c]}
             if "PFlogPF" in d:
-                d["PFlogPF (shift. CLR)"] = d.pop("PFlogPF")
+                d["PFlog (shift. CLR)"] = d.pop("PFlogPF")
             look[r["ds"]] = d
     except Exception as e:
         print(f"[plot_all] CV(q) functional CSV not loaded: {e}", file=sys.stderr)
@@ -376,7 +376,7 @@ def plot_data(axs, data, ds=""):
         else:
             try:
                 cq = cvq.get(title)   # CV(q) for this method (None -> falls back to cov_gene)
-                if title == "PFlogPF (shift. CLR)":
+                if title == "PFlog (shift. CLR)":
                     # scclr sparse shifted-CLR (ShiftedCLR object): derive panel stats
                     # from the sparse log1p(PF) + per-cell center -- never densified.
                     # Centered => per-cell sums are 0 (depth removed); rank-monotone by

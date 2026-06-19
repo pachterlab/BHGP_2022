@@ -9,7 +9,7 @@ suppressMessages({ library(Matrix); library(sctransform); library(glmGamPoi) })
 suppressMessages(if (requireNamespace("future", quietly=TRUE)) {
   options(future.globals.maxSize=16*1024^3); future::plan("sequential") })
 a <- commandArgs(trailingOnly=TRUE); ds <- a[[1]]; do_full <- as.integer(a[[2]])
-D <- "/home/sina/projects/synchromesh/data"
+D <- Sys.getenv("BHGP_DATA_ROOT", unset="data")
 mj <- jsonlite::fromJSON(file.path(D,ds,"subset_genes",paste0(ds,"_subset_genes_metrics.json")))
 stored <- mj$sctransform$cov_gene
 

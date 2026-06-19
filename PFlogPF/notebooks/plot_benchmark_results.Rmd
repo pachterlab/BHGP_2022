@@ -117,7 +117,7 @@ consistency_pl <- res_main %>%
 simulation_pl <- res_main %>%
   filter(benchmark == "simulation") %>%
   make_main_plot_panel(add_group_label = FALSE) +
-  # Same widening rationale as the downsampling panel: PFlogPF (shift. CLR) lands
+  # Same widening rationale as the downsampling panel: PFlog (shift. CLR) lands
   # above the default xlim because of its scale-invariance, so its mean dot
   # would be clipped off-screen. Widen to match downsampling's range.
   coord_cartesian(xlim = c(0.2, 5)) +
@@ -130,7 +130,7 @@ simulation_pl <- res_main %>%
 downsampling_pl <- res_main %>%
   filter(benchmark == "downsampling") %>%
   make_main_plot_panel(add_group_label = FALSE) +
-  # PFlogPF (shift. CLR) is ~5x more depth-robust than every other method, so its
+  # PFlog (shift. CLR) is ~5x more depth-robust than every other method, so its
   # normalized recovery sits around 5; widen the downsampling-panel xlim so
   # those datapoints are visible. Other 2 panels keep the default [0.2, 1.8].
   coord_cartesian(xlim = c(0.2, 10)) +
@@ -410,7 +410,7 @@ plot_assemble(annotate_text("a", x = 2,   y = 1, vjust = 1, fontsize = font_size
 ```
 
 Stand-alone version of just the siRNA-KD k-NN-vs-PCA-dimensions panel
-(originally the last sub-panel of AE&H Fig 2 panel d). PFlogPF (shift. CLR)
+(originally the last sub-panel of AE&H Fig 2 panel d). PFlog (shift. CLR)
 appears as a red line because the compositional family color flows through
 `pca_dat`. Uses ggsave (no tikz) so it renders independently of the main
 figure's tikz/pdflatex post-processing.

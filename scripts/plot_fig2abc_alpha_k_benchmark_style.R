@@ -27,7 +27,7 @@ benchmark_dir <- file.path(pf_dir, "benchmark", "output", "benchmark_results")
 figure_dir <- normalizePath(file.path(repo_dir, "..", "figures"), mustWork = FALSE)
 dir.create(figure_dir, showWarnings = FALSE, recursive = TRUE)
 
-# Compatibility shim used by PFlogPF/notebooks/plot_benchmark_results.Rmd.
+# Compatibility shim used by the benchmark plotting notebook.
 # gggroupedscale is not available for current ggplot2, so use ggh4x nested axes.
 scale_y_grouped_discrete <- function(..., grouping = NULL, gap_size = 1, limits = NULL,
                                      add_group_label = FALSE, guide = NULL,
@@ -60,7 +60,8 @@ options(ggrastr.default.dpi = 150)
 source(file.path(notebook_dir, "utils.R"), chdir = TRUE)
 source(file.path(notebook_dir, "annotation_helper.R"), chdir = TRUE)
 
-# Keep this updated figure visually aligned with PFlogPF/output/main_benchmark_fig.pdf.
+# Keep this adapted Supplementary Note figure visually aligned with the
+# Ahlmann-Eltze--Huber benchmark style.
 trans_labels[c("logp1", "logp1_hvg", "logp1_hvg_zscore", "logp1_zscore", "logp1_size_normed")] <- c(
   "logp1" = r"($\log(y/s+1)$)",
   "logp1_hvg" = r"($\log(y/s+1)\rightarrow$HVG)",
@@ -208,8 +209,8 @@ parameter_choices <- function(res) {
     tibble(
       benchmark = "simulation",
       knn = 50,
-      pca_dim = c(5, 10, 10, 200, 50),
-      dataset = c("dyngen", "linear_walk", "muscat", "random_walk", "scDesign2")
+      pca_dim = c(5, 10, 50),
+      dataset = c("dyngen", "muscat", "scDesign2")
     ),
     tibble(
       benchmark = "consistency",
@@ -288,8 +289,8 @@ consistency_pl <- res_main %>%
 simulation_pl <- res_main %>%
   filter(benchmark == "simulation") %>%
   make_main_plot_panel(add_group_label = FALSE) +
-  coord_cartesian(xlim = c(0.2, 8)) +
-  scale_x_continuous(breaks = c(0.45, 1, 2, 5, 8), labels = c("0.5", "1", "2", "5", "8")) +
+  coord_cartesian(xlim = c(0.2, 1.45)) +
+  scale_x_continuous(breaks = c(0.45, 1, 1.25), labels = c("0.5", "1", "1.25")) +
   labs(
     x = "Relative $k$-NN overlap",
     subtitle = "Ground truth versus simulated counts"
@@ -298,8 +299,8 @@ simulation_pl <- res_main %>%
 downsampling_pl <- res_main %>%
   filter(benchmark == "downsampling") %>%
   make_main_plot_panel(add_group_label = FALSE) +
-  coord_cartesian(xlim = c(0.2, 6.2)) +
-  scale_x_continuous(breaks = c(0.45, 1, 2, 4, 6), labels = c("0.5", "1", "2", "4", "6")) +
+  coord_cartesian(xlim = c(0.2, 3.8)) +
+  scale_x_continuous(breaks = c(0.45, 1, 2, 3, 3.5), labels = c("0.5", "1", "2", "3", "3.5")) +
   labs(
     x = "Relative $k$-NN overlap",
     subtitle = "Original versus downsampled deep-seq data"

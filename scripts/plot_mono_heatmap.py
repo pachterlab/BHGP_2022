@@ -11,8 +11,7 @@ For one dataset (default angelidis_2019):
   4. Plot the matrix of ranks as a heatmap (cividis), one panel per method.
 
 A truly monotonic transform preserves the PF gene ordering, so its heatmap is
-a clean left->right gradient; rank-distorting transforms look scrambled. (The
-faint scramble in PFlog1pPF comes from the averaging step, see Methods.)
+a clean left->right gradient; rank-distorting transforms look scrambled.
 
 Usage:
     python plot_mono_heatmap.py <dataset_dir> <out_prefix> [n_top]
@@ -40,10 +39,10 @@ from scipy.io import mmread
 PANELS = [
     ("raw",         "raw.mtx.gz",         False),
     ("log1pPF",     "pf_log.mtx.gz",      False),
-    # PFlog1pPF = additive centered-log-ratio computed on the fly from raw via
+    # PFlog = additive centered-log-ratio computed on the fly from raw via
     # norm_clr (PF to mean depth -> log1p -> per-cell centering); "__CLR__"
     # sentinel triggers that. NOT the multiplicative pf_log_pf.mtx.gz.
-    ("PFlog1pPF",   "__CLR__",            True),
+    ("PFlog",   "__CLR__",            True),
     ("sctransform", "sctransform.csv.gz", True),
 ]
 REF = "raw"   # method whose per-celltype top-N order is used for every panel

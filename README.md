@@ -8,9 +8,8 @@ data"* (Booeshaghi, Hallgrímsdóttir, Gálvez-Merchán, Pachter).
 Single-cell count normalization should **stabilize variance**, **remove
 sequencing-depth effects**, and **preserve within-cell gene ranks**. We show that
 a single transform satisfies all three (while being compatible with PCA and
-invariant to gene order): proportional fitting, then `log1p`, then a second
-proportional fitting — **PFlog1pPF**, which is exactly a **shifted centered
-log-ratio (CLR)** transform. Across hundreds of datasets and the benchmarks of
+invariant to gene order): proportional fitting, then `log1p`, then centering —
+**PFlog**, which is exactly a **shifted centered log-ratio (CLR)** transform. Across hundreds of datasets and the benchmarks of
 [Ahlmann-Eltze & Huber (2023)](https://doi.org/10.1038/s41592-023-01814-1) it
 matches or beats widely used alternatives (log1pPF, sctransform), most strikingly
 in robustness to downsampling.
@@ -21,7 +20,7 @@ overdispersion (`var = μ + α·μ²`) and `s` is the mean total UMI per cell. T
 exactly the variance-stabilizing count-scale pseudocount `y₀ = 1/(4α)` (see the
 Supplementary Note); larger overdispersion ⇒ smaller pseudocount.
 
-PFlog1pPF in a few lines (sparse in, dense out — the centering fills zeros):
+PFlog in a few lines (sparse in, dense out — the centering fills zeros):
 
 ```python
 import numpy as np, scipy.sparse as sp
@@ -44,7 +43,7 @@ K   = 4 * overdispersion(mtx) * s            # delta-method first-PF constant (y
 
 log1ppf = pf(mtx, K); log1ppf.data = np.log1p(log1ppf.data)  # PF to K -> log1p
 cell_mean = np.asarray(log1ppf.mean(1)).ravel()
-pflog1ppf = log1ppf.toarray() - cell_mean[:, None]           # 2nd PF = per-cell centering
+pflog = log1ppf.toarray() - cell_mean[:, None]               # per-cell centering
 ```
 
 For a cell-type-specific analysis, estimate `α` and `s` *within* the cell type —
@@ -52,12 +51,12 @@ the pooled-dataset `α` is inflated by between-cell-type heterogeneity.
 
 ## Key results
 
-- **PFlog1pPF (= shifted CLR)** is the unique count transform that is variance-
+- **PFlog (= shifted CLR)** is the unique count transform that is variance-
   stabilizing, depth-invariant, and rank-preserving (Supplementary Note).
 - On **526 datasets** (437 passing QC) it is the best overall: it removes residual
   depth structure, keeps monotonicity, and stabilizes variance as well as log1pPF —
   whereas log1pPF/sctransform retain depth, and sctransform scrambles ranks.
-- Reproducing the **Ahlmann-Eltze & Huber** k-NN benchmarks, PFlog1pPF is strongest
+- Reproducing the **Ahlmann-Eltze & Huber** k-NN benchmarks, PFlog is strongest
   on downsampling: ~**36.8/50** neighbors recovered vs ~5.8 for other methods.
 - Its embedding geometry is **more stable to feature-panel choice** than log1pPF.
 - Seurat's `"CLR"` is **not** the centered log-ratio and does not remove depth.

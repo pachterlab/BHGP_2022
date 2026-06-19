@@ -16,11 +16,12 @@ on top of (non-)invariance -- worth a caption note.
 Methods:
   - raw                  : no normalization (identity)      -> grows ~ |s-1|
   - log1pPF              : log1p(PF)                         -> grows
-  - PFlogPF (shift. CLR) : additive log-centering           -> flat ~0 (invariant)
+  - PFlog (shift. CLR) : additive log-centering           -> flat ~0 (invariant)
   - sctransform          : Satija v2 Pearson residuals (computed in R via glmGamPoi)
 
 All methods run on the SAME subsampled, sanitized matrix. sctransform is delegated
-to scale_sweep_sctransform.R using the gcc-12 buildtools toolchain.
+to scale_sweep_sctransform.R; set SCALE_SWEEP_R_LD_LIBRARY_PATH if the R runtime
+needs a custom library path.
 
 Usage:
     python plot_scale_sweep.py <raw.mtx.gz> <out_prefix> [scales_csv] [n_cells] [seed]
@@ -40,11 +41,12 @@ import pandas as pd
 from scipy.io import mmread, mmwrite
 from scipy import sparse
 
-BUILDTOOLS = "/home/sina/bin/miniconda3/envs/buildtools"
-R_ENV = dict(os.environ, R_LD_LIBRARY_PATH=f"/usr/lib/R/lib:{BUILDTOOLS}/lib")
+R_ENV = os.environ.copy()
+if os.environ.get("SCALE_SWEEP_R_LD_LIBRARY_PATH"):
+    R_ENV["R_LD_LIBRARY_PATH"] = os.environ["SCALE_SWEEP_R_LD_LIBRARY_PATH"]
 
 cividis = matplotlib.colormaps["cividis"]
-CLR_LABEL = "PFlogPF (shift. CLR)"
+CLR_LABEL = "PFlog (shift. CLR)"
 STYLE = {
     "raw":         dict(color="k",          marker="o"),
     "log1pPF":     dict(color=cividis(0.5), marker="s"),
@@ -71,7 +73,7 @@ def f_log1pPF(X):
 
 
 def f_clr(X, c=1.0):
-    """Exact shifted CLR (additive log-centering) = PFlogPF per the paper's
+    """Exact shifted CLR (additive log-centering) = PFlog per the paper's
     equivalence proof. T(x) = log(x/rowsum + c) - mean_genes(log(x/rowsum + c)).
     Scale-invariant by construction: x/rowsum cancels any global multiplier."""
     u = do_pf(X, sf=1.0)            # each cell sums to 1 (scale-free)
