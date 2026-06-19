@@ -97,6 +97,13 @@ transform_fns <- list(
   `PFlog` = scclr_pflog
 )
 ord <- names(transform_fns)
+method_axis_labels <- c(
+  "raw counts" = "raw counts",
+  'Seurat "CLR"' = 'Seurat "CLR"',
+  "log1pPF" = "log1pPF",
+  "Ahlmann-Eltze–Huber" = "log(y/s+1/(4α))",
+  "PFlog" = "PFlog"
+)
 
 run_pca <- function(X_genes_x_cells, n) {
   X <- t(X_genes_x_cells)
@@ -170,6 +177,7 @@ p <- ggplot(df, aes(method, score, fill = method)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 3,
                fill = "white", color = "black", show.legend = FALSE) +
   scale_fill_manual(values = fills) +
+  scale_x_discrete(labels = method_axis_labels) +
   scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25)) +
   labs(x = NULL, y = "twin-recovery score") +
   theme_cowplot(font_size = 12) +
@@ -190,6 +198,7 @@ p_r2 <- ggplot(r2_df, aes(method, pc1_depth_R2, fill = method)) +
   stat_summary(fun = mean, geom = "point", shape = 23, size = 3,
                fill = "white", color = "black", show.legend = FALSE) +
   scale_fill_manual(values = fills) +
+  scale_x_discrete(labels = method_axis_labels) +
   scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25)) +
   labs(x = NULL, y = expression("PC1 variance from depth ("*R^2*")")) +
   theme_cowplot(font_size = 12) +
