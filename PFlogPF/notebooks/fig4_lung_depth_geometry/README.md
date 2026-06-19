@@ -53,4 +53,4 @@ If `scclr` is not installed, pass a local checkout as above. The output table is
 - `tables/muscat_downsample12_k10_recovery.tsv`
 
 The key manuscript values are the `full_knn_recovery_from_downsampled` entries
-for `PFlogPF PCA` (`0.3100`) and `scANVI latent` (`0.1716`).
+for `PFlog PCA` (`0.3100`) and `scANVI latent` (`0.1716`).

@@ -140,7 +140,7 @@ def main() -> None:
 
     embeddings: dict[str, np.ndarray] = {
         "logCP10K PCA": pca_scores(log_cp10k(joint), n_components=30),
-        "PFlogPF PCA": scclr.normalize_pca(joint, n_components=30, target="auto", seed=args.seed).scores,
+        "PFlog PCA": scclr.normalize_pca(joint, n_components=30, target="auto", seed=args.seed).scores,
     }
     embeddings["scVI latent"], embeddings["scANVI latent"] = fit_scvi_scanvi(scvi, joint, batch, joint_labels, args)
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Recompute Figure 2a-c CLR rows with scclr sparse shifted-CLR PCA.
+"""Recompute adapted AEH benchmark PFlog rows with scclr sparse shifted-CLR PCA.
 
 This script does not rewrite the benchmark result TSVs. It writes CLR-only
 override tables to the sibling ``figures`` directory. The plotting script
 ``plot_fig2abc_alpha_k_benchmark_style.R`` then replaces the checked-in
-fixed-shift CLR rows with these alpha/K rows for the selected Figure 2
+fixed-shift CLR rows with these alpha/K rows for the selected Supplementary Note
 parameter choices and renders the paper-style figure.
 """
 
@@ -283,9 +283,7 @@ def run_simulation() -> pd.DataFrame:
         return pd.read_csv(out, sep="\t")
     params = [
         ("dyngen", 5),
-        ("linear_walk", 10),
         ("muscat", 10),
-        ("random_walk", 200),
         ("scDesign2", 50),
     ]
     rows = []
@@ -333,31 +331,8 @@ def generate_simulation_mtx(simulator: str, seed: int) -> tuple[Path, Path]:
     same 1000-gene/5000-cell scale used by muscat and dyngen; otherwise their
     dense truth space makes local regeneration impractically slow.
     """
-    legacy_counts = CACHE / f"simulation_{simulator}_seed{seed}_counts.mtx"
-    legacy_truth = CACHE / f"simulation_{simulator}_seed{seed}_truth.mtx"
-    truth_knn = CACHE / f"simulation_{simulator}_seed{seed}_truth_knn.tsv"
-    if legacy_counts.exists() and legacy_truth.exists():
-        if not truth_knn.exists():
-            r_convert = f"""
-        suppressPackageStartupMessages({{
-          library(BiocNeighbors)
-          library(Matrix)
-        }})
-        truth <- Matrix::readMM("{legacy_truth}")
-        truth_knn <- BiocNeighbors::findKNN(
-          as.matrix(t(truth)),
-          k = 50L,
-          BNPARAM = BiocNeighbors::AnnoyParam(),
-          get.distance = FALSE
-        )$index
-        write.table(truth_knn, file = "{truth_knn}", sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
-        """
-            r_convert_script = CACHE / f"convert_cached_{simulator}_seed{seed}_truth_knn.R"
-            r_convert_script.write_text(r_convert)
-            subprocess.run(["Rscript", "--vanilla", str(r_convert_script)], check=True)
-        return legacy_counts, truth_knn
-
     counts = CACHE / f"simulation_allv2_{simulator}_seed{seed}_counts.mtx"
+    truth_knn = CACHE / f"simulation_allv2_{simulator}_seed{seed}_truth_knn.tsv"
     if counts.exists() and truth_knn.exists():
         return counts, truth_knn
 

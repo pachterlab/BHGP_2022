@@ -19,6 +19,7 @@ suppressPackageStartupMessages({
   library(irlba)
   library(ggplot2)
   library(cowplot)
+  library(reticulate)
 })
 
 args <- commandArgs(trailingOnly = FALSE)
@@ -46,14 +47,54 @@ group <- rep(c("full", "downsampled"), each = N)   # depth label per joint colum
 message(sprintf("%s: %d cells x %d genes; median depth %.0f",
                 DATASET, N, nrow(UMI), median(colSums(UMI))))
 
+scclr_python <- Sys.getenv("SC_CLR_PYTHON", unset = "")
+if (nzchar(scclr_python)) {
+  use_python(scclr_python, required = TRUE)
+}
+scclr_path <- Sys.getenv("SC_CLR_PATH", unset = "")
+if (!nzchar(scclr_path)) {
+  sibling_scclr <- file.path(PFLOGPF_ROOT, "..", "..", "scclr", "python")
+  if (dir.exists(sibling_scclr)) {
+    scclr_path <- normalizePath(sibling_scclr, mustWork = TRUE)
+  }
+}
+if (nzchar(scclr_path)) {
+  py_run_string(sprintf("import sys; sys.path.insert(0, %s)", shQuote(scclr_path)))
+}
+scclr <- import("scclr")
+np <- import("numpy")
+message("Using scclr from: ", scclr$`__file__`)
+
 size_factors <- function(M) { cs <- colSums(M); cs / mean(cs) }
+estimate_alpha <- function(M) {
+  sf <- size_factors(M)
+  norm <- sweep(M, 2, sf, "/")
+  mu <- rowMeans(norm)
+  keep <- mu > 0
+  norm <- norm[keep, , drop = FALSE]
+  mu <- mu[keep]
+  v <- apply(norm, 1, var)
+  poisson_term <- mu * mean(1 / sf)
+  alpha_g <- (v - poisson_term) / (mu^2)
+  alpha_g <- alpha_g[is.finite(alpha_g) & alpha_g > 0]
+  if (!length(alpha_g)) stop("could not estimate a positive overdispersion")
+  median(alpha_g)
+}
+scclr_pflog <- function(M) {
+  X <- np$array(t(M), dtype = "float64")
+  sclr <- scclr$normalize(X, target = "mean", center = TRUE)
+  t(sclr$to_dense())
+}
 transform_fns <- list(
   `raw counts`    = function(M) M,
   `Seurat "CLR"`  = function(M) as.matrix(NormalizeData(M, normalization.method = "CLR",
                                                         margin = 2, verbose = FALSE)),
   `log1pPF`       = function(M) log1p(sweep(M, 2, size_factors(M), "/")),
-  `PFlogPF (shift. CLR)` = function(M) { l <- log1p(sweep(M, 2, size_factors(M), "/"))
-                                  sweep(l, 2, colMeans(l), "-") }
+  `Ahlmann-Eltze–Huber` = function(M) {
+    alpha <- estimate_alpha(M)
+    log(sweep(M, 2, size_factors(M), "/") + 1 / (4 * alpha))
+  },
+  `PFlog` = scclr_pflog
 )
 ord <- names(transform_fns)
 
@@ -114,10 +155,11 @@ print(aggregate(pc1_depth_R2 ~ method, r2_df, mean), row.names = FALSE)
 
 # Violin figure.
 # Ahlmann-Eltze & Huber palette (ColorBrewer Set2), distinct hue per method.
-# Our method PFlogPF (shift. CLR) is highlighted in red (#E41A1C), matching the
+# Our method PFlog is highlighted in red (#E41A1C), matching the
 # manuscript main_benchmark_fig.pdf. (see notebooks/annotation_helper.R)
 fills <- c("raw counts" = "#7d7d7d", `Seurat "CLR"` = "#000000",
-           "log1pPF" = "#66C2A5", "PFlogPF (shift. CLR)" = "#E41A1C")
+           "log1pPF" = "#66C2A5", "Ahlmann-Eltze–Huber" = "#FC8D62",
+           "PFlog" = "#E41A1C")
 
 p <- ggplot(df, aes(method, score, fill = method)) +
   geom_hline(yintercept = 0.5, linetype = 2, color = "grey40") +

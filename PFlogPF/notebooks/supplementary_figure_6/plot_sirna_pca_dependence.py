@@ -26,6 +26,7 @@ RESULTS = (
     / "benchmark_results"
     / "downsampling_results.tsv"
 )
+CLR_OVERRIDE = SCRIPT_DIR / "sirna_pca_dependence_clr_alpha_k.tsv"
 
 FAMILY_MAP = {
     "logp1": "delta_method",
@@ -69,12 +70,31 @@ FAMILY_COLORS = {
 
 DIRECT_LABELS = {
     "logp1": "log1pPF",
-    "clr": "PFlog1pPF",
+    "clr": "PFlog",
 }
 
 
 def main() -> None:
     results = pd.read_csv(RESULTS, sep="\t")
+    if CLR_OVERRIDE.exists():
+        overrides = pd.read_csv(CLR_OVERRIDE, sep="\t")
+        key_cols = ["dataset", "seed", "pca_dim", "knn"]
+        override_keys = overrides[key_cols].drop_duplicates()
+        stale = results.merge(override_keys.assign(_replace=True), how="left", on=key_cols)
+        results = pd.concat(
+            [
+                stale[~((stale["transformation"] == "clr") & stale["_replace"].fillna(False))]
+                .drop(columns=["_replace"]),
+                overrides,
+            ],
+            ignore_index=True,
+            sort=False,
+        )
+    else:
+        raise FileNotFoundError(
+            f"Missing {CLR_OVERRIDE}. Run recompute_sirna_pca_dependence_scclr.py first."
+        )
+
     sirna = results[
         (results["dataset"] == "smartSeq3_siRNA_knockdown")
         & (results["knn"] == 50)

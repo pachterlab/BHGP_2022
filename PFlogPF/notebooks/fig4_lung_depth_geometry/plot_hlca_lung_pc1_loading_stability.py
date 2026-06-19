@@ -139,7 +139,7 @@ def main() -> None:
             low_norm,
             high_norm,
         ),
-        "PFlogPF": (low_pf, high_pf, low_norm, high_norm),
+        "PFlog": (low_pf, high_pf, low_norm, high_norm),
     }
 
     loadings = pd.DataFrame({"gene": genes})
