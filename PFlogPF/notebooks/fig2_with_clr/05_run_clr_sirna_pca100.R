@@ -1,8 +1,11 @@
 #!/usr/bin/env Rscript
 # 05_run_clr_sirna_pca100.R
 #
-# Computes CLR downsampling benchmark for smartSeq3_siRNA_knockdown at
-# pca_dim = 100 (extends the default set of 5, 10, 50 for the PCA-dim plot).
+# Computes direct CLR self-overlap for smartSeq3_siRNA_knockdown at pca_dim = 100
+# (extends the default set of 5, 10, 50 for the PCA-dim plot).
+#
+# This is not the AE&H consensus-overlap metric used by downsampling_results.tsv.
+# Results are written to downsampling_self_overlap_results.tsv.
 #
 # Run from notebooks/fig2_with_clr/ directory:
 #   Rscript 05_run_clr_sirna_pca100.R
@@ -81,11 +84,16 @@ for (seed in 1:5) {
 }
 
 new_rows <- bind_rows(rows)
-existing <- read_tsv(file.path(RESULTS_DIR, "downsampling_results.tsv"),
-                     show_col_types = FALSE) %>%
-  mutate(alpha = as.character(alpha)) %>%
+out_file <- file.path(RESULTS_DIR, "downsampling_self_overlap_results.tsv")
+existing <- if (file.exists(out_file)) {
+  read_tsv(out_file, show_col_types = FALSE) %>%
+    mutate(alpha = as.character(alpha))
+} else {
+  tibble()
+}
+existing <- existing %>%
   filter(!(dataset == "smartSeq3_siRNA_knockdown" & transformation == "clr" & pca_dim == 100))
-write_tsv(bind_rows(existing, new_rows),
-          file.path(RESULTS_DIR, "downsampling_results.tsv"))
-message("Added ", nrow(new_rows), " rows to downsampling_results.tsv")
+write_tsv(bind_rows(existing, new_rows), out_file)
+message("Added ", nrow(new_rows),
+        " self-overlap rows to downsampling_self_overlap_results.tsv")
 message("=== DONE ===")

@@ -20,6 +20,7 @@ docs/
 data/*/
 data/all_genes.tar.gz
 data/subset_genes.tar.gz
+data/*.png
 data/size_*.txt
 # size source data for the matrix-size supplement panel IS tracked
 !data/size_raw.txt

@@ -303,15 +303,17 @@ if (!SKIP_CONSISTENCY && nrow(consistency_results) > 0) {
 # PART 2 — DOWNSAMPLING BENCHMARK
 # ═══════════════════════════════════════════════════════════════════════════════
 
-SKIP_DOWNSAMPLING <- any(grepl("^clr$",
-  readr::read_tsv(file.path(RESULTS_DIR, "downsampling_results.tsv"),
-                  show_col_types = FALSE)$transformation))
+DOWNSAMPLING_SELF_OVERLAP_FILE <- file.path(RESULTS_DIR, "downsampling_self_overlap_results.tsv")
+SKIP_DOWNSAMPLING <- file.exists(DOWNSAMPLING_SELF_OVERLAP_FILE) &&
+  any(grepl("^clr$",
+    readr::read_tsv(DOWNSAMPLING_SELF_OVERLAP_FILE,
+                    show_col_types = FALSE)$transformation))
 
 message("\n=== DOWNSAMPLING BENCHMARK ===")
 if (SKIP_DOWNSAMPLING) {
-  message("CLR rows already present in downsampling_results.tsv — skipping.")
+  message("CLR self-overlap rows already present in downsampling_self_overlap_results.tsv — skipping.")
   downsampling_results <- readr::read_tsv(
-    file.path(RESULTS_DIR, "downsampling_results.tsv"), show_col_types = FALSE) %>%
+    DOWNSAMPLING_SELF_OVERLAP_FILE, show_col_types = FALSE) %>%
     filter(transformation == "clr")
 }
 
@@ -404,6 +406,10 @@ run_downsampling_clr <- function(dataset_name) {
         knn_full <- clr_knn(UMI_f, sf_f, pca_dim, knn)
         knn_red  <- clr_knn(UMI_r, sf_r, pca_dim, knn)
         elapsed  <- (proc.time() - t_start)[["elapsed"]]
+        # This standalone runner has only the CLR full/reduced KNNs, so it
+        # computes direct self-overlap. The AE&H downsampling benchmark table
+        # uses consensus-overlap across full-depth transformations; keep these
+        # rows in a separate file so the metrics are not mixed.
         ov <- mean_knn_overlap(knn_full, knn_red)
         rows[[length(rows) + 1]] <- tibble::tibble(
           overlap                     = ov,
@@ -435,12 +441,17 @@ downsampling_results <- if (SKIP_DOWNSAMPLING) downsampling_results else map(DS_
 }) %>% compact() %>% bind_rows()
 
 if (!SKIP_DOWNSAMPLING && nrow(downsampling_results) > 0) {
-  out_file <- file.path(RESULTS_DIR, "downsampling_results.tsv")
-  existing <- readr::read_tsv(out_file, show_col_types = FALSE)
-  existing <- mutate(existing, alpha = as.character(alpha))
+  out_file <- DOWNSAMPLING_SELF_OVERLAP_FILE
+  existing <- if (file.exists(out_file)) {
+    readr::read_tsv(out_file, show_col_types = FALSE) %>%
+      mutate(alpha = as.character(alpha))
+  } else {
+    tibble::tibble()
+  }
   existing <- filter(existing, transformation != "clr")
   readr::write_tsv(bind_rows(existing, downsampling_results), out_file)
-  message("\nAppended ", nrow(downsampling_results), " CLR rows to downsampling_results.tsv")
+  message("\nWrote ", nrow(downsampling_results),
+          " CLR self-overlap rows to downsampling_self_overlap_results.tsv")
 } else {
   message("\nNo downsampling results computed.")
 }

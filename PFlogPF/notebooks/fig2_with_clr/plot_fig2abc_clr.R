@@ -30,6 +30,21 @@ source("../annotation_helper.R")
 # Rename CLR to PFlog (shift. CLR) in plain labels
 trans_labels_plain["clr"] <- "PFlog (shift. CLR)"
 
+read_downsampling_consensus <- function(path) {
+  dat <- read_tsv(path, show_col_types = FALSE)
+  if ("transformation_full_data_ids" %in% names(dat)) {
+    is_self_overlap <- dat$transformation == "clr" &
+      grepl("^clr_local_", dat$transformation_full_data_ids)
+    if (any(is_self_overlap)) {
+      warning("Dropping ", sum(is_self_overlap),
+              " CLR self-overlap rows from ", path,
+              "; Fig. 2 downsampling uses AE&H consensus-overlap.")
+      dat <- filter(dat, !is_self_overlap)
+    }
+  }
+  dat
+}
+
 # ── Load data ─────────────────────────────────────────────────────────────────
 res <- bind_rows(
   read_tsv("../../benchmark/output/benchmark_results/simulation_results.tsv",
@@ -40,8 +55,7 @@ res <- bind_rows(
            show_col_types = FALSE) %>%
     transmute(benchmark = "consistency", overlap = mean_overlap, knn, pca_dim,
               alpha = as.character(alpha), transformation, dataset, replicate = seed),
-  read_tsv("../../benchmark/output/benchmark_results/downsampling_results.tsv",
-           show_col_types = FALSE) %>%
+  read_downsampling_consensus("../../benchmark/output/benchmark_results/downsampling_results.tsv") %>%
     transmute(benchmark = "downsampling", overlap = overlap, knn, pca_dim,
               alpha = as.character(alpha), transformation, dataset, replicate = seed)
 ) %>%

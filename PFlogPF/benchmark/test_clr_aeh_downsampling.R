@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # Sanity test: re-run CLR downsampling on the mcSCRB dataset using AE&H's
-# downsampling methodology and compare to the existing per-cell rmultinom
-# result currently in downsampling_results.tsv.
+# downsampling methodology and compare to the per-cell rmultinom self-overlap
+# result now kept separate from downsampling_results.tsv.
 #
 # AE&H method:  scuttle::downsampleMatrix(UMI, prop = 5000/median(colsums), bycol = FALSE)
 #               Each matrix entry is independently downsampled: rbinom(x_ij, prop).

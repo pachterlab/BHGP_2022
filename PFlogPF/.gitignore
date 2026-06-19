@@ -4,6 +4,7 @@ benchmark/output/*
 !benchmark/output/benchmark_results/*.tsv
 !benchmark/output/benchmark_results/*.RDS
 !benchmark/output/benchmark_results/*.rds
+benchmark/renv/.gitignore
 benchmark/renv/library/
 benchmark/renv/staging/
 
@@ -11,11 +12,17 @@ benchmark/renv/staging/
 /output/
 !/output/
 !/output/main_benchmark_fig_source_data.xlsx
+/output/*.aux
+/output/*.log
+/output/*.tex
+/output/*_source_data.*
+!/output/main_benchmark_fig_source_data.xlsx
 *.html
 *.pdf
 !/illustrations/
 !/illustrations/*.pdf
 !/output/*.pdf
+/output/main_duration.pdf
 *.png
 Rplots.pdf
 

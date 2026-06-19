@@ -1,9 +1,12 @@
 #!/usr/bin/env Rscript
 # run_clr_downsampling_missing.R
 #
-# Runs CLR downsampling benchmark for the 2 missing datasets:
+# Runs direct CLR self-overlap for the 2 missing downsampling datasets:
 #   - smartSeq3_hek  (Smartseq3.HEK.cleanup.UMIcounts.txt from E-MTAB-8735)
 #   - smartSeq3_siRNA_knockdown (RDS files from sandberg-lab GitHub)
+#
+# This is not the AE&H consensus-overlap metric used by downsampling_results.tsv.
+# Results are written to downsampling_self_overlap_results.tsv.
 #
 # Run from notebooks/fig2_with_clr/ directory:
 #   Rscript _downsampling_missing.R
@@ -146,12 +149,19 @@ if (!is.null(sirna_mat)) {
 new_rows <- bind_rows(results)
 
 if (nrow(new_rows) > 0) {
-  existing <- read_tsv(file.path(RESULTS_DIR, "downsampling_results.tsv"),
-                       show_col_types = FALSE) %>%
-    mutate(alpha = as.character(alpha))
-  write_tsv(bind_rows(existing, new_rows),
-            file.path(RESULTS_DIR, "downsampling_results.tsv"))
-  message("\nAdded ", nrow(new_rows), " CLR rows to downsampling_results.tsv")
+  out_file <- file.path(RESULTS_DIR, "downsampling_self_overlap_results.tsv")
+  existing <- if (file.exists(out_file)) {
+    read_tsv(out_file, show_col_types = FALSE) %>%
+      mutate(alpha = as.character(alpha))
+  } else {
+    tibble()
+  }
+  drop_keys <- new_rows %>% distinct(dataset, transformation, pca_dim, knn)
+  existing <- existing %>%
+    anti_join(drop_keys, by = c("dataset", "transformation", "pca_dim", "knn"))
+  write_tsv(bind_rows(existing, new_rows), out_file)
+  message("\nAdded ", nrow(new_rows),
+          " CLR self-overlap rows to downsampling_self_overlap_results.tsv")
 } else {
   message("No new results computed.")
 }
