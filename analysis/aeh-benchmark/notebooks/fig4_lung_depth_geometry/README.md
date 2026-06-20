@@ -15,6 +15,10 @@ and the muscat 12x downsampling kNN result quoted in Section 2.5.
 
 ## Figure 4
 
+By default, the HLCA PC loading comparison uses the top 1,000 common genes by
+combined mean expression after requiring detection in more than 1% of cells in
+both assays.
+
 Run from the repository root:
 
 ```bash

@@ -40,7 +40,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--summary", type=Path, default=DEFAULT_TABLE)
     parser.add_argument("--loadings", type=Path, default=DEFAULT_LOADINGS)
     parser.add_argument("--scclr-path", type=Path, default=None, help="Optional path to a local scclr/python directory.")
-    parser.add_argument("--n-genes", type=int, default=3000)
+    parser.add_argument("--n-genes", type=int, default=1000)
     parser.add_argument("--min-detection", type=float, default=0.01)
     return parser.parse_args()
 

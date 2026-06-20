@@ -56,4 +56,4 @@ python-preference = "managed"
 [tool.uv.sources]
 # scclr is git-only (Rust/maturin extension). Pinned to a specific commit for
 # reproducibility; bump the rev to upgrade.
-scclr = { git = "https://github.com/cleartools/scclr", rev = "93650e06d55524e193a8c945b76d2a17dffcd0df" }
+scclr = { git = "https://github.com/cleartools/scclr", rev = "95280146f36d3907dd24ea61e38e60074e776860" }

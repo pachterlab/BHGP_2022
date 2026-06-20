@@ -192,7 +192,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.0,<3" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
     { name = "scanpy", specifier = ">=1.10,<2" },
-    { name = "scclr", git = "https://github.com/cleartools/scclr?rev=93650e06d55524e193a8c945b76d2a17dffcd0df" },
+    { name = "scclr", git = "https://github.com/cleartools/scclr?rev=95280146f36d3907dd24ea61e38e60074e776860" },
     { name = "scikit-learn", specifier = ">=1.3,<2" },
     { name = "scipy", specifier = ">=1.11,<2" },
 ]
@@ -1864,7 +1864,7 @@ wheels = [
 [[package]]
 name = "scclr"
 version = "0.1.0"
-source = { git = "https://github.com/cleartools/scclr?rev=93650e06d55524e193a8c945b76d2a17dffcd0df#93650e06d55524e193a8c945b76d2a17dffcd0df" }
+source = { git = "https://github.com/cleartools/scclr?rev=95280146f36d3907dd24ea61e38e60074e776860#95280146f36d3907dd24ea61e38e60074e776860" }
 dependencies = [
     { name = "numpy" },
     { name = "scipy" },
