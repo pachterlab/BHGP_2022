@@ -234,7 +234,7 @@ def clr_gene_var(sclr):
 
 def read_data(base_data_fn, max_cells=25000, seed=0):
     from metrics_matrix import compute_overdispersion
-    import scclr
+    from scclr_pflog import normalize_pflog
     data = {}
 
     for title in mtx_labels:
@@ -260,22 +260,20 @@ def read_data(base_data_fn, max_cells=25000, seed=0):
             data[k] = v[idx]
         raw = data[txlabel["raw"]]
 
-    # PFlog (shift. CLR) = additive centered log-ratio. Computed via scclr's sparse
-    # shifted-CLR (sparse log1p(PF) + per-cell center vector); it is never densified,
-    # so the panel is memory-safe even on the largest matrices. Passing the dataset
-    # overdispersion alpha sets the delta-method scale K = 4*alpha*s (variance-
-    # stabilizing pseudocount y0 = 1/(4*alpha)), matching Fig 1a/1b and the summary
-    # metrics. plot_data derives the panel stats from the sparse-plus-rank-one form.
+    # PFlog (shift. CLR) is corrected runorm/scclr PFlog:
+    # center(log1p(4*alpha*x)).  scclr stores it as sparse log terms plus a
+    # per-cell center vector, so the panel is memory-safe even on the largest
+    # matrices. plot_data derives panel stats from the sparse-plus-rank-one form.
     alpha = float(compute_overdispersion(raw))
-    data["PFlog (shift. CLR)"] = scclr.normalize(raw, alpha=alpha)
+    data["PFlog (shift. CLR)"] = normalize_pflog(raw, alpha=alpha)
     return data
 
 # 'pf_log_pf' intentionally NOT in mtx_labels: PFlog is computed on the fly as
-# the additive CLR (see read_data), not read from the multiplicative pf_log_pf.mtx.gz.
+# corrected runorm/scclr PFlog (see read_data), not read from the legacy
+# pf_log_pf.mtx.gz artifact.
 mtx_labels = ['raw', 'pf', 'log', 'pf_log', 'cpm_log', 'cp10k_log', "sqrt"]
 
-# "PFlog (shift. CLR)" = Aitchison centered log-ratio (additive), computed in
-# read_data via norm_clr.
+# "PFlog (shift. CLR)" = corrected runorm/scclr shifted CLR, computed in read_data.
 labels = [
     'raw',
      'PF',
@@ -299,7 +297,7 @@ txlabel = {
   'cp10k_log_scale': 'scalelog1pCP10k',
   'sctransform': 'sctransform',
   'pf_log': 'log1pPF',
-  'pf_log_pf': 'PFlog (shift. CLR)',
+  'pf_log_pf': 'legacy PF-log-PF',
 }
 
 def setup_plot(ds, shape):

@@ -28,9 +28,18 @@ RESULTS_DIR <- "output/benchmark_results"
 DATA_DIR    <- "output/clr_local/data/downsampling"
 
 # ── Shared helpers ─────────────────────────────────────────────────────────────
-clr_transform <- function(UMI, sf) {
+estimate_alpha <- function(UMI) {
+  mu <- as.numeric(Matrix::rowMeans(UMI))
+  m2 <- as.numeric(Matrix::rowMeans(UMI * UMI))
+  v  <- m2 - mu^2
+  a  <- sum((v - mu) * mu^2) / sum(mu^4)
+  if (!is.finite(a) || a <= 0) 0.05 else a
+}
+
+clr_transform <- function(UMI, sf = NULL, alpha = NULL) {
+  if (is.null(alpha)) alpha <- estimate_alpha(UMI)
   if (inherits(UMI, "sparseMatrix")) UMI <- as.matrix(UMI)
-  logpf <- log1p(sweep(UMI, 2L, sf, "/"))
+  logpf <- log(UMI + 1 / (4 * alpha))
   sweep(logpf, 2L, colMeans(logpf), "-")
 }
 

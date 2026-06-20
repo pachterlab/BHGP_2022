@@ -81,9 +81,17 @@ logp1_transform <- function(UMI) {
 }
 
 clr_transform <- function(UMI) {
-  sf  <- sf_vec(UMI)
-  lpf <- log1p(sweep(UMI, 2L, sf, "/"))
+  alpha <- estimate_alpha(UMI)
+  lpf <- log(as.matrix(UMI) + 1 / (4 * alpha))
   sweep(lpf, 2L, colMeans(lpf), "-")
+}
+
+estimate_alpha <- function(UMI) {
+  mu <- as.numeric(Matrix::rowMeans(UMI))
+  m2 <- as.numeric(Matrix::rowMeans(UMI * UMI))
+  v  <- m2 - mu^2
+  a  <- sum((v - mu) * mu^2) / sum(mu^4)
+  if (!is.finite(a) || a <= 0) 0.05 else a
 }
 
 # ── 5. PCA + Harmony integration ──────────────────────────────────────────────

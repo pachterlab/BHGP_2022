@@ -82,7 +82,7 @@ estimate_alpha <- function(M) {
 }
 scclr_pflog <- function(M) {
   X <- np$array(t(M), dtype = "float64")
-  sclr <- scclr$normalize(X, target = "mean", center = TRUE)
+  sclr <- scclr$normalize(X, target = "auto", center = TRUE)
   t(sclr$to_dense())
 }
 transform_fns <- list(

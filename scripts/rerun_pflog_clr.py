@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
-"""Recompute the summary metrics for 'PFlog (shift. CLR)' using the ADDITIVE
-centered log-ratio (norm_clr), replacing the multiplicative pf_log_pf values in
-every dataset's *_subset_genes_metrics.json.
+"""Recompute only the summary metrics for 'PFlog (shift. CLR)' with runorm/scclr.
 
-norm_clr is pure Python/scipy, so this needs no R and no persisted clr.csv.gz:
-each dataset's CLR is computed on the fly from raw.mtx.gz, metrics taken, matrix
-discarded. Other methods' entries are left untouched. Resumable via a manifest.
+PFlog is the corrected shifted CLR ``center(log1p(4 * alpha * x))``.  Each
+dataset's PFlog object is computed on the fly from raw.mtx.gz, summary metrics
+are updated in-place, and other methods' entries are left untouched.  Resumable
+via a manifest.
 
-Usage: python rerun_pflog_clr.py <data_root> [n_workers] [manifest]
+Usage: python rerun_pflog_clr.py <data_root> [n_workers] [manifest] [scclr_path]
 """
 import glob, json, os, sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import numpy as np
 from scipy.io import mmread
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import norm_sparse as NS          # norm_clr (additive shifted CLR)
-import compare_sct_impl as C      # cov_gene / r2_depth / r_mono (same defs as metrics_methods)
 from metrics_matrix import compute_overdispersion   # dataset overdispersion alpha
+from scclr_pflog import cov_gene, normalize_pflog
 
 LABEL = "PFlog (shift. CLR)"
+OLD_LABEL = "PFlogPF (shift. CLR)"
 
 
 def find_json(d):
@@ -27,34 +26,33 @@ def find_json(d):
 
 
 def process(args):
-    ds, d = args
+    ds, d, scclr_path = args
     raw_fn, jpath = os.path.join(d, "raw.mtx.gz"), find_json(d)
     try:
         raw = mmread(raw_fn).tocsr().astype(np.float64)
-        # Delta-method first-PF constant K = 4*alpha*s, with the dataset (pooled)
-        # overdispersion alpha and scale s = mean total UMI per cell. This is the
-        # variance-stabilizing pseudocount y0 = 1/(4*alpha); it lowers cov_gene
-        # while leaving r2_depth (~0) and r_mono (=1) unchanged (both K-invariant).
         alpha = float(compute_overdispersion(raw))
-        scale = float(np.asarray(raw.sum(1)).ravel().mean())
-        X = np.asarray(NS.norm_clr(raw, alpha=alpha, scale=scale))   # additive shifted CLR (dense)
-        raw32 = raw.astype(np.float32)
-        entry = {"cov_gene": C.cov_gene(X), "cov_cell": None,
-                 "r2_depth": C.r2_depth(X, raw32), "r_mono": C.r_mono(X, raw32),
-                 "clr_alpha": alpha, "clr_scale": scale, "clr_K": 4.0 * alpha * scale}
+        sclr = normalize_pflog(raw, alpha=alpha, scclr_path=scclr_path)
+        entry = {
+            "cov_gene": cov_gene(sclr),
+            "cov_cell": None,
+            "r2_depth": 0.0,
+            "r_mono": 1.0,
+            "scclr_alpha": float(sclr.alpha),
+            "scclr_k": float(sclr.k),
+            "pflog_formula": "center(log1p(4*alpha*x))",
+        }
         dd = json.load(open(jpath))
-        if isinstance(dd.get(LABEL), dict):
-            dd[LABEL].update(entry)
-        else:
-            dd[LABEL] = entry
-        dd["pflog_impl"] = "additive CLR (norm_clr), delta-method K=4*alpha*s"
+        dd.pop(OLD_LABEL, None)
+        dd.pop("pflogpf_impl", None)
+        dd[LABEL] = entry
+        dd["pflog_impl"] = "runorm/scclr PFlog: center(log1p(4*alpha*x))"
         json.dump(dd, open(jpath, "w"))
-        return (ds, "OK", f"cov={entry['cov_gene']:.2f} r2d={entry['r2_depth']:.3f} rmono={entry['r_mono']:.3f} K={entry['clr_K']:.0f}")
+        return (ds, "OK", f"cov={entry['cov_gene']:.2f} r2d=0.000 rmono=1.000 alpha={entry['scclr_alpha']:.3g}")
     except Exception as e:
         return (ds, "FAIL", repr(e)[:200])
 
 
-def main(data_root, n_workers=8, manifest="/tmp/pflog_clr_done.txt"):
+def main(data_root, n_workers=8, manifest="/tmp/pflog_scclr_done.txt", scclr_path=None):
     n_workers = int(n_workers)
     done = {l.split("\t")[0] for l in open(manifest)} if os.path.exists(manifest) else set()
     tasks = []
@@ -63,7 +61,7 @@ def main(data_root, n_workers=8, manifest="/tmp/pflog_clr_done.txt"):
         if ds in done:
             continue
         if os.path.exists(os.path.join(d, "raw.mtx.gz")) and find_json(d):
-            tasks.append((ds, d))
+            tasks.append((ds, d, scclr_path))
     print(f"{len(tasks)} datasets ({len(done)} done), {n_workers} workers", flush=True)
     ok = fail = 0
     with ProcessPoolExecutor(max_workers=n_workers) as ex, open(manifest, "a") as mf:

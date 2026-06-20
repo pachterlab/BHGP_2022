@@ -4,8 +4,10 @@
 # Runs CLR consistency benchmark for GSE184806 (43k cells) using a
 # memory-efficient approach that avoids forming the full dense CLR matrix.
 #
-# The centered CLR matrix is: ctA[j,g] = L[g,j] - a[j] - b[g] + m
-# where L = log1p(UMI/sf) (sparse), a = colMeans(L), b = rowMeans(L), m = mean(L)
+# The centered PFlog matrix is: ctA[j,g] = L[g,j] - a[j] - b[g] + m
+# where L stores log1p(4*alpha*UMI) at nonzero entries. This is equivalent to
+# double-centering log(UMI + 1/(4*alpha)); the omitted log pseudocount constant
+# cancels under centering.
 #
 # irlba multiply functions (ctA is N x G, cells x genes):
 #   ctA %*% v  = t(L) %*% v - (a - m) * sum(v) - dot(b, v) * 1_N
@@ -32,15 +34,23 @@ RESULTS_DIR <- "../../benchmark/output/benchmark_results"
 DATA_DIR    <- "../../benchmark/output/clr_local/data/consistency"
 
 # ── Sparse CLR PCA ─────────────────────────────────────────────────────────────
-clr_pca_sparse <- function(UMI, sf, n_pca) {
+estimate_alpha <- function(UMI) {
+  mu <- as.numeric(Matrix::rowMeans(UMI))
+  m2 <- as.numeric(Matrix::rowMeans(UMI * UMI))
+  v  <- m2 - mu^2
+  a  <- sum((v - mu) * mu^2) / sum(mu^4)
+  if (!is.finite(a) || a <= 0) 0.05 else a
+}
+
+clr_pca_sparse <- function(UMI, sf = NULL, n_pca, alpha = NULL) {
   stopifnot(inherits(UMI, "sparseMatrix"))
+  if (is.null(alpha)) alpha <- estimate_alpha(UMI)
   G <- nrow(UMI)  # genes
   N <- ncol(UMI)  # cells
 
-  # Step 1: L = log1p(UMI / sf) — sparse, same sparsity pattern as UMI
+  # Step 1: L = log1p(4*alpha*UMI) — sparse, same sparsity pattern as UMI
   L <- UMI
-  col_idx <- rep(seq_len(N), diff(L@p))
-  L@x <- log1p(L@x / sf[col_idx])
+  L@x <- log1p(4 * alpha * L@x)
 
   # Step 2: Precompute row/col means for double-centering
   a <- Matrix::colMeans(L)  # per-cell mean, length N

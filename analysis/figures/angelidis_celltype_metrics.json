@@ -5,12 +5,12 @@
   "n_genes": 16541,
   "methods": {
     "raw": {
-      "pc1_entropy_frac": 0.6153157193469235,
+      "pc1_entropy_frac": 0.6153158666158922,
       "fp_de_genes": 366,
       "mean_abs_spearman": 0.9136838136818328
     },
     "PF": {
-      "pc1_entropy_frac": 0.5525240110283904,
+      "pc1_entropy_frac": 0.5525241092077029,
       "fp_de_genes": 0,
       "mean_abs_spearman": 0.9136838136818328
     },
@@ -20,7 +20,7 @@
       "mean_abs_spearman": 0.9136838136818328
     },
     "log1p": {
-      "pc1_entropy_frac": 0.8676287470038712,
+      "pc1_entropy_frac": 0.8676286488245587,
       "fp_de_genes": 358,
       "mean_abs_spearman": 0.9136838136818328
     },
@@ -35,9 +35,9 @@
       "mean_abs_spearman": 0.9136838136818328
     },
     "scalelog1pCP10k": {
-      "pc1_entropy_frac": 0.9439212398418664,
+      "pc1_entropy_frac": 0.9439213380211788,
       "fp_de_genes": 31,
-      "mean_abs_spearman": 0.8099113211349013
+      "mean_abs_spearman": 0.8099113211349012
     },
     "sctransform": {
       "pc1_entropy_frac": 0.9126902042033203,
@@ -45,17 +45,16 @@
       "mean_abs_spearman": 0.813231752409753
     },
     "log1pPF": {
-      "pc1_entropy_frac": 0.8478929379803841,
+      "pc1_entropy_frac": 0.8478930361596965,
       "fp_de_genes": 4,
       "mean_abs_spearman": 0.9136838136818328
     },
     "PFlog (shift. CLR)": {
-      "pc1_entropy_frac": 0.9063150287308197,
-      "fp_de_genes": 6,
-      "mean_abs_spearman": 0.9136838163806312
+      "pc1_entropy_frac": 0.9387211725596877,
+      "fp_de_genes": 293,
+      "mean_abs_spearman": 0.9136838154630315
     }
   },
-  "clr_alpha": 0.6213054533995451,
-  "clr_scale": 885.408935546875,
-  "clr_K": 2200.437600575839
+  "scclr_alpha": 0.621305453400371,
+  "scclr_k": 2034.0744461326356
 }

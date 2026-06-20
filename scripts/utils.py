@@ -69,6 +69,8 @@ def notsct(mtx):
     print("pf_log")
     data["pf_log"] = np.log(pc + do_pf(mtx))
     print("pf_log_pf")
+    # Historical PF->log1p->PF artifact; manuscript PFlog is computed from
+    # runorm/scclr as center(log1p(4*alpha*x)), not from this matrix.
     data["pf_log_pf"] = do_log_pf(do_pf(mtx), pc=pc)
     print("cp10k_log")
     data["cp10k_log"] = np.log(pc + do_pf(mtx, target_sum=10_000))

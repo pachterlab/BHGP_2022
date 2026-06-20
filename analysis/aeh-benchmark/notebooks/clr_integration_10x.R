@@ -76,16 +76,17 @@ logp1_transform <- function(UMI) {
 }
 
 clr_transform <- function(UMI) {
-  sf  <- sf_vec(UMI)
-  lpf <- log1p(Matrix::t(Matrix::t(UMI) / sf))
-  lpf - Matrix::rowMeans(lpf)   # subtract per-cell mean (lpf is genes x cells; rowMeans = per-gene, so need colMeans)
+  alpha <- estimate_alpha(UMI)
+  lpf <- log(as.matrix(UMI) + 1 / (4 * alpha))
+  sweep(lpf, 2L, colMeans(lpf), "-")
 }
 
-# Fix: CLR subtracts per-CELL mean, i.e. colMeans of the genes×cells matrix
-clr_transform <- function(UMI) {
-  sf  <- sf_vec(UMI)
-  lpf <- as.matrix(log1p(Matrix::t(Matrix::t(UMI) / sf)))
-  sweep(lpf, 2L, colMeans(lpf), "-")
+estimate_alpha <- function(UMI) {
+  mu <- as.numeric(Matrix::rowMeans(UMI))
+  m2 <- as.numeric(Matrix::rowMeans(UMI * UMI))
+  v  <- m2 - mu^2
+  a  <- sum((v - mu) * mu^2) / sum(mu^4)
+  if (!is.finite(a) || a <= 0) 0.05 else a
 }
 
 logp1_transform <- function(UMI) {

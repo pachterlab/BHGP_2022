@@ -54,10 +54,18 @@ downsample_per_cell <- function(M, fraction = 0.1) {
   out
 }
 
-# CLR transform + PCA + kNN, returning the kNN index matrix.
+estimate_alpha <- function(UMI) {
+  mu <- as.numeric(Matrix::rowMeans(UMI))
+  m2 <- as.numeric(Matrix::rowMeans(UMI * UMI))
+  v  <- m2 - mu^2
+  a  <- sum((v - mu) * mu^2) / sum(mu^4)
+  if (!is.finite(a) || a <= 0) 0.05 else a
+}
+
+# Corrected PFlog / runorm shifted CLR + PCA + kNN.
 clr_knn <- function(UMI, pca_dim = 10, knn = 50) {
-  sf <- colSums(UMI); sf <- sf / mean(sf)
-  logpf <- log1p(sweep(UMI, 2L, sf, "/"))
+  alpha <- estimate_alpha(UMI)
+  logpf <- log(UMI + 1 / (4 * alpha))
   X <- t(sweep(logpf, 2L, colMeans(logpf), "-"))
   k <- min(pca_dim, nrow(X) - 1L, ncol(X) - 1L)
   pc <- prcomp_irlba(X, n = k, center = TRUE, scale. = FALSE)$x

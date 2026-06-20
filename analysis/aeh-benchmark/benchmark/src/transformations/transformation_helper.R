@@ -405,15 +405,17 @@ scgpt_fnc <- function(UMI, sf, alpha, n_bins = 51L){
   res
 }
 
-# CLR (Centered Log-Ratio): delta-method shifted log, then subtract per-cell mean
-# across genes. The shift is the variance-stabilizing pseudocount y0 = 1/(4*alpha)
-# (passed via overdispersion = alpha, which sets shifted_log_transform's default
-# pseudo_count = 1/(4*overdispersion)) -- i.e. PFlog with the delta-method K =
-# 4*alpha*s, identical to logp_alpha_fnc plus the CLR centering. Removes the
-# per-cell mean (depth) component before PCA, unlike logp1 which only removes the
-# per-gene mean during PCA centering.
+# CLR (Centered Log-Ratio): corrected PFlog / runorm shifted CLR. The shift is
+# the variance-stabilizing pseudocount y0 = 1/(4*alpha), applied on the count
+# scale as log(x + y0), then centered within each cell. This matches the scclr
+# sparse implementation center(log1p(4*alpha*x)) up to a per-cell-removed
+# constant. It is intentionally not the older size-factor formula
+# log(x / sf + y0).
 clr_fnc <- function(UMI, sf, alpha){
-  logpf <- transformGamPoi::shifted_log_transform(UMI, overdispersion = alpha, size_factors = sf, on_disk = FALSE)
+  if(inherits(UMI, "sparseMatrix")){
+    UMI <- as.matrix(UMI)
+  }
+  logpf <- log(UMI + 1 / (4 * alpha))
   sweep(logpf, MARGIN = 2, STATS = MatrixGenerics::colMeans2(logpf), FUN = "-")
 }
 

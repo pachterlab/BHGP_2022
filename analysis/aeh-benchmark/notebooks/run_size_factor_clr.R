@@ -28,12 +28,21 @@ Y <- Y[Matrix::rowSums(Y) > 0, ]
 cat("After filtering zeros:", nrow(Y), "genes\n")
 
 # ── 2. Define transformations ─────────────────────────────────────────────────
-clr_transform <- function(UMI, sf) {
-  logpf <- log1p(sweep(UMI, 2L, sf, "/"))
+estimate_alpha <- function(UMI) {
+  mu <- as.numeric(Matrix::rowMeans(UMI))
+  m2 <- as.numeric(Matrix::rowMeans(UMI * UMI))
+  v  <- m2 - mu^2
+  a  <- sum((v - mu) * mu^2) / sum(mu^4)
+  if (!is.finite(a) || a <= 0) 0.05 else a
+}
+
+clr_transform <- function(UMI, sf = NULL, alpha = NULL) {
+  if (is.null(alpha)) alpha <- estimate_alpha(UMI)
+  logpf <- log(UMI + 1 / (4 * alpha))
   sweep(logpf, 2L, colMeans(logpf), "-")
 }
 clr_alpha_transform <- function(UMI, sf, alpha = 0.05) {
-  logpf <- log(sweep(UMI, 2L, sf, "/") + 1 / (4 * alpha))
+  logpf <- log(UMI + 1 / (4 * alpha))
   sweep(logpf, 2L, colMeans(logpf), "-")
 }
 

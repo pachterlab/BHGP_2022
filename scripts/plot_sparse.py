@@ -217,8 +217,8 @@ def read_data(base_data_fn):
 
 mtx_labels = ['raw', 'pf', 'log', 'pf_log', 'pf_log_pf', 'cpm_log', 'cp10k_log', "sqrt"]
 
-# pf_log_pf is displayed as "PFlog (shift. CLR)" — equivalent to Aitchison's
-# centered log-ratio transform via the supplementary note's proof.
+# pf_log_pf is the legacy PF->log1p->PF artifact. Current PFlog is computed
+# on the fly with runorm/scclr in plot_all.py and the PFlog rerun script.
 labels = [
     'raw',
      'PF',
@@ -229,7 +229,7 @@ labels = [
      'scalelog1pCP10k',
      'sctransform',
      'log1pPF',
-     'PFlog (shift. CLR)',
+     'legacy PF-log-PF',
 ]
 
 txlabel = {
@@ -242,7 +242,7 @@ txlabel = {
   'cp10k_log_scale': 'scalelog1pCP10k',
   'sctransform': 'sctransform',
   'pf_log': 'log1pPF',
-  'pf_log_pf': 'PFlog (shift. CLR)',
+  'pf_log_pf': 'legacy PF-log-PF',
 }
 
 def setup_plot(ds, shape):

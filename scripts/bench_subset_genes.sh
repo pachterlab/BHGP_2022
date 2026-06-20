@@ -9,7 +9,8 @@
 #
 # Each <DS>/subset_genes/ directory is expected to contain:
 #   raw.mtx.gz                             (required)
-#   {pf,log,sqrt,pf_log,pf_log_pf,cpm_log,cp10k_log}.mtx.gz   (sparse methods)
+#   {pf,log,sqrt,pf_log,pf_log_pf,cpm_log,cp10k_log}.mtx.gz   (sparse methods;
+#                                                             pf_log_pf is legacy)
 #   {sctransform,cp10k_log_scale}.csv.gz   (dense methods, optional)
 #   <DS>_subset_genes_metrics.json          (required; will be updated in-place)
 

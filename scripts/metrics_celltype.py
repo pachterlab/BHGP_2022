@@ -16,7 +16,7 @@ Usage:
 
 <dataset_dir> must contain:
     matrix.mtx.gz, barcodes.txt.gz, metadata_barcodes.txt.gz (cells × genes raw)
-    subset_genes/{raw,pf,sqrt,log,cp10k_log,cpm_log,pf_log,pf_log_pf}.mtx.gz
+    subset_genes/{raw,pf,sqrt,log,cp10k_log,cpm_log,pf_log}.mtx.gz
     subset_genes/{sctransform,cp10k_log_scale}.csv.gz
 The metadata file's last column must be 'celltype' and the first column the barcode.
 """
@@ -43,10 +43,9 @@ METHODS = [
     ("scalelog1pCP10k",      "cp10k_log_scale.csv.gz", True),
     ("sctransform",          "sctransform.csv.gz",    True),
     ("log1pPF",              "pf_log.mtx.gz",         False),
-    # PFlog (shift. CLR) is the additive centered-log-ratio, computed on the fly
-    # from raw via norm_clr (PF to mean depth -> log1p -> per-cell centering); the
-    # "__CLR__" sentinel triggers that instead of reading a file. NOT the
-    # multiplicative pf_log_pf.mtx.gz approximation.
+    # PFlog (shift. CLR) is the corrected runorm/scclr transform, computed on
+    # the fly from raw as center(log1p(4*alpha*x)). The "__CLR__" sentinel
+    # triggers that instead of reading the legacy pf_log_pf.mtx.gz artifact.
     ("PFlog (shift. CLR)", "__CLR__",               True),
 ]
 
@@ -173,18 +172,15 @@ def main():
     ap.add_argument("--n_sub", type=int, default=500,
                     help="cells to subsample for pairwise Spearman (default 500)")
     ap.add_argument("--clr_alpha", type=float, default=None,
-                    help="overdispersion alpha; sets the PFlog first-PF constant "
-                         "K = 4*alpha*scale (delta-method pseudocount). If omitted "
-                         "(and --clr_calibrate off), PFlog uses sf=mean depth.")
+                    help="overdispersion alpha for runorm/scclr PFlog. If omitted "
+                         "(and --clr_calibrate off), scclr estimates alpha with target='auto'.")
     ap.add_argument("--clr_scale", type=float, default=None,
-                    help="scale factor s (mean total UMI per cell) used in "
-                         "K = 4*alpha*scale; defaults to the matrix mean cell depth.")
+                    help="legacy argument; accepted but ignored by corrected scclr PFlog.")
     ap.add_argument("--clr_calibrate", action="store_true",
-                    help="calibrate the PFlog pseudocount to the delta-method "
-                         "K = 4*alpha*s with alpha and s estimated WITHIN this cell "
-                         "type (the right scale for a cell-type-specific metric; the "
-                         "whole-dataset alpha is inflated by between-celltype "
-                         "heterogeneity). Overridden by explicit --clr_alpha/--clr_scale.")
+                    help="estimate alpha WITHIN this cell type. The whole-dataset alpha "
+                         "is inflated by between-celltype heterogeneity.")
+    ap.add_argument("--scclr-path", default=None,
+                    help="optional path to a local scclr/python checkout.")
     args = ap.parse_args()
 
     # Load metadata, find cell-type indices in matrix-column order.
@@ -219,28 +215,24 @@ def main():
 
     for label, fname, dense in METHODS:
         if fname == "__CLR__":
-            from norm_sparse import norm_clr
+            from scclr_pflog import normalize_pflog, to_dense
             alpha, scale = args.clr_alpha, args.clr_scale
             if args.clr_calibrate and alpha is None:
-                # delta-method calibration with WITHIN-celltype overdispersion (the
-                # whole-dataset alpha is inflated by between-celltype heterogeneity).
+                # WITHIN-celltype overdispersion is the right scale for this
+                # cell-type-specific metric.
                 from metrics_matrix import compute_overdispersion
                 alpha = float(compute_overdispersion(sparse.csr_matrix(raw_sub)))
-                if scale is None:
-                    scale = float(raw_sub.sum(1).mean())
             if alpha is not None:
-                if scale is None:
-                    scale = float(raw_full.sum(1).mean())
-                K = 4.0 * alpha * scale
-                results["clr_alpha"], results["clr_scale"], results["clr_K"] = alpha, scale, K
-                print(f"  {label}: additive CLR, delta-method K=4*alpha*s={K:.4g} "
-                      f"(alpha={alpha:.4g}, s={scale:.4g}, y0=1/(4a)={1/(4*alpha):.4g})...",
+                sclr = normalize_pflog(sparse.csr_matrix(raw_full), alpha=alpha, scclr_path=args.scclr_path)
+                results["scclr_alpha"], results["scclr_k"] = float(sclr.alpha), float(sclr.k)
+                print(f"  {label}: runorm/scclr PFlog center(log1p(4*alpha*x)) "
+                      f"(alpha={float(sclr.alpha):.4g}, y0=1/(4a)={1/(4*float(sclr.alpha)):.4g})...",
                       file=sys.stderr)
-                X = np.asarray(norm_clr(sparse.csr_matrix(raw_full),
-                                        alpha=alpha, scale=scale), dtype=np.float32)
             else:
-                print(f"  {label}: compute additive CLR (norm_clr, sf=mean)...", file=sys.stderr)
-                X = np.asarray(norm_clr(sparse.csr_matrix(raw_full)), dtype=np.float32)
+                print(f"  {label}: runorm/scclr PFlog target='auto'...", file=sys.stderr)
+                sclr = normalize_pflog(sparse.csr_matrix(raw_full), scclr_path=args.scclr_path)
+                results["scclr_alpha"], results["scclr_k"] = float(sclr.alpha), float(sclr.k)
+            X = to_dense(sclr)
         else:
             path = os.path.join(args.dataset_dir, "subset_genes", fname)
             if not os.path.exists(path):

@@ -38,14 +38,21 @@ existing <- read_tsv(sim_tsv, show_col_types = FALSE) %>%
 cat("Existing CLR/CLR_alpha simulation rows:", nrow(existing), "\n")
 
 # ── Transforms ────────────────────────────────────────────────────────────────
-clr_transform <- function(UMI) {
-  sf <- Matrix::colSums(UMI); sf <- sf / mean(sf)
-  logpf <- log1p(sweep(as.matrix(UMI), 2L, sf, "/"))
+estimate_alpha <- function(UMI) {
+  mu <- as.numeric(Matrix::rowMeans(UMI))
+  m2 <- as.numeric(Matrix::rowMeans(UMI * UMI))
+  v  <- m2 - mu^2
+  a  <- sum((v - mu) * mu^2) / sum(mu^4)
+  if (!is.finite(a) || a <= 0) 0.05 else a
+}
+
+clr_transform <- function(UMI, alpha = NULL) {
+  if (is.null(alpha)) alpha <- estimate_alpha(UMI)
+  logpf <- log(as.matrix(UMI) + 1 / (4 * alpha))
   sweep(logpf, 2L, colMeans(logpf), "-")
 }
 clr_alpha_transform <- function(UMI, alpha = 0.05) {
-  sf <- Matrix::colSums(UMI); sf <- sf / mean(sf)
-  logpf <- log(sweep(as.matrix(UMI), 2L, sf, "/") + 1 / (4 * alpha))
+  logpf <- log(as.matrix(UMI) + 1 / (4 * alpha))
   sweep(logpf, 2L, colMeans(logpf), "-")
 }
 

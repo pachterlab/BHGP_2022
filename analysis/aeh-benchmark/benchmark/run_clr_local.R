@@ -60,10 +60,20 @@ suppressPackageStartupMessages({
 
 # ── Core functions ─────────────────────────────────────────────────────────────
 
-# CLR: log(y/sf + 1) then subtract per-cell mean across genes (Aitchison)
-clr_transform <- function(UMI, sf) {
+# Corrected PFlog / runorm shifted CLR:
+# log(y + 1/(4*alpha)) then subtract per-cell mean across genes.
+estimate_alpha <- function(UMI) {
+  mu <- as.numeric(Matrix::rowMeans(UMI))
+  m2 <- as.numeric(Matrix::rowMeans(UMI * UMI))
+  v  <- m2 - mu^2
+  a  <- sum((v - mu) * mu^2) / sum(mu^4)
+  if (!is.finite(a) || a <= 0) 0.05 else a
+}
+
+clr_transform <- function(UMI, sf = NULL, alpha = NULL) {
+  if (is.null(alpha)) alpha <- estimate_alpha(UMI)
   if (inherits(UMI, "sparseMatrix")) UMI <- as.matrix(UMI)
-  logpf <- log1p(sweep(UMI, 2L, sf, "/"))     # genes × cells
+  logpf <- log(UMI + 1 / (4 * alpha))          # genes × cells
   sweep(logpf, 2L, colMeans(logpf), "-")       # subtract per-cell mean
 }
 

@@ -26,10 +26,14 @@ dirs, e.g. `synchromesh/data`):
 - **Fig 1a** — angelidis_2019 within-cell-type per-method bars (PC1-loading
   entropy / # false-positive DE genes / 1-|within-celltype Spearman|) for the
   Type_2_pneumocytes cell type. Compute the metrics JSON, then plot:
-  `python scripts/metrics_celltype.py DATA/angelidis_2019 Type_2_pneumocytes analysis/figures/angelidis_celltype_metrics.json`
+  `SC_CLR_PATH=/path/to/scclr/python python scripts/metrics_celltype.py DATA/angelidis_2019 Type_2_pneumocytes analysis/figures/angelidis_celltype_metrics.json --clr_calibrate --scclr-path /path/to/scclr/python`
   `python scripts/plot_celltype_bar.py analysis/figures/angelidis_celltype_metrics.json analysis/figures/angelidis_celltype_bar`
 - **Fig 1b** — across-dataset summary boxplot over all datasets' metrics JSONs:
   `python scripts/plot_summary.py DATA analysis/figures/summary_subset_genes angelidis_2019`
+
+PFlog rows are computed with the corrected runorm/scclr transform,
+`center(log1p(4*alpha*x))`. Legacy `pf_log_pf.mtx.gz` files are kept only as
+historical artifacts and should not be used as the manuscript PFlog result.
 
 (`scripts/plot_bar.py` renders an all-cells single-dataset metric bar
 `<DS>_metrics-bar` from a `*_subset_genes_metrics.json` — a per-dataset analog of

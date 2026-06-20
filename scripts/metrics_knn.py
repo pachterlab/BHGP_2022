@@ -33,8 +33,13 @@ from sklearn.neighbors import NearestNeighbors
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from norm_sparse import (  # noqa: E402
     norm_raw, norm_pf, norm_log, norm_pf_log, norm_pf_log_pf,
-    norm_cpm_log, norm_cp10k_log, norm_sqrt, norm_clr,
+    norm_cpm_log, norm_cp10k_log, norm_sqrt,
 )
+from scclr_pflog import normalize_pflog, to_dense  # noqa: E402
+
+
+def norm_pflog(mtx):
+    return to_dense(normalize_pflog(mtx), dtype=np.float64)
 
 METHODS = {
     "raw":        norm_raw,
@@ -45,21 +50,20 @@ METHODS = {
     "cpm_log":    norm_cpm_log,
     "cp10k_log":  norm_cp10k_log,
     "sqrt":       norm_sqrt,
-    "clr":        norm_clr,
+    "pflog":      norm_pflog,
+    "clr":        norm_pflog,  # AEH tables use the historical clr key for PFlog.
 }
 
 
 def _resolve_method(name, c=None):
-    """Allow 'clr@<c>' syntax to pass a pseudocount, e.g. 'clr@0.4'."""
+    """Resolve method names; legacy 'clr@<c>' now maps to scclr PFlog."""
     if "@" in name:
-        base, c_str = name.split("@", 1)
-        c_val = float(c_str)
+        base, _ignored = name.split("@", 1)
     else:
         base = name
-        c_val = c
+    if c is not None and base == "clr":
+        print("WARNING: clr pseudocount arguments are ignored; using runorm/scclr PFlog", file=sys.stderr)
     fn = METHODS[base]
-    if base == "clr" and c_val is not None:
-        return lambda m, _fn=fn, _c=c_val: _fn(m, c=_c), base
     return fn, base
 
 
@@ -70,7 +74,8 @@ def _ensure_dense(m):
 def knn_overlap_for_method(raw, method_name, k=50, n_pca=50, seed=42):
     """Compute split-half k-NN overlap for one transformation.
 
-    method_name accepts 'clr@<c>' syntax to set pseudocount, e.g. 'clr@0.4032'.
+    method_name accepts 'pflog' or the historical AEH key 'clr' for the corrected
+    runorm/scclr PFlog transform.
     """
     n_cells, n_genes = raw.shape
     rng = np.random.default_rng(seed)

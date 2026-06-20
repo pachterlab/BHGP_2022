@@ -8,7 +8,7 @@ apply a normalization f, and plot the RELATIVE Frobenius distance to the unscale
 A normalization that is invariant to sequencing depth / total-count scaling stays
 flat near zero; one that is not grows as s moves away from 1.
 
-raw/log1pPF/CLR use continuous s*M (defined for real input, isolating pure
+raw/log1pPF/PFlog use continuous s*M (defined for real input, isolating pure
 scaling). sctransform requires integer counts, so its input is round(sM); at
 s<1 that rounding also downsamples, so its low-s points reflect information loss
 on top of (non-)invariance -- worth a caption note.
@@ -16,7 +16,7 @@ on top of (non-)invariance -- worth a caption note.
 Methods:
   - raw                  : no normalization (identity)      -> grows ~ |s-1|
   - log1pPF              : log1p(PF)                         -> grows
-  - PFlog (shift. CLR) : additive log-centering           -> flat ~0 (invariant)
+  - PFlog (shift. CLR)   : runorm/scclr center(log1p(4*alpha*x))
   - sctransform          : Satija v2 Pearson residuals (computed in R via glmGamPoi)
 
 All methods run on the SAME subsampled, sanitized matrix. sctransform is delegated
@@ -40,6 +40,8 @@ import numpy as np
 import pandas as pd
 from scipy.io import mmread, mmwrite
 from scipy import sparse
+
+from scclr_pflog import normalize_pflog, to_dense
 
 R_ENV = os.environ.copy()
 if os.environ.get("SCALE_SWEEP_R_LD_LIBRARY_PATH"):
@@ -72,13 +74,9 @@ def f_log1pPF(X):
     return np.log1p(do_pf(X))
 
 
-def f_clr(X, c=1.0):
-    """Exact shifted CLR (additive log-centering) = PFlog per the paper's
-    equivalence proof. T(x) = log(x/rowsum + c) - mean_genes(log(x/rowsum + c)).
-    Scale-invariant by construction: x/rowsum cancels any global multiplier."""
-    u = do_pf(X, sf=1.0)            # each cell sums to 1 (scale-free)
-    L = np.log(u + c)
-    return L - L.mean(axis=1, keepdims=True)
+def f_clr(X):
+    """Corrected runorm/scclr PFlog: center(log1p(4*alpha*x))."""
+    return to_dense(normalize_pflog(sparse.csr_matrix(X)), dtype=np.float64)
 
 
 PY_METHODS = {"raw": f_raw, "log1pPF": f_log1pPF, CLR_LABEL: f_clr}

@@ -88,7 +88,7 @@ def main(raw_mtx_fn, norm_mtx_fn, metrics_fn):
       'cp10k_log_scale': 'scalelog1pCP10k',
       'sctransform': 'sctransform',
       'pf_log': 'log1pPF',
-      'pf_log_pf': 'PFlog (shift. CLR)',
+      'pf_log_pf': 'legacy PF-log-PF',
     }
     method = txlabel[os.path.basename(norm_mtx_fn).split(".")[0]]
     

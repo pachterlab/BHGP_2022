@@ -17,7 +17,7 @@ Usage:
     python plot_mono_heatmap.py <dataset_dir> <out_prefix> [n_top]
 
 <dataset_dir> must contain metadata_barcodes.txt.gz (last column 'celltype',
-matrix-row order) and subset_genes/{pf,pf_log_pf}.mtx.gz +
+matrix-row order) and subset_genes/{raw,pf_log}.mtx.gz +
 subset_genes/{cp10k_log_scale,sctransform}.csv.gz.
 """
 import gzip
@@ -39,9 +39,8 @@ from scipy.io import mmread
 PANELS = [
     ("raw",         "raw.mtx.gz",         False),
     ("log1pPF",     "pf_log.mtx.gz",      False),
-    # PFlog = additive centered-log-ratio computed on the fly from raw via
-    # norm_clr (PF to mean depth -> log1p -> per-cell centering); "__CLR__"
-    # sentinel triggers that. NOT the multiplicative pf_log_pf.mtx.gz.
+    # PFlog = corrected runorm/scclr shifted CLR, computed on the fly from raw
+    # as center(log1p(4*alpha*x)). NOT the legacy pf_log_pf.mtx.gz artifact.
     ("PFlog",   "__CLR__",            True),
     ("sctransform", "sctransform.csv.gz", True),
 ]
@@ -82,14 +81,13 @@ def main(dataset_dir, out_prefix, n_top=100):
     gb = {}
     for label, fname, dense in PANELS:
         if fname == "__CLR__":
-            from norm_sparse import norm_clr
             from metrics_matrix import compute_overdispersion
+            from scclr_pflog import normalize_pflog, to_dense
             raw = mmread(os.path.join(dataset_dir, "subset_genes", "raw.mtx.gz")).tocsr()
             alpha = float(compute_overdispersion(raw))
-            scale = float(np.asarray(raw.sum(1)).ravel().mean())
-            print(f"computing {label} (additive CLR, delta-method K=4*alpha*s, "
+            print(f"computing {label} with runorm/scclr center(log1p(4*alpha*x)) "
                   f"alpha={alpha:.3g})...", file=sys.stderr)
-            X = np.asarray(norm_clr(raw, alpha=alpha, scale=scale), dtype=np.float32)[keep]
+            X = to_dense(normalize_pflog(raw, alpha=alpha))[keep]
         else:
             if label == "sctransform" and sct_override:
                 path = sct_override

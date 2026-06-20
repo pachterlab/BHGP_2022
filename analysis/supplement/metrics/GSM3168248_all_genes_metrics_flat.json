@@ -37,8 +37,12 @@
   "log1pPF_cov_cell": 0.2571180415972926,
   "log1pPF_r2_depth": 0.5210455387304997,
   "log1pPF_r_mono": 1,
-  "PFlog1pPF_cov_gene": 5.166060714490775,
-  "PFlog1pPF_cov_cell": 1.4437268778692282e-14,
+  "PFlog1pPF_cov_gene": 1.6910005045430687,
+  "PFlog1pPF_cov_cell": null,
   "PFlog1pPF_r2_depth": 0,
-  "PFlog1pPF_r_mono": 1
+  "PFlog1pPF_r_mono": 1,
+  "PFlog1pPF_scclr_alpha": 1.7083748715830867,
+  "PFlog1pPF_scclr_k": 26315.76633928158,
+  "PFlog1pPF_formula": "center(log1p(4*alpha*x))",
+  "PFlog1pPF_impl": "runorm/scclr PFlog: center(log1p(4*alpha*x))"
 }
