@@ -576,6 +576,88 @@ theorem shifted_pflog_variance_scale
   · exact log1pPFScale_eq_shiftedLogCountScale (K := K) (s := s) (x := x) hK hs
   · exact scale_factor_from_alpha (K := K) (s := s) (alpha := alpha) hK halpha h
 
+/-- Coordinatewise logarithm of a positive-domain vector. -/
+noncomputable def logCoords {n : Nat} (z : Fin n -> ℝ) : Fin n -> ℝ :=
+  fun i => Real.log (z i)
+
+/-- CLR applied after coordinatewise logarithm on the positive domain. -/
+noncomputable def positiveCLR {n : Nat} (z : Fin n -> ℝ) : Fin n -> ℝ :=
+  clr (logCoords z)
+
+/-- Add a fixed normalized shift to every coordinate. -/
+def shiftedComposition {n : Nat} (tau : ℝ) (u : Fin n -> ℝ) : Fin n -> ℝ :=
+  fun i => u i + tau
+
+/-- The shifted CLR transform with fixed normalized shift `tau`. -/
+noncomputable def shiftedCLR {n : Nat} (tau : ℝ) (u : Fin n -> ℝ) : Fin n -> ℝ :=
+  positiveCLR (shiftedComposition tau u)
+
+/-- The positive-domain condition for the shifted composition. -/
+def ShiftedPositive {n : Nat} (tau : ℝ) (u : Fin n -> ℝ) : Prop :=
+  ∀ i : Fin n, 0 < u i + tau
+
+/--
+Graph label: shifted-domain pullback of CLR uniqueness.
+
+If a positive-domain transform `S` is obtained by pulling back a log-domain
+transform `T` through coordinatewise logarithms, and `T` satisfies the CLR
+axioms in log-coordinates, then `S` is the ordinary CLR of the logged positive
+vector. This is the formal restriction step used in Supplementary Note
+Proposition `prop:shifted-pflogpf-scale`.
+-/
+theorem positive_domain_pullback_clr (D : Nat)
+    (S : (Fin (D + 2) -> ℝ) -> (Fin (D + 2) -> ℝ))
+    (T : (Fin (D + 2) -> ℝ) -> (Fin (D + 2) -> ℝ))
+    (hS : ∀ z : Fin (D + 2) -> ℝ,
+      (∀ i : Fin (D + 2), 0 < z i) -> S z = T (logCoords z))
+    (hmono :
+      ∀ x : Fin (D + 2) -> ℝ, ∀ i j : Fin (D + 2),
+        x i > x j ↔ T x i > T x j)
+    (hadd : ∀ x y : Fin (D + 2) -> ℝ, T (x + y) = T x + T y)
+    (hperm :
+      ∀ sigma : Equiv.Perm (Fin (D + 2)), ∀ x : Fin (D + 2) -> ℝ,
+        T (permute sigma x) = permute sigma (T x))
+    (hscale : ∀ c : ℝ, T (fun _ : Fin (D + 2) => c) = 0)
+    (hcal : T (basis (first D)) (first D) =
+      (D + 1 : ℝ) / (D + 2 : ℝ)) :
+    ∀ z : Fin (D + 2) -> ℝ, (∀ i : Fin (D + 2), 0 < z i) ->
+      S z = positiveCLR z := by
+  intro z hz
+  rw [hS z hz]
+  unfold positiveCLR
+  exact clr_uniqueness_theorem D T hmono hadd hperm hscale hcal (logCoords z)
+
+/--
+Graph label: shifted-composition pullback of CLR uniqueness.
+
+For a fixed normalized shift `tau`, if a transform on unshifted compositions is
+the restriction of a positive-domain transform satisfying the preceding
+pullback statement after applying `u ↦ u + tau`, then it is exactly shifted
+CLR. This is the Lean formalization of the shifted-domain pullback statement.
+-/
+theorem shifted_domain_pullback_clr (D : Nat) (tau : ℝ)
+    (S : (Fin (D + 2) -> ℝ) -> (Fin (D + 2) -> ℝ))
+    (T : (Fin (D + 2) -> ℝ) -> (Fin (D + 2) -> ℝ))
+    (hS : ∀ u : Fin (D + 2) -> ℝ, ShiftedPositive tau u ->
+      S u = T (logCoords (shiftedComposition tau u)))
+    (hmono :
+      ∀ x : Fin (D + 2) -> ℝ, ∀ i j : Fin (D + 2),
+        x i > x j ↔ T x i > T x j)
+    (hadd : ∀ x y : Fin (D + 2) -> ℝ, T (x + y) = T x + T y)
+    (hperm :
+      ∀ sigma : Equiv.Perm (Fin (D + 2)), ∀ x : Fin (D + 2) -> ℝ,
+        T (permute sigma x) = permute sigma (T x))
+    (hscale : ∀ c : ℝ, T (fun _ : Fin (D + 2) => c) = 0)
+    (hcal : T (basis (first D)) (first D) =
+      (D + 1 : ℝ) / (D + 2 : ℝ)) :
+    ∀ u : Fin (D + 2) -> ℝ, ShiftedPositive tau u ->
+      S u = shiftedCLR tau u := by
+  intro u hu
+  rw [hS u hu]
+  unfold shiftedCLR positiveCLR
+  exact clr_uniqueness_theorem D T hmono hadd hperm hscale hcal
+    (logCoords (shiftedComposition tau u))
+
 /-- Rank monotonicity on the log-coordinate domain. -/
 def RankMonotone {n : Nat}
     (T : (Fin n -> ℝ) -> (Fin n -> ℝ)) : Prop :=
