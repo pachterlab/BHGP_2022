@@ -1,0 +1,37 @@
+{
+  "dataset": "HLCA lung balanced subset",
+  "input": "analysis/aeh-benchmark/notebooks/fig4_lung_depth_geometry/data/hlca_lung_seqwell_10xv3_balanced_raw.h5ad",
+  "n_cells": 1120,
+  "n_genes": 3000,
+  "pca_dim": 10,
+  "k": 50,
+  "alpha": 25.395708639352048,
+  "scclr_K": 389257.07771972095,
+  "mean_depth_after_gene_filter": 3831.917857142857,
+  "assay_counts": {
+    "Seq-Well": 560,
+    "10x 3' v3": 560
+  },
+  "cell_type_counts": {
+    "natural killer cell": 140,
+    "CD1c-positive myeloid dendritic cell": 140,
+    "type II pneumocyte": 140,
+    "alveolar macrophage": 140,
+    "ciliated columnar cell of tracheobronchial tree": 140,
+    "classical monocyte": 140,
+    "CD8-positive, alpha-beta T cell": 140,
+    "epithelial cell of lower respiratory tract": 140
+  },
+  "reference_pseudocounts": {
+    "CPM": 0.003831917857142857,
+    "log1pPF": 1.0,
+    "PFlog optimum": 0.00984418287161364,
+    "CP10k": 0.3831917857142857
+  },
+  "outputs": {
+    "pdf": "analysis/aeh-benchmark/output/hlca_lung_balanced_pflog_pseudocount_knn_overlap.pdf",
+    "png": "analysis/aeh-benchmark/output/hlca_lung_balanced_pflog_pseudocount_knn_overlap.png",
+    "tsv": "analysis/aeh-benchmark/output/hlca_lung_balanced_pflog_pseudocount_knn_overlap.tsv",
+    "json": "analysis/aeh-benchmark/output/hlca_lung_balanced_pflog_pseudocount_knn_overlap.json"
+  }
+}

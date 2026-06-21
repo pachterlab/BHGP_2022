@@ -13,7 +13,6 @@ import matplotlib
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
-from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
 
 import scclr
@@ -25,6 +24,7 @@ import matplotlib.pyplot as plt
 
 HERE = Path(__file__).resolve().parent
 AEH_BENCHMARK_DIR = HERE.parents[1]
+REPO_DIR = AEH_BENCHMARK_DIR.parents[1]
 OUT_DIR = AEH_BENCHMARK_DIR / "output"
 DATA = AEH_BENCHMARK_DIR / "notebooks" / "fig4_lung_depth_geometry" / "data" / "hlca_lung_seqwell_10xv3_balanced_raw.h5ad"
 OUT = OUT_DIR / "hlca_lung_balanced_pflog_pseudocount_knn_overlap.pdf"
@@ -60,14 +60,14 @@ def mean_overlap(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.mean([len(set(x).intersection(y)) for x, y in zip(a, b)]))
 
 
-def dense_pca(X_cells_genes: np.ndarray, n_components: int) -> np.ndarray:
-    k = min(n_components, X_cells_genes.shape[0] - 1, X_cells_genes.shape[1] - 1)
-    return PCA(n_components=int(k), svd_solver="full").fit_transform(X_cells_genes)
+def repo_path(path: Path) -> str:
+    return str(path.resolve().relative_to(REPO_DIR.resolve()))
 
 
-def pflog_transform(pf_counts: np.ndarray, pseudocount: float) -> np.ndarray:
-    Z = np.log(pf_counts + pseudocount)
-    return Z - Z.mean(axis=1, keepdims=True)
+def pflog_pca_scores(counts: sp.csr_matrix, pseudocount: float, n_components: int) -> np.ndarray:
+    alpha = 1.0 / (4.0 * float(pseudocount))
+    res = scclr.normalize_pca(counts, n_components=n_components, target="auto", alpha=alpha, seed=SEED, tol=1e-6)
+    return np.asarray(res.scores)
 
 
 def main() -> None:
@@ -101,10 +101,9 @@ def main() -> None:
     hi = max(reference.values()) * 8.0
     pseudocounts = np.unique(np.r_[np.logspace(np.log10(lo), np.log10(hi), 95), list(reference.values())])
 
-    pf_counts = counts.multiply(sbar / depths[:, None]).toarray()
     rows = []
     for y0 in pseudocounts:
-        emb = dense_pca(pflog_transform(pf_counts, float(y0)), PCA_DIM)
+        emb = pflog_pca_scores(counts, float(y0), PCA_DIM)
         rows.append(
             {
                 "dataset": DATASET,
@@ -180,7 +179,7 @@ def main() -> None:
     fig.savefig(OUT.with_suffix(".png"), dpi=300, bbox_inches="tight")
     summary = {
         "dataset": DATASET,
-        "input": str(DATA),
+        "input": repo_path(DATA),
         "n_cells": int(counts.shape[0]),
         "n_genes": int(counts.shape[1]),
         "pca_dim": PCA_DIM,
@@ -192,10 +191,10 @@ def main() -> None:
         "cell_type_counts": cell_type_counts,
         "reference_pseudocounts": reference,
         "outputs": {
-            "pdf": str(OUT),
-            "png": str(OUT.with_suffix(".png")),
-            "tsv": str(OUT.with_suffix(".tsv")),
-            "json": str(OUT.with_suffix(".json")),
+            "pdf": repo_path(OUT),
+            "png": repo_path(OUT.with_suffix(".png")),
+            "tsv": repo_path(OUT.with_suffix(".tsv")),
+            "json": repo_path(OUT.with_suffix(".json")),
         },
     }
     OUT.with_suffix(".json").write_text(json.dumps(summary, indent=2) + "\n")

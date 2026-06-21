@@ -30,7 +30,11 @@ SCRIPT_DIR <- if (length(file_arg)) {
   getwd()
 }
 AEH_BENCHMARK_ROOT <- normalizePath(file.path(SCRIPT_DIR, "..", ".."))
-DATA_DIR <- file.path(AEH_BENCHMARK_ROOT, "benchmark/output/clr_local/data/downsampling")
+DATA_DIR <- Sys.getenv("AEH_DOWNSAMPLING_DATA_DIR", unset = "")
+if (!nzchar(DATA_DIR)) {
+  DATA_DIR <- file.path(AEH_BENCHMARK_ROOT, "benchmark/output/clr_local/data/downsampling")
+}
+DATA_DIR <- normalizePath(DATA_DIR, mustWork = TRUE)
 OUT_DIR <- file.path(AEH_BENCHMARK_ROOT, "output")
 DATASET  <- "smartSeq3_fibroblasts"
 FRACTION <- 0.10

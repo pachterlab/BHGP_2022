@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate manuscript Figure 3 from Angelidis lung pseudobulk counts.
+"""Generate manuscript Figure 2 from Angelidis lung pseudobulk counts.
 
 The input AnnData contains raw UMI counts summed by mouse sample. The script
 compares standard log1p(CP10K) normalization with PFlog normalization, then
@@ -36,7 +36,9 @@ AEH_BENCHMARK_DIR = HERE.parents[1]
 FIGURE_OUT = AEH_BENCHMARK_DIR / "output"
 
 DEFAULT_INPUT = HERE / "angelidis_lung_pseudobulk.h5ad"
-DEFAULT_FIGURE = FIGURE_OUT / "angelidis_pca_and_pc1_loadings_four_panel.pdf"
+DEFAULT_FIGURE = FIGURE_OUT / "angelidis_pca_and_pc1_loadings_six_panel.pdf"
+DEFAULT_PSEUDOCOUNT_SWEEP = FIGURE_OUT / "angelidis_pseudobulk_pseudocount_r2_sweep.tsv"
+DEFAULT_PSEUDOCOUNT_SUMMARY = FIGURE_OUT / "angelidis_pseudobulk_pseudocount_r2_sweep.json"
 
 AGE_COLORS = {"Young": "#2c7fb8", "Old": "#d95f5f"}
 AGE_MARKERS = {"Young": "o", "Old": "^"}
@@ -46,6 +48,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
     parser.add_argument("--output", type=Path, default=DEFAULT_FIGURE)
+    parser.add_argument("--pseudocount-sweep", type=Path, default=DEFAULT_PSEUDOCOUNT_SWEEP)
+    parser.add_argument("--pseudocount-summary", type=Path, default=DEFAULT_PSEUDOCOUNT_SUMMARY)
     parser.add_argument("--n-comps", type=int, default=5)
     parser.add_argument(
         "--comparison",
@@ -272,7 +276,109 @@ def plot_pca_panel(
     panel_label(ax, panel)
 
 
-def plot_figure(adata_log: ad.AnnData, adata_pf: ad.AnnData, merged: pd.DataFrame, output: Path) -> dict:
+def plot_depth_panel(ax, adata: ad.AnnData, panel: str) -> None:
+    obs = adata.obs.copy().reset_index(drop=True)
+    obs["depth_millions"] = obs["total_umi"].astype(float) / 1_000_000.0
+    obs["age_label"] = obs["age_label"].astype(str)
+
+    groups = ["Young", "Old"]
+    data = [obs.loc[obs["age_label"] == label, "depth_millions"].to_numpy() for label in groups]
+    positions = np.arange(len(groups))
+    bp = ax.boxplot(
+        data,
+        positions=positions,
+        widths=0.48,
+        patch_artist=True,
+        showfliers=False,
+        medianprops={"color": "black", "linewidth": 0.9},
+        boxprops={"linewidth": 0.75},
+        whiskerprops={"linewidth": 0.75},
+        capprops={"linewidth": 0.75},
+    )
+    for patch, label in zip(bp["boxes"], groups):
+        patch.set_facecolor(AGE_COLORS[label])
+        patch.set_alpha(0.22)
+        patch.set_edgecolor("black")
+
+    rng = np.random.default_rng(0)
+    for i, label in enumerate(groups):
+        vals = obs.loc[obs["age_label"] == label, "depth_millions"].to_numpy()
+        jitter = rng.uniform(-0.08, 0.08, size=vals.shape[0])
+        ax.scatter(
+            np.full(vals.shape[0], positions[i]) + jitter,
+            vals,
+            s=28,
+            color=AGE_COLORS[label],
+            edgecolor="black",
+            linewidth=0.45,
+            alpha=0.95,
+            zorder=3,
+        )
+
+    ax.set_xticks(positions)
+    ax.set_xticklabels(groups)
+    ax.set_ylim(bottom=0)
+    ax.set_ylabel("total UMI (millions)")
+    ax.set_xlabel("age group")
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.tick_params(width=0.7, length=3)
+    panel_label(ax, panel)
+
+
+def plot_pseudocount_panel(ax, sweep_path: Path, summary_path: Path, panel: str) -> None:
+    if not sweep_path.exists():
+        raise FileNotFoundError(f"pseudocount sweep table not found: {sweep_path}")
+    if not summary_path.exists():
+        raise FileNotFoundError(f"pseudocount sweep summary not found: {summary_path}")
+
+    sweep = pd.read_csv(sweep_path, sep="\t")
+    summary = json.loads(summary_path.read_text())
+    reference = summary["reference_pseudocounts"]
+
+    colors = {"logPF": "#4d4d4d", "PFlog": "#e41a1c"}
+    for method, group in sweep.groupby("method", sort=False):
+        group = group.sort_values("pseudocount")
+        ax.plot(group["pseudocount"], group["r2"], color=colors[method], lw=1.8, label=method)
+
+    marker_styles = {
+        "PFlog optimum": dict(color="#e41a1c", linestyle="-", lw=1.0),
+        "CPM": dict(color="#2c7fb8", linestyle="--", lw=0.9),
+        "log1pPF": dict(color="#238b45", linestyle="--", lw=0.9),
+        "CP10k": dict(color="#756bb1", linestyle="--", lw=0.9),
+    }
+    label_y = {"PFlog optimum": 0.48, "CPM": 0.05, "log1pPF": 0.20, "CP10k": 0.32}
+    for name, value in reference.items():
+        style = marker_styles[name]
+        ax.axvline(value, **style)
+        ax.text(
+            value,
+            label_y[name],
+            f"{name}\n{value:.3g}",
+            rotation=90,
+            va="bottom",
+            ha="right",
+            color=style["color"],
+            fontsize=6.8,
+        )
+
+    ax.set_xscale("log")
+    ax.set_ylim(0, min(1.0, max(0.92, sweep["r2"].max() * 1.08)))
+    ax.set_xlabel("count-scale pseudocount")
+    ax.set_ylabel(r"$R^2$(PC1 loading, edgePython logFC)")
+    ax.legend(frameon=False, loc="upper right")
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.tick_params(width=0.7, length=3)
+    panel_label(ax, panel)
+
+
+def plot_figure(
+    adata_log: ad.AnnData,
+    adata_pf: ad.AnnData,
+    merged: pd.DataFrame,
+    output: Path,
+    pseudocount_sweep: Path,
+    pseudocount_summary: Path,
+) -> dict:
     cache_dir = Path(tempfile.gettempdir()) / "pflog_matplotlib_cache"
     cache_dir.mkdir(parents=True, exist_ok=True)
     os.environ.setdefault("MPLCONFIGDIR", str(cache_dir / "matplotlib"))
@@ -295,7 +401,7 @@ def plot_figure(adata_log: ad.AnnData, adata_pf: ad.AnnData, merged: pd.DataFram
         }
     )
 
-    fig, axes = plt.subplots(2, 2, figsize=(6.9, 5.6), constrained_layout=True)
+    fig, axes = plt.subplots(3, 2, figsize=(7.1, 8.2), constrained_layout=True)
     fig.set_constrained_layout_pads(w_pad=0.03, h_pad=0.03, wspace=0.08, hspace=0.08)
 
     comparison_label = adata_log.uns.get("method_label", "log1p(CP10K)")
@@ -331,7 +437,7 @@ def plot_figure(adata_log: ad.AnnData, adata_pf: ad.AnnData, merged: pd.DataFram
 
     correlations = {}
     for ax, (panel, col, xlabel) in zip(
-        axes[1],
+        axes[1, :],
         [
             ("c", "logcp10k_pc1_loading", comparison_loading_label),
             ("d", "pflog_pc1_loading", "PFlog PC1 loading"),
@@ -367,6 +473,9 @@ def plot_figure(adata_log: ad.AnnData, adata_pf: ad.AnnData, merged: pd.DataFram
         ax.tick_params(width=0.7, length=3)
         panel_label(ax, panel)
 
+    plot_depth_panel(axes[2, 0], adata_pf, "e")
+    plot_pseudocount_panel(axes[2, 1], pseudocount_sweep, pseudocount_summary, "f")
+
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, bbox_inches="tight")
     fig.savefig(output.with_suffix(".png"), dpi=300, bbox_inches="tight")
@@ -395,7 +504,7 @@ def main() -> None:
     write_pca_coordinates(adata_log, adata_pf)
     de = run_edgepython_de(adata, args.edgepython_path)
     merged = merge_loadings_with_de(adata, adata_log, adata_pf, de)
-    summary = plot_figure(adata_log, adata_pf, merged, args.output)
+    summary = plot_figure(adata_log, adata_pf, merged, args.output, args.pseudocount_sweep, args.pseudocount_summary)
     summary.update(
         {
             "n_samples": int(adata.n_obs),

@@ -16,6 +16,8 @@ import scipy.sparse as sp
 from scipy.stats import pearsonr
 from sklearn.decomposition import PCA
 
+import scclr
+
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -23,6 +25,7 @@ import matplotlib.pyplot as plt
 
 HERE = Path(__file__).resolve().parent
 AEH_BENCHMARK_DIR = HERE.parents[1]
+REPO_DIR = AEH_BENCHMARK_DIR.parents[1]
 OUT_DIR = AEH_BENCHMARK_DIR / "output"
 DEFAULT_INPUT = HERE / "angelidis_lung_pseudobulk.h5ad"
 DEFAULT_DE = HERE / "pc1_loadings_with_edgepython_de.csv"
@@ -62,15 +65,18 @@ def orient_old_positive(scores: np.ndarray, loadings: np.ndarray, ages: np.ndarr
     return scores, loadings
 
 
+def repo_path(path: Path) -> str:
+    return str(path.resolve().relative_to(REPO_DIR.resolve()))
+
+
 def pc1_loadings_for_pseudocount(
-    pf_counts: np.ndarray,
+    counts: sp.csr_matrix,
     ages: np.ndarray,
     pseudocount: float,
     clr_center: bool,
 ) -> np.ndarray:
-    transformed = np.log(pf_counts + float(pseudocount))
-    if clr_center:
-        transformed = transformed - transformed.mean(axis=1, keepdims=True)
+    alpha = 1.0 / (4.0 * float(pseudocount))
+    transformed = scclr.normalize(counts, alpha=alpha, center=clr_center).to_dense()
     pca = PCA(n_components=2, svd_solver="full")
     scores = pca.fit_transform(transformed)
     loadings = pca.components_.T
@@ -87,7 +93,9 @@ def main() -> None:
     adata = ad.read_h5ad(DEFAULT_INPUT)
     counts = as_csr(adata.X)
     depths = np.asarray(counts.sum(axis=1)).ravel()
-    alpha, sbar = estimate_alpha(counts)
+    od = scclr.overdispersion(counts)
+    alpha = float(od["alpha"])
+    sbar = float(od["mean_depth"])
     y0_opt = 1.0 / (4.0 * alpha)
     reference = {
         "PFlog optimum": y0_opt,
@@ -96,7 +104,6 @@ def main() -> None:
         "CP10k": sbar / 10_000.0,
     }
 
-    pf_counts = counts.multiply(sbar / depths[:, None]).toarray()
     ages = adata.obs["age_label"].astype(str).to_numpy()
     de = pd.read_csv(DEFAULT_DE).dropna(subset=["logFC"]).copy()
     gene_index = pd.Series(np.arange(adata.n_vars), index=adata.var_names.astype(str))
@@ -110,7 +117,7 @@ def main() -> None:
     rows = []
     for y0 in pseudocounts:
         for label, center in [("logPF", False), ("PFlog", True)]:
-            loading = pc1_loadings_for_pseudocount(pf_counts, ages, float(y0), clr_center=center)
+            loading = pc1_loadings_for_pseudocount(counts, ages, float(y0), clr_center=center)
             r = pearsonr(loading[idx], logfc).statistic
             rows.append({"method": label, "pseudocount": float(y0), "r2": float(r * r)})
     sweep = pd.DataFrame(rows)
@@ -142,7 +149,7 @@ def main() -> None:
         "log1pPF": dict(color="#238b45", linestyle="--", lw=0.9),
         "CP10k": dict(color="#756bb1", linestyle="--", lw=0.9),
     }
-    label_y = {"PFlog optimum": 0.05, "CPM": 0.14, "log1pPF": 0.36, "CP10k": 0.32}
+    label_y = {"PFlog optimum": 0.48, "CPM": 0.05, "log1pPF": 0.20, "CP10k": 0.32}
     for name, value in reference.items():
         style = marker_styles[name]
         ax.axvline(value, **style)
@@ -171,9 +178,9 @@ def main() -> None:
         "alpha": alpha,
         "mean_depth": sbar,
         "reference_pseudocounts": reference,
-        "output_pdf": str(DEFAULT_OUT),
-        "output_png": str(DEFAULT_OUT.with_suffix(".png")),
-        "output_table": str(table_out),
+        "output_pdf": repo_path(DEFAULT_OUT),
+        "output_png": repo_path(DEFAULT_OUT.with_suffix(".png")),
+        "output_table": repo_path(table_out),
     }
     (DEFAULT_OUT.with_suffix(".json")).write_text(json.dumps(summary, indent=2) + "\n")
     print(json.dumps(summary, indent=2))

@@ -189,6 +189,90 @@ def mean_overlap(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.mean([len(set(x).intersection(y)) for x, y in zip(a, b)]))
 
 
+def _row_scaled_sparse(X: sp.csr_matrix, scale: np.ndarray) -> sp.csr_matrix:
+    return X.multiply(scale[:, None]).tocsr()
+
+
+def log1p_size_normalized_dense(X_cell_gene: sp.csr_matrix) -> np.ndarray:
+    depth = np.asarray(X_cell_gene.sum(axis=1)).ravel()
+    sf = depth / np.mean(depth)
+    return _row_scaled_sparse(X_cell_gene, 1.0 / sf).log1p().toarray()
+
+
+def zscore_columns(X: np.ndarray) -> np.ndarray:
+    mu = X.mean(axis=0)
+    sd = X.std(axis=0, ddof=1)
+    sd[sd == 0] = 1.0
+    return (X - mu) / sd
+
+
+def select_hvg_columns(X: np.ndarray, n: int = 1000) -> np.ndarray:
+    if X.shape[1] <= n:
+        return X
+    var = X.var(axis=0, ddof=1)
+    keep = np.argpartition(-var, n - 1)[:n]
+    keep = keep[np.argsort(-var[keep], kind="stable")]
+    return X[:, keep]
+
+
+def log_method_matrix(X_cell_gene: sp.csr_matrix, method: str) -> np.ndarray:
+    logp1 = log1p_size_normalized_dense(X_cell_gene)
+    if method == "logp1":
+        return logp1
+    if method == "logp1_hvg":
+        return select_hvg_columns(logp1)
+    if method == "logp1_zscore":
+        return zscore_columns(logp1)
+    if method == "logp1_hvg_zscore":
+        return zscore_columns(select_hvg_columns(logp1))
+    if method == "logp1_size_normed":
+        pf = logp1.sum(axis=1)
+        pf = pf / np.mean(pf)
+        return logp1 / pf[:, None]
+    if method == "logp_cpm":
+        depth = np.asarray(X_cell_gene.sum(axis=1)).ravel()
+        return _row_scaled_sparse(X_cell_gene, 1e6 / depth).log1p().toarray()
+    raise ValueError(method)
+
+
+def pca_knn_dense(X_cell_feature: np.ndarray, n_components: int, k: int, seed: int) -> np.ndarray:
+    n_comp = min(n_components, X_cell_feature.shape[0] - 1, X_cell_feature.shape[1] - 1)
+    emb = PCA(n_components=int(n_comp), svd_solver="randomized", random_state=int(seed)).fit_transform(X_cell_feature)
+    return knn(emb, k)
+
+
+def log_method_full_knns(X_full_cell_gene: sp.csr_matrix, pca_dim: int, k: int, seed: int) -> dict[str, np.ndarray]:
+    methods = [
+        "logp1",
+        "logp1_hvg",
+        "logp1_zscore",
+        "logp1_hvg_zscore",
+        "logp_cpm",
+        "logp1_size_normed",
+    ]
+    out: dict[str, np.ndarray] = {}
+    for method in methods:
+        out[method] = pca_knn_dense(log_method_matrix(X_full_cell_gene, method), pca_dim, k, seed)
+    return out
+
+
+def score_reduced_against_full_consensus(
+    reduced_knn: np.ndarray,
+    full_knns: dict[str, np.ndarray],
+) -> tuple[float, float, int]:
+    n_cells = reduced_knn.shape[0]
+    overlaps: list[int] = []
+    common_sizes: list[int] = []
+    for idx in range(n_cells):
+        common = set(next(iter(full_knns.values()))[idx])
+        for full_knn in list(full_knns.values())[1:]:
+            common.intersection_update(full_knn[idx])
+        common_sizes.append(len(common))
+        if len(common) > 1:
+            overlaps.append(sum(j in common for j in reduced_knn[idx]))
+    return float(np.mean(overlaps)), float(np.mean(common_sizes)), len(overlaps)
+
+
 def run_consistency() -> pd.DataFrame:
     out = OUTDIR / "fig2abc_clr_alpha_k_consistency.tsv"
     if out.exists():
@@ -235,6 +319,7 @@ def run_consistency() -> pd.DataFrame:
 
 def run_downsampling() -> pd.DataFrame:
     out = OUTDIR / "fig2abc_clr_alpha_k_downsampling.tsv"
+    diagnostic_out = OUTDIR / "fig2c_pflogpf_consensus_diagnostic.tsv"
     if out.exists():
         return pd.read_csv(out, sep="\t")
     params = [
@@ -245,6 +330,7 @@ def run_downsampling() -> pd.DataFrame:
         ("smartSeq3_siRNA_knockdown", 50),
     ]
     rows = []
+    diagnostics = []
     for ds, pca_dim in params:
         M = filter_gene_cell(load_downsampling_gene_cell(ds))
         for seed in range(1, 6):
@@ -257,7 +343,14 @@ def run_downsampling() -> pd.DataFrame:
             Xr = Xr[keep]
             ef, af, kf = scclr_pca_cells_genes(Xf, pca_dim, seed)
             er, ar, kr = scclr_pca_cells_genes(Xr, pca_dim, seed)
-            ov = mean_overlap(knn(ef, 50), knn(er, 50))
+            full_pf_knn = knn(ef, 50)
+            reduced_pf_knn = knn(er, 50)
+            direct_ov = mean_overlap(full_pf_knn, reduced_pf_knn)
+            full_log_knns = log_method_full_knns(Xf, pca_dim, 50, seed)
+            ov, mean_common, n_scored = score_reduced_against_full_consensus(
+                reduced_pf_knn,
+                full_log_knns,
+            )
             rows.append({
                 "overlap": ov,
                 "dataset": ds,
@@ -271,9 +364,32 @@ def run_downsampling() -> pd.DataFrame:
                 "K_full": kf,
                 "K_reduced": kr,
             })
-            print(f"downsampling {ds} seed={seed} overlap={ov:.3f} K=({kf:.3g},{kr:.3g})", flush=True)
+            diagnostics.append({
+                "overlap": ov,
+                "dataset": ds,
+                "seed": seed,
+                "pca_dim": pca_dim,
+                "knn": 50,
+                "transformation": "clr",
+                "alpha": "TRUE",
+                "alpha_est_full": af,
+                "alpha_est_reduced": ar,
+                "K_full": kf,
+                "K_reduced": kr,
+                "direct_overlap": direct_ov,
+                "mean_common_neighbors": mean_common,
+                "n_cells_scored": n_scored,
+                "n_cells": Xr.shape[0],
+                "consensus_methods": ",".join(full_log_knns.keys()),
+            })
+            print(
+                f"downsampling {ds} seed={seed} consensus={ov:.3f} "
+                f"direct={direct_ov:.3f} K=({kf:.3g},{kr:.3g})",
+                flush=True,
+            )
     df = pd.DataFrame(rows)
     df.to_csv(out, sep="\t", index=False)
+    pd.DataFrame(diagnostics).to_csv(diagnostic_out, sep="\t", index=False)
     return df
 
 

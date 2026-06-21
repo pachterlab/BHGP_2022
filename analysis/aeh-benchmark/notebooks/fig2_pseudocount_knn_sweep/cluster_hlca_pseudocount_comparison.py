@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 import scanpy as sc
 import scipy.sparse as sp
-from sklearn.decomposition import PCA
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 
 import scclr
@@ -47,18 +46,10 @@ def filter_cells_genes(X: sp.csr_matrix) -> tuple[sp.csr_matrix, np.ndarray]:
     return X[:, idx].tocsr(), cell_keep
 
 
-def dense_pca(X_cells_genes: np.ndarray, n_components: int) -> np.ndarray:
-    k = min(n_components, X_cells_genes.shape[0] - 1, X_cells_genes.shape[1] - 1)
-    return PCA(n_components=int(k), svd_solver="full", random_state=SEED).fit_transform(X_cells_genes)
-
-
 def pflog_scores(counts: sp.csr_matrix, pseudocount: float, n_components: int) -> np.ndarray:
-    depths = np.asarray(counts.sum(axis=1)).ravel()
-    sbar = float(depths.mean())
-    pf_counts = counts.multiply(sbar / depths[:, None]).toarray()
-    Z = np.log(pf_counts + pseudocount)
-    Z -= Z.mean(axis=1, keepdims=True)
-    return dense_pca(Z, n_components)
+    alpha = 1.0 / (4.0 * float(pseudocount))
+    res = scclr.normalize_pca(counts, n_components=n_components, target="auto", alpha=alpha, seed=SEED, tol=1e-6)
+    return np.asarray(res.scores)
 
 
 def leiden_from_scores(scores: np.ndarray, *, n_neighbors: int) -> np.ndarray:
