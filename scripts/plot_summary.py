@@ -91,6 +91,7 @@ def load_metrics(data_root):
 
 def main(data_root, out_prefix, reference_ds="angelidis_2019"):
     df = load_metrics(data_root)
+    n_total = df["ds"].nunique()
     # Panel A (variance stabilization): use CV(q) from the delta-method analysis in
     # place of the empirical cov_gene. Functional transforms = model-based q; sctransform
     # = empirical CV of full-vst residual gene variances (flagged with the x-label *).
@@ -108,11 +109,6 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
     _cvq = pd.concat([_cvq, _sct], ignore_index=True)
     df = df.merge(_cvq, on=["ds", "method"], how="left")
     df["cov_gene"] = df["cvq"].where(df["cvq"].notna(), df["cov_gene"])
-    # Drop datasets that have any NaN metric in any of the LABELS we will plot.
-    bad = df.groupby("ds")[["cov_gene", "r2_depth", "r_mono"]].apply(lambda x: x.isna().any().any())
-    keep_ds_all = bad[~bad].index
-    df = df[df["ds"].isin(keep_ds_all)]
-    n_total = df["ds"].nunique()
 
     # Min-depth filter at the reference dataset's avg_per_cell.
     ref_rows = df[(df["method"] == "raw") & (df["ds"] == reference_ds)]
@@ -124,7 +120,12 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
         pass_ds = df[(df["method"] == "raw") & (df["avg_per_cell"] >= min_apc)]["ds"].unique()
         df_pass = df[df["ds"].isin(pass_ds)]
     n_pass = df_pass["ds"].nunique()
-    print(f"{n_total} datasets after NaN drop, {n_pass} pass the avg_per_cell >= {reference_ds} filter")
+    missing = df_pass.groupby("ds")[["cov_gene", "r2_depth", "r_mono"]].apply(lambda x: x.isna().any().any())
+    n_pass_complete = int((~missing).sum())
+    print(
+        f"{n_total} datasets total, {n_pass} pass the avg_per_cell >= {reference_ds} filter "
+        f"({n_pass_complete} with complete plotted metrics)"
+    )
 
     # mono metric: lower = more monotonic
     df_pass = df_pass.copy()
@@ -147,9 +148,12 @@ def main(data_root, out_prefix, reference_ds="angelidis_2019"):
 
     ref_in_pass = reference_ds in df_pass["ds"].unique()
     for ax, (met, color_key, ylabel) in zip(axs, panels):
-        per_method = gb[met].apply(lambda s: s.values).reindex(LABELS)
+        per_method = gb[met].apply(lambda s: s.dropna().values).reindex(LABELS)
         # Drop methods that may be missing entirely.
-        present_labels = [m for m in LABELS if isinstance(per_method.loc[m], np.ndarray)]
+        present_labels = [
+            m for m in LABELS
+            if isinstance(per_method.loc[m], np.ndarray) and len(per_method.loc[m]) > 0
+        ]
         data = [per_method.loc[m] for m in present_labels]
         positions = np.arange(len(present_labels))
 
