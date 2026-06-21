@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Compute corrected runorm/scclr PFlog normalization on a raw sparse matrix.
+"""Compute current scclr PFlog normalization on a raw sparse matrix.
 
 Writes a single dense CSV.gz output: <out_prefix>/clr.csv.gz
 
 Mathematically, PFlog is the shifted CLR
-center(log1p(4 * alpha * x)), computed by runorm/scclr.  This is not the older
+center(log1p(4 * alpha * x)), computed by scclr.  This is not the older
 depth-targeted CLR helper center(log1p(K * x / s_i)).
 
 Output is dense because per-cell mean subtraction destroys sparsity.
@@ -26,7 +26,7 @@ def main(in_matrix_fn, out_prefix):
     mtx = mmread(in_matrix_fn).tocsr()
     print(f"  shape: {mtx.shape}, density: {mtx.nnz / (mtx.shape[0]*mtx.shape[1]):.4f}", flush=True)
 
-    print("computing PFlog with runorm/scclr target='auto'", flush=True)
+    print("computing PFlog with scclr target='auto'", flush=True)
     out = to_dense(normalize_pflog(mtx))
 
     out_fn = os.path.join(out_prefix, "clr.csv.gz")

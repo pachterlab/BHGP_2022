@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Remake of Figure 1b panel 1 (variance-stabilization panel): per-method boxplot of
-CV(q) across datasets, replacing the old 'CV of gene variances' (cov_gene) metric.
+CV(q) across datasets, replacing the previous 'CV of gene variances' (cov_gene) metric.
 
 Functional transforms use the model-based delta-method q (scripts/compute_cvq_all.py).
 sctransform has no functional q, so it is shown as its EMPIRICAL cv_q_emp = CV of the

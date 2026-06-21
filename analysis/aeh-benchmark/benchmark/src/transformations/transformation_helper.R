@@ -405,7 +405,7 @@ scgpt_fnc <- function(UMI, sf, alpha, n_bins = 51L){
   res
 }
 
-# CLR (Centered Log-Ratio): corrected PFlog / runorm shifted CLR. The shift is
+# CLR (Centered Log-Ratio): PFlog / shifted CLR. The shift is
 # the variance-stabilizing pseudocount y0 = 1/(4*alpha), applied on the count
 # scale as log(x + y0), then centered within each cell. This matches the scclr
 # sparse implementation center(log1p(4*alpha*x)) up to a per-cell-removed

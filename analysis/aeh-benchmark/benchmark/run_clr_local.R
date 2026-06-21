@@ -60,7 +60,7 @@ suppressPackageStartupMessages({
 
 # ── Core functions ─────────────────────────────────────────────────────────────
 
-# Corrected PFlog / runorm shifted CLR:
+# Current PFlog / shifted CLR:
 # log(y + 1/(4*alpha)) then subtract per-cell mean across genes.
 estimate_alpha <- function(UMI) {
   mu <- as.numeric(Matrix::rowMeans(UMI))

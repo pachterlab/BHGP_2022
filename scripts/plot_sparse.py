@@ -218,7 +218,7 @@ def read_data(base_data_fn):
 mtx_labels = ['raw', 'pf', 'log', 'pf_log', 'pf_log_pf', 'cpm_log', 'cp10k_log', "sqrt"]
 
 # pf_log_pf is the legacy PF->log1p->PF artifact. Current PFlog is computed
-# on the fly with runorm/scclr in plot_all.py and the PFlog rerun script.
+# on the fly with scclr in plot_all.py and the PFlog rerun script.
 labels = [
     'raw',
      'PF',

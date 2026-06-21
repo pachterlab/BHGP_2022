@@ -1,7 +1,7 @@
-# Figure 4: lung cross-depth PC loading geometry
+# Main Fig. 3: lung cross-depth PC loading geometry
 
-This directory contains the source data and Python code for manuscript Figure 4
-and the muscat 12x downsampling kNN result quoted in Section 2.5.
+This directory contains the source data and Python code for main Fig. 3 and the
+muscat 12-fold downsampling kNN result quoted in the Discussion.
 
 ## Inputs
 
@@ -13,7 +13,7 @@ and the muscat 12x downsampling kNN result quoted in Section 2.5.
 - `data/muscat_seed1_truth_cluster_labels.tsv`: coarse labels derived from the
   muscat truth matrix for the supervised scANVI step.
 
-## Figure 4
+## Main Fig. 3
 
 By default, the HLCA PC loading comparison uses the top 1,000 common genes by
 combined mean expression after requiring detection in more than 1% of cells in

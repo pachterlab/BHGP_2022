@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Sync corrected PFlog metrics into committed supplement flat JSON files.
+"""Sync current PFlog metrics into committed supplement flat JSON files.
 
 The flat supplement files historically use the prefix ``PFlog1pPF`` for the
 PFlog row.  For compatibility we keep that prefix, but the values are sourced
-from the current ``PFlog (shift. CLR)`` entry produced by runorm/scclr:
+from the current ``PFlog (shift. CLR)`` entry produced by scclr:
 
     center(log1p(4 * alpha * x))
 
@@ -46,7 +46,7 @@ def sync_one(source_json: Path, flat_json: Path) -> bool:
             flat[flat_key] = value
             changed = True
 
-    impl = source.get("pflog_impl", "runorm/scclr PFlog: center(log1p(4*alpha*x))")
+    impl = source.get("pflog_impl", "scclr PFlog: center(log1p(4*alpha*x))")
     if flat.get(f"{FLAT_PREFIX}_impl") != impl:
         flat[f"{FLAT_PREFIX}_impl"] = impl
         changed = True

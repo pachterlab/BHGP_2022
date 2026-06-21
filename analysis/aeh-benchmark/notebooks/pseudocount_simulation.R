@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # Supplementary pseudocount simulation.
 #
-# The old version of this figure plotted an abstract "correction factor" cf,
+# An earlier version of this figure plotted an abstract "correction factor" cf,
 # where the shifted-log pseudocount was 1 / (cf * alpha).  This version plots the
 # same idea in the notation used in the paper:
 #

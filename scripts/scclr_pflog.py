@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Helpers for the corrected runorm/scclr PFlog transform.
+"""Helpers for the current scclr PFlog transform.
 
 PFlog is the shifted CLR
 
     center(log1p(4 * alpha * x))
 
-computed by runorm/scclr.  The older depth-targeted helper
+computed by scclr.  The earlier depth-targeted helper
 ``center(log1p(4 * alpha * x * sbar / s_i))`` is intentionally not used here.
 """
 
@@ -42,8 +42,8 @@ def _assert_correct_pflog(scclr) -> None:
     if not np.allclose(got, expected):
         src = getattr(scclr, "__file__", "<unknown>")
         raise RuntimeError(
-            "Imported scclr does not implement corrected PFlog "
-            f"center(log1p(4*alpha*x)); got stale module at {src}. "
+            "Imported scclr does not implement current PFlog "
+            f"center(log1p(4*alpha*x)); got incompatible module at {src}. "
             "Set SC_CLR_PATH=/path/to/scclr/python or update the environment."
         )
 

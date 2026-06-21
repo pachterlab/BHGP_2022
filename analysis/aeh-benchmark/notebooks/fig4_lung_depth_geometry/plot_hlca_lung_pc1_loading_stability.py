@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate manuscript Figure 4: cross-depth PC1 loading stability in lung cells."""
+"""Generate main Fig. 3: cross-depth PC1 loading stability in lung cells."""
 
 from __future__ import annotations
 

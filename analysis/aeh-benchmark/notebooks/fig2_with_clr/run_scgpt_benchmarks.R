@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 #
-# Compute scGPT value-binning benchmark rows for the Figure 2 reproduction
+# Compute scGPT value-binning benchmark rows for the AE&H Figure 2 reproduction
 # directory and append them to the benchmark result tables.
 
 suppressPackageStartupMessages({

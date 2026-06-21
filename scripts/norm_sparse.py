@@ -45,18 +45,18 @@ def norm_sqrt(mtx):
     return sqrt
 
 def norm_clr(mtx, c=1.0, sf=None, alpha=None, scale=None):
-    """Compatibility wrapper for corrected PFlog via runorm/scclr.
+    """Compatibility wrapper for current PFlog via scclr.
 
     PFlog is now computed as ``center(log1p(4 * alpha * x))`` (or
     ``target="auto"`` when ``alpha`` is omitted).  The older depth-targeted
     implementation, ``center(log1p(K * x / s_i))``, is not used for PFlog.
 
     ``c``, ``sf``, and ``scale`` are accepted only so older scripts fail less
-    abruptly; they do not control the runorm/scclr PFlog transform.
+    abruptly; they do not control the scclr PFlog transform.
     """
     if c != 1.0 or sf is not None or scale is not None:
         warnings.warn(
-            "norm_clr now delegates to runorm/scclr PFlog; c/sf/scale are ignored",
+            "norm_clr now delegates to scclr PFlog; c/sf/scale are ignored",
             RuntimeWarning,
             stacklevel=2,
         )

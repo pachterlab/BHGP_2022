@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sweep PFlog pseudocounts and compare kNN graphs to PFlog on a Fig. 2c dataset."""
+"""Sweep PFlog pseudocounts on a smartSeq3 dataset from the AE&H benchmark."""
 
 from __future__ import annotations
 

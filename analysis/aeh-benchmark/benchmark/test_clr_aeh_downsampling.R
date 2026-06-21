@@ -5,7 +5,7 @@
 #
 # AE&H method:  scuttle::downsampleMatrix(UMI, prop = 5000/median(colsums), bycol = FALSE)
 #               Each matrix entry is independently downsampled: rbinom(x_ij, prop).
-# Old CLR method: per-cell rmultinom(size = sum(cell) * 0.1, prob = cell + 1e-8)
+# Historical CLR runner: per-cell rmultinom(size = sum(cell) * 0.1, prob = cell + 1e-8)
 #
 # Single dataset (mcSCRB), 5 seeds, pca_dim = 10, knn = 50 — same parameter
 # slice used in the main panel of the benchmark figure.
@@ -62,7 +62,7 @@ estimate_alpha <- function(UMI) {
   if (!is.finite(a) || a <= 0) 0.05 else a
 }
 
-# Corrected PFlog / runorm shifted CLR + PCA + kNN.
+# Current PFlog / shifted CLR + PCA + kNN.
 clr_knn <- function(UMI, pca_dim = 10, knn = 50) {
   alpha <- estimate_alpha(UMI)
   logpf <- log(UMI + 1 / (4 * alpha))

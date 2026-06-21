@@ -62,7 +62,7 @@ def _resolve_method(name, c=None):
     else:
         base = name
     if c is not None and base == "clr":
-        print("WARNING: clr pseudocount arguments are ignored; using runorm/scclr PFlog", file=sys.stderr)
+        print("WARNING: clr pseudocount arguments are ignored; using scclr PFlog", file=sys.stderr)
     fn = METHODS[base]
     return fn, base
 
@@ -74,8 +74,8 @@ def _ensure_dense(m):
 def knn_overlap_for_method(raw, method_name, k=50, n_pca=50, seed=42):
     """Compute split-half k-NN overlap for one transformation.
 
-    method_name accepts 'pflog' or the historical AEH key 'clr' for the corrected
-    runorm/scclr PFlog transform.
+    method_name accepts 'pflog' or the historical AEH key 'clr' for the current
+    scclr PFlog transform.
     """
     n_cells, n_genes = raw.shape
     rng = np.random.default_rng(seed)

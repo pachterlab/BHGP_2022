@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Recompute only the summary metrics for 'PFlog (shift. CLR)' with runorm/scclr.
+"""Recompute only the summary metrics for 'PFlog (shift. CLR)' with scclr.
 
-PFlog is the corrected shifted CLR ``center(log1p(4 * alpha * x))``.  Each
+PFlog is the shifted CLR ``center(log1p(4 * alpha * x))``.  Each
 dataset's PFlog object is computed on the fly from raw.mtx.gz, summary metrics
 are updated in-place, and other methods' entries are left untouched.  Resumable
 via a manifest.
@@ -45,7 +45,7 @@ def process(args):
         dd.pop(OLD_LABEL, None)
         dd.pop("pflogpf_impl", None)
         dd[LABEL] = entry
-        dd["pflog_impl"] = "runorm/scclr PFlog: center(log1p(4*alpha*x))"
+        dd["pflog_impl"] = "scclr PFlog: center(log1p(4*alpha*x))"
         json.dump(dd, open(jpath, "w"))
         return (ds, "OK", f"cov={entry['cov_gene']:.2f} r2d=0.000 rmono=1.000 alpha={entry['scclr_alpha']:.3g}")
     except Exception as e:

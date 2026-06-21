@@ -12,7 +12,7 @@ OBS=$(find $path -mindepth 1 -maxdepth 1 -type d  \( ! -iname ".*" \) | sed 's|^
 (
 for MTX in raw pf log sqrt pf_log pf_log_pf cpm_log cp10k_log; do
     # pf_log_pf is a legacy artifact; current manuscript PFlog is recomputed
-    # with runorm/scclr and is not produced by this sparse-matrix loop.
+    # with scclr and is not produced by this sparse-matrix loop.
     echo $MTX &&
     for d in $OBS; do
         if [ -f $d/$MTX.mtx.gz ]; then

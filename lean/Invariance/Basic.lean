@@ -549,8 +549,9 @@ theorem log1pPFScale_eq_shiftedLogCountScale
 /--
 Graph label: solve the software scale factor from `alpha`.
 
-If the count-scale pseudocount is `1 / (4 * alpha)`, then the software scale
-factor is `K = 4 * alpha * s`.
+For a cell with depth `s`, if the count-scale pseudocount is
+`1 / (4 * alpha)`, then the corresponding software scale factor is
+`K = 4 * alpha * s`.
 -/
 theorem scale_factor_from_alpha
     {K s alpha : ℝ} (hK : K ≠ 0) (halpha : alpha ≠ 0)

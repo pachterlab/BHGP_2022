@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Compare legacy PFlog-ish artifacts against corrected runorm/scclr PFlog.
+"""Compare legacy PFlog-ish artifacts against current scclr PFlog.
 
 The legacy ``pf_log_pf.mtx.gz`` artifact is kept only for historical comparison.
-Current PFlog is computed on raw counts with runorm/scclr as
+Current PFlog is computed on raw counts with scclr as
 ``center(log1p(4*alpha*x))``.
 
 Reports the summary-boxplot metrics (cov_gene, r2_depth, r_mono) and the
@@ -29,7 +29,7 @@ def main(dsdir, celltype):
     raw_ct = np.asarray(raw[idx].todense()); depth = raw_ct.sum(1)
     print(f"raw {raw.shape} | legacy {mult.shape} | scclr {sclr.shape} | {celltype}: {idx.size} cells\n")
 
-    for name, X in [("legacy pf_log_pf artifact", mult), ("runorm/scclr PFlog", sclr)]:
+    for name, X in [("legacy pf_log_pf artifact", mult), ("scclr PFlog", sclr)]:
         print(f"=== {name} ===")
         print(f"  row-sum |max|         = {np.abs(X.sum(1)).max():.3f}   (0 => centered/CLR)")
         print(f"  [summary] cov_gene    = {C.cov_gene(X):.4f}")

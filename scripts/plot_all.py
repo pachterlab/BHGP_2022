@@ -260,7 +260,7 @@ def read_data(base_data_fn, max_cells=25000, seed=0):
             data[k] = v[idx]
         raw = data[txlabel["raw"]]
 
-    # PFlog (shift. CLR) is corrected runorm/scclr PFlog:
+    # PFlog (shift. CLR) is current scclr PFlog:
     # center(log1p(4*alpha*x)).  scclr stores it as sparse log terms plus a
     # per-cell center vector, so the panel is memory-safe even on the largest
     # matrices. plot_data derives panel stats from the sparse-plus-rank-one form.
@@ -269,11 +269,11 @@ def read_data(base_data_fn, max_cells=25000, seed=0):
     return data
 
 # 'pf_log_pf' intentionally NOT in mtx_labels: PFlog is computed on the fly as
-# corrected runorm/scclr PFlog (see read_data), not read from the legacy
+# current scclr PFlog (see read_data), not read from the legacy
 # pf_log_pf.mtx.gz artifact.
 mtx_labels = ['raw', 'pf', 'log', 'pf_log', 'cpm_log', 'cp10k_log', "sqrt"]
 
-# "PFlog (shift. CLR)" = corrected runorm/scclr shifted CLR, computed in read_data.
+# "PFlog (shift. CLR)" = current scclr shifted CLR, computed in read_data.
 labels = [
     'raw',
      'PF',

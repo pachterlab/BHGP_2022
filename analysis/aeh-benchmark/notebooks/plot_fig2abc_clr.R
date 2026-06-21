@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # plot_fig2abc_clr.R
 #
-# Reproduces Figure 2 panels a, b, c from Ahlmann-Eltze & Huber (2023)
+# Reproduces Ahlmann-Eltze & Huber (2023) Figure 2 panels a, b, and c
 # with CLR (centered log-ratio) added as an additional transformation.
 #
 # Run from notebooks/ directory:
@@ -38,7 +38,7 @@ read_downsampling_consensus <- function(path) {
     if (any(is_self_overlap)) {
       warning("Dropping ", sum(is_self_overlap),
               " CLR self-overlap rows from ", path,
-              "; Fig. 2 downsampling uses AE&H consensus-overlap.")
+              "; AE&H Fig. 2 downsampling uses consensus-overlap.")
       dat <- filter(dat, !is_self_overlap)
     }
   }

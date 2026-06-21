@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # plot_fig2d_clr.R
 #
-# Reproduces Figure 2d (siRNA KD downsampling panel) with PFlog (shift. CLR) added.
+# Reproduces Ahlmann-Eltze & Huber (2023) Figure 2d with PFlog (shift. CLR) added.
 # Run from notebooks/fig2_with_clr/ directory: Rscript plot_fig2d_clr.R
 
 suppressPackageStartupMessages({
@@ -23,7 +23,7 @@ read_downsampling_consensus <- function(path) {
     if (any(is_self_overlap)) {
       warning("Dropping ", sum(is_self_overlap),
               " CLR self-overlap rows from ", path,
-              "; Fig. 2 downsampling uses AE&H consensus-overlap.")
+              "; AE&H Fig. 2 downsampling uses consensus-overlap.")
       dat <- filter(dat, !is_self_overlap)
     }
   }

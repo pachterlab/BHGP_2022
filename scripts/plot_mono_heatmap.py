@@ -39,7 +39,7 @@ from scipy.io import mmread
 PANELS = [
     ("raw",         "raw.mtx.gz",         False),
     ("log1pPF",     "pf_log.mtx.gz",      False),
-    # PFlog = corrected runorm/scclr shifted CLR, computed on the fly from raw
+    # PFlog = current scclr shifted CLR, computed on the fly from raw
     # as center(log1p(4*alpha*x)). NOT the legacy pf_log_pf.mtx.gz artifact.
     ("PFlog",   "__CLR__",            True),
     ("sctransform", "sctransform.csv.gz", True),
@@ -85,7 +85,7 @@ def main(dataset_dir, out_prefix, n_top=100):
             from scclr_pflog import normalize_pflog, to_dense
             raw = mmread(os.path.join(dataset_dir, "subset_genes", "raw.mtx.gz")).tocsr()
             alpha = float(compute_overdispersion(raw))
-            print(f"computing {label} with runorm/scclr center(log1p(4*alpha*x)) "
+            print(f"computing {label} with scclr center(log1p(4*alpha*x)) "
                   f"alpha={alpha:.3g})...", file=sys.stderr)
             X = to_dense(normalize_pflog(raw, alpha=alpha))[keep]
         else:

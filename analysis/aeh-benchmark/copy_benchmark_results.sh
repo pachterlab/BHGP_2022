@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Remove old folder content
+# Refresh local benchmark content
 rm -r benchmark
-# Make new folder
+# Create destination folder
 mkdir benchmark
 mkdir benchmark/renv
 

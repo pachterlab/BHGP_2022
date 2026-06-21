@@ -73,7 +73,7 @@ def load_metrics(data_root):
                 alpha = mm.get("scclr_alpha")
                 if formula != EXPECTED_PFLOG_FORMULA or alpha is None:
                     raise ValueError(
-                        f"{fn}: {CLR_METHOD} is not the corrected runorm/scclr "
+                        f"{fn}: {CLR_METHOD} is not the current scclr "
                         f"PFlog entry ({EXPECTED_PFLOG_FORMULA}); got "
                         f"formula={formula!r}, scclr_alpha={alpha!r}"
                     )

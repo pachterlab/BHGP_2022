@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Recompute Supplementary Note Figure 7 PFlog rows with scclr.
+"""Recompute auxiliary siRNA PCA-dimension PFlog rows with scclr.
 
 The checked-in Ahlmann-Eltze--Huber downsampling table contains the original
-``clr`` rows. Figure 2c replaces those rows with scclr sparse shifted-CLR PCA
-using estimated alpha/K; this script does the same for the siRNA PCA-dimension
-sweep shown in Supplementary Note Figure 7.
+``clr`` rows. The manuscript uses scclr sparse shifted-CLR PCA for the retained
+PFlog benchmark rows; this archived auxiliary script applies the same override
+to the siRNA PCA-dimension sweep.
 """
 
 from __future__ import annotations
@@ -87,7 +87,7 @@ def main() -> None:
     out = pd.DataFrame(rows)
     out.to_csv(OUT, sep="\t", index=False)
 
-    # Also write a copy next to the Figure 2 override tables for easier auditing.
+    # Also write a copy next to the benchmark override tables for easier auditing.
     FIGURE_DIR.mkdir(parents=True, exist_ok=True)
     out.to_csv(FIGURE_DIR / OUT.name, sep="\t", index=False)
     print(f"Saved: {OUT}")

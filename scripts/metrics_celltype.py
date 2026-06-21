@@ -43,7 +43,7 @@ METHODS = [
     ("scalelog1pCP10k",      "cp10k_log_scale.csv.gz", True),
     ("sctransform",          "sctransform.csv.gz",    True),
     ("log1pPF",              "pf_log.mtx.gz",         False),
-    # PFlog (shift. CLR) is the corrected runorm/scclr transform, computed on
+    # PFlog (shift. CLR) is the current scclr transform, computed on
     # the fly from raw as center(log1p(4*alpha*x)). The "__CLR__" sentinel
     # triggers that instead of reading the legacy pf_log_pf.mtx.gz artifact.
     ("PFlog (shift. CLR)", "__CLR__",               True),
@@ -172,10 +172,10 @@ def main():
     ap.add_argument("--n_sub", type=int, default=500,
                     help="cells to subsample for pairwise Spearman (default 500)")
     ap.add_argument("--clr_alpha", type=float, default=None,
-                    help="overdispersion alpha for runorm/scclr PFlog. If omitted "
+                    help="overdispersion alpha for scclr PFlog. If omitted "
                          "(and --clr_calibrate off), scclr estimates alpha with target='auto'.")
     ap.add_argument("--clr_scale", type=float, default=None,
-                    help="legacy argument; accepted but ignored by corrected scclr PFlog.")
+                    help="legacy argument; accepted but ignored by current scclr PFlog.")
     ap.add_argument("--clr_calibrate", action="store_true",
                     help="estimate alpha WITHIN this cell type. The whole-dataset alpha "
                          "is inflated by between-celltype heterogeneity.")
@@ -225,11 +225,11 @@ def main():
             if alpha is not None:
                 sclr = normalize_pflog(sparse.csr_matrix(raw_full), alpha=alpha, scclr_path=args.scclr_path)
                 results["scclr_alpha"], results["scclr_k"] = float(sclr.alpha), float(sclr.k)
-                print(f"  {label}: runorm/scclr PFlog center(log1p(4*alpha*x)) "
+                print(f"  {label}: scclr PFlog center(log1p(4*alpha*x)) "
                       f"(alpha={float(sclr.alpha):.4g}, y0=1/(4a)={1/(4*float(sclr.alpha)):.4g})...",
                       file=sys.stderr)
             else:
-                print(f"  {label}: runorm/scclr PFlog target='auto'...", file=sys.stderr)
+                print(f"  {label}: scclr PFlog target='auto'...", file=sys.stderr)
                 sclr = normalize_pflog(sparse.csr_matrix(raw_full), scclr_path=args.scclr_path)
                 results["scclr_alpha"], results["scclr_k"] = float(sclr.alpha), float(sclr.k)
             X = to_dense(sclr)

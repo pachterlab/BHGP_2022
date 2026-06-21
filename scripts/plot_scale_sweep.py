@@ -16,7 +16,7 @@ on top of (non-)invariance -- worth a caption note.
 Methods:
   - raw                  : no normalization (identity)      -> grows ~ |s-1|
   - log1pPF              : log1p(PF)                         -> grows
-  - PFlog (shift. CLR)   : runorm/scclr center(log1p(4*alpha*x))
+  - PFlog (shift. CLR)   : scclr center(log1p(4*alpha*x))
   - sctransform          : Satija v2 Pearson residuals (computed in R via glmGamPoi)
 
 All methods run on the SAME subsampled, sanitized matrix. sctransform is delegated
@@ -75,7 +75,7 @@ def f_log1pPF(X):
 
 
 def f_clr(X):
-    """Corrected runorm/scclr PFlog: center(log1p(4*alpha*x))."""
+    """Current scclr PFlog: center(log1p(4*alpha*x))."""
     return to_dense(normalize_pflog(sparse.csr_matrix(X)), dtype=np.float64)
 
 
