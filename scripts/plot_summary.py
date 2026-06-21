@@ -50,6 +50,7 @@ cividis = matplotlib.colormaps["cividis"]
 COLORS = {"cell": cividis(0.01), "gene": cividis(0.5), "mono": cividis(0.99)}
 CLR_METHOD = "PFlog (shift. CLR)"
 CLR_COLOR  = "#E41A1C"   # matches angelidis_celltype_bar.pdf
+EXPECTED_PFLOG_FORMULA = "center(log1p(4*alpha*x))"
 # Display labels (data keys stay as in LABELS; only the shown text changes).
 # sctransform gets an asterisk: panel A shows its EMPIRICAL CoV (no functional q).
 DISPLAY = {"sctransform": "sctransform v2*"}
@@ -67,6 +68,15 @@ def load_metrics(data_root):
             mm = m.get(method)
             if not isinstance(mm, dict):
                 continue
+            if method == CLR_METHOD:
+                formula = mm.get("pflog_formula")
+                alpha = mm.get("scclr_alpha")
+                if formula != EXPECTED_PFLOG_FORMULA or alpha is None:
+                    raise ValueError(
+                        f"{fn}: {CLR_METHOD} is not the corrected runorm/scclr "
+                        f"PFlog entry ({EXPECTED_PFLOG_FORMULA}); got "
+                        f"formula={formula!r}, scclr_alpha={alpha!r}"
+                    )
             rows.append({
                 "ds": ds,
                 "method": method,
