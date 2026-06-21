@@ -1,0 +1,21 @@
+{
+  "comparison": "Angelidis Type_2_pneumocytes, 3m only, mouse-balanced high-depth vs next-depth cells",
+  "endpoint": "repeated abundance-matched log-ratio balance DE",
+  "n_replicates": 200,
+  "bins": 12,
+  "detection_threshold": 0.25,
+  "n_genes": 361,
+  "n_balances_per_replicate": 180,
+  "alpha": 0.01,
+  "depth": {
+    "next_mean": 1175.725,
+    "high_mean": 1905.405,
+    "next_median": 1087.5,
+    "high_median": 1824.0
+  },
+  "normalization": {
+    "mean_depth": 1540.565,
+    "scclr_alpha": 0.22789664420527667,
+    "scclr_k": 1404.3583747204082
+  }
+}

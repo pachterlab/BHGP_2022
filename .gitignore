@@ -43,6 +43,8 @@ analysis/figures/*
 !analysis/figures/angelidis_celltype_bar.pdf
 !analysis/figures/angelidis_celltype_bar.png
 !analysis/figures/angelidis_celltype_metrics.json
+!analysis/figures/angelidis_type2_3m_many_balance_de_summary.tsv
+!analysis/figures/angelidis_type2_3m_many_balance_de.json
 !analysis/figures/matrix_size_vs_ncells.pdf
 !analysis/figures/matrix_size_vs_ncells.png
 !analysis/figures/angelidis_mono_heatmap.pdf
