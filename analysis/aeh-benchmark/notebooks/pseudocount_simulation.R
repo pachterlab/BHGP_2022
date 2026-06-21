@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# Supplementary pseudocount / K simulation.
+# Supplementary pseudocount simulation.
 #
 # The old version of this figure plotted an abstract "correction factor" cf,
 # where the shifted-log pseudocount was 1 / (cf * alpha).  This version plots the
@@ -14,7 +14,8 @@
 #   K = 4 alpha sbar.
 #
 # The simulation below generates Huber-benchmark-like settings with fixed
-# underlying proportions and variable cell depths.  For a range of K values it
+# underlying proportions and variable cell depths.  For a range of pseudocount
+# values, equivalently for a range of K values with y0 = sbar / K, it
 # evaluates the modeled delta-method technical variance
 #
 #   q_gc(K) = {d/dmu log(1 + K mu_gc / s_c)}^2 (mu_gc + alpha mu_gc^2)
@@ -41,13 +42,13 @@ angelidis_alpha <- 0.4047020313316354
 scenarios <- tibble::tribble(
   ~scenario_id, ~alpha, ~mean_depth, ~alpha_label,
   "ss3_fib", 0.0903663957233413, 228770.623306233, "0.090 (Smart-seq3 fibroblasts)",
-  "gsm4235299", 0.23372025889020434, 55641.95855614973, "0.234 (low consistency)",
+  "gsm4235299", 0.23372025889020434, 55641.95855614973, "0.234 (GSM4235299)",
   "sirna", 0.242038898430308, 125183.563983249, "0.242 (siRNA KD)",
   "angelidis", angelidis_alpha, 818.46, "0.405 (Angelidis et al.)",
   "mcscrb", 0.796583324572214, 63974.1124497992, "0.797 (mcSCRB)",
   "ss3_hek", 1.06442469733767, 50291.0427350427, "1.06 (Smart-seq3 HEK)",
-  "gsm5429730", 4.030432793492418, 7401.56266768877, "4.03 (high consistency)",
-  "gsm5429729", 6.64734493432392, 7254.195482034863, "6.65 (highest consistency)"
+  "gsm5429730", 4.030432793492418, 7401.56266768877, "4.03 (GSM5429730)",
+  "gsm5429729", 6.64734493432392, 7254.195482034863, "6.65 (GSM5429729)"
 )
 
 k_reference <- c(
@@ -112,14 +113,18 @@ summary_df <- results |>
     q75 = quantile(cv, 0.75),
     .groups = "drop"
   ) |>
-  mutate(alpha_label = factor(alpha_label, levels = scenarios$alpha_label))
+  mutate(
+    pseudocount = mean_depth / K,
+    alpha_label = factor(alpha_label, levels = scenarios$alpha_label)
+  ) |>
+  arrange(alpha_label, pseudocount)
 
 anscombe_df <- scenarios |>
   transmute(
     scenario_id,
     alpha_label = factor(alpha_label, levels = scenarios$alpha_label),
-    K = 4 * alpha * mean_depth,
-    scenario = "Anscombe K"
+    pseudocount = 1 / (4 * alpha),
+    scenario = "Anscombe"
   )
 
 min_df <- summary_df |>
@@ -127,14 +132,21 @@ min_df <- summary_df |>
   transmute(
     scenario_id,
     alpha_label,
-    K,
-    scenario = "CV-min K"
+    pseudocount,
+    scenario = "CV minimum"
   )
 
-ref_df <- data.frame(
-  K = unname(k_reference),
-  scenario = names(k_reference)
-)
+ref_df <- merge(
+  scenarios,
+  data.frame(scenario = names(k_reference), K = unname(k_reference)),
+  by = NULL
+) |>
+  transmute(
+    scenario_id,
+    alpha_label = factor(alpha_label, levels = scenarios$alpha_label),
+    pseudocount = mean_depth / K,
+    scenario
+  )
 
 out <- file.path(dirname(sub("--file=", "", grep("--file=", commandArgs(FALSE), value = TRUE)[1])),
                  "..", "output")
@@ -144,44 +156,44 @@ dir.create(out, showWarnings = FALSE, recursive = TRUE)
 write.csv(results, file.path(out, "pseudocount_simulation.csv"), row.names = FALSE)
 
 line_cols <- c(
-  "Anscombe K" = "#aa3377",
-  "CV-min K" = "#d55e00",
+  "Anscombe" = "#aa3377",
+  "CV minimum" = "#d55e00",
   "CP10k" = "#333333",
   "CPM" = "#666666"
 )
 
-p <- ggplot(summary_df, aes(x = K, y = median_cv)) +
+p <- ggplot(summary_df, aes(x = pseudocount, y = median_cv)) +
   geom_ribbon(aes(ymin = q25, ymax = q75), fill = "#b9c9d6", alpha = 0.55) +
   geom_line(color = "#2f5d7c", linewidth = 0.9) +
   geom_vline(
     data = ref_df,
-    aes(xintercept = K, color = scenario),
+    aes(xintercept = pseudocount, color = scenario),
     linewidth = 0.45,
     linetype = "dashed"
   ) +
   geom_vline(
     data = anscombe_df,
-    aes(xintercept = K, color = scenario),
+    aes(xintercept = pseudocount, color = scenario),
     linewidth = 0.65
   ) +
   geom_vline(
     data = min_df,
-    aes(xintercept = K, color = scenario),
+    aes(xintercept = pseudocount, color = scenario),
     linewidth = 0.75
   ) +
   facet_wrap(vars(alpha_label), nrow = 2) +
   scale_x_log10(
-    breaks = c(1e3, 1e4, 1e5, 1e6, 1e7),
-    labels = c(expression(10^3), expression(10^4), expression(10^5), expression(10^6), expression(10^7))
+    breaks = c(1e-4, 1e-3, 1e-2, 1e-1, 1, 10, 100, 1000),
+    labels = c(expression(10^-4), expression(10^-3), expression(10^-2), expression(10^-1), "1", "10", "100", "1000")
   ) +
   scale_y_continuous(expand = expansion(mult = c(0.02, 0.12))) +
   scale_color_manual(
     values = line_cols,
-    breaks = c("Anscombe K", "CV-min K", "CP10k", "CPM"),
+    breaks = c("Anscombe", "CV minimum", "CP10k", "CPM"),
     name = NULL
   ) +
   labs(
-    x = expression("software scale factor " * K),
+    x = "count-scale pseudocount",
     y = expression("CV of modeled technical variances " * q)
   ) +
   theme_classic(base_size = 11) +
