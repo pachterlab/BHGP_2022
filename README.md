@@ -1,7 +1,7 @@
 # Normalization for negative-binomial count data
 
-Code and data to reproduce *"Normalization for negative-binomial count
-data"* (Booeshaghi, Hallgrímsdóttir, Gálvez-Merchán, Pachter).
+Code and data to reproduce *"[Normalization for negative-binomial count
+data](https://www.biorxiv.org/content/10.1101/2022.05.06.490859v4)"* (Booeshaghi, Hallgrímsdóttir, Gálvez-Merchán, Pachter). Software that implements the methods is available at [https://github.com/cleartools/scclr](https://github.com/cleartools/scclr) (Python) and [https://github.com/cleartools/scclrR](https://github.com/cleartools/scclrR) (R).
 
 ## Summary
 
